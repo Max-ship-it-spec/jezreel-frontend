@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="Imagenes/Logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jezreel Vet — Panel Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#1565C0;--azul-vivo:#1976D2;--azul-claro:#E3F2FD;--azul-medio:#BBDEFB;--azul-oscuro:#0D47A1;--azul-noche:#0A2E6B;--acento:#FF6F00;--acento-claro:#FFF3E0;--gris:#F4F6FB;--texto:#0D1B3E;--texto-suave:#4A5568;--blanco:#FFFFFF;--borde:rgba(21,101,192,0.15);--radio:12px;--sombra:0 4px 20px rgba(13,71,161,0.08);--sidebar:260px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gris);color:var(--texto);display:flex;min-height:100vh;}
+.sidebar{width:var(--sidebar);background:var(--azul-noche);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform 0.3s;}
+.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.sidebar-logo h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;}
+.sidebar-logo h1 span{color:var(--acento);}
+.sidebar-logo p{font-size:11.5px;color:rgba(255,255,255,0.5);margin-top:3px;}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);padding:12px 8px 6px;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;cursor:pointer;font-size:13.5px;font-weight:500;color:rgba(255,255,255,0.7);transition:all 0.2s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff;}
+.nav-item.active{background:var(--azul-vivo);color:#fff;font-weight:700;}
+.nav-item .icon{font-size:17px;width:22px;text-align:center;}
+.sidebar-user{padding:16px;border-top:1px solid rgba(255,255,255,0.1);}
+.sidebar-user-info{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--azul-vivo);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+.sidebar-user-info p{font-size:13px;font-weight:600;color:#fff;}
+.sidebar-user-info span{font-size:11px;color:rgba(255,255,255,0.5);}
+.btn-logout{width:100%;padding:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:0.2s;}
+.btn-logout:hover{background:#C62828;color:#fff;border-color:#C62828;}
+.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:#fff;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--borde);position:sticky;top:0;z-index:50;box-shadow:var(--sombra);}
+.topbar h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.badge-admin{background:var(--azul-claro);color:var(--azul-oscuro);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.content{padding:28px;flex:1;}
+.section{display:none;}.section.active{display:block;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:#fff;border-radius:var(--radio);padding:20px;border:1px solid var(--borde);box-shadow:var(--sombra);position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc1::before{background:linear-gradient(90deg,var(--azul-oscuro),var(--azul-vivo));}
+.sc2::before{background:linear-gradient(90deg,var(--acento),#FFB300);}
+.sc3::before{background:linear-gradient(90deg,#2E7D32,#66BB6A);}
+.sc4::before{background:linear-gradient(90deg,#880E4F,#E91E63);}
+.stat-icon{font-size:26px;margin-bottom:8px;}
+.stat-val{font-size:28px;font-weight:900;color:var(--azul-noche);}
+.stat-label{font-size:12.5px;color:var(--texto-suave);margin-top:2px;}
+.card{background:#fff;border-radius:var(--radio);border:1px solid var(--borde);box-shadow:var(--sombra);overflow:hidden;margin-bottom:20px;}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--borde);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.card-header h3{font-size:15px;font-weight:700;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{text-align:left;padding:10px 16px;background:var(--gris);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);white-space:nowrap;}
+tbody td{padding:10px 16px;border-bottom:1px solid var(--borde);color:var(--texto);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:#FAFBFF;}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:0.2s;font-family:inherit;}
+.btn-primary{background:var(--azul);color:#fff;}.btn-primary:hover{background:var(--azul-oscuro);}
+.btn-sm{padding:5px 10px;font-size:11.5px;}
+.btn-azul{background:var(--azul-claro);color:var(--azul-oscuro);}.btn-azul:hover{background:var(--azul);color:#fff;}
+.btn-rojo{background:#FFEBEE;color:#C62828;}.btn-rojo:hover{background:#E53935;color:#fff;}
+.btn-verde{background:#E8F5E9;color:#2E7D32;}.btn-verde:hover{background:#43A047;color:#fff;}
+.btn-naranja{background:#FFF3E0;color:#E65100;}.btn-naranja:hover{background:#FB8C00;color:#fff;}
+.btn-wa{background:#25D366;color:#fff;display:flex;align-items:center;gap:6px;}.btn-wa:hover{background:#1ebe5d;}
+.stars-ctrl{display:flex;align-items:center;gap:6px;}
+.stars-ctrl .num{font-size:15px;font-weight:900;min-width:20px;text-align:center;color:var(--azul-noche);}
+.badge{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11.5px;font-weight:700;}
+.b-azul{background:var(--azul-claro);color:var(--azul-oscuro);}
+.b-acento{background:var(--acento-claro);color:#E65100;}
+.b-verde{background:#E8F5E9;color:#2E7D32;}
+.b-rojo{background:#FFEBEE;color:#C62828;}
+.b-gris{background:#ECEFF1;color:#37474F;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--texto-suave);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;color:var(--texto);background:var(--gris);transition:0.2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--azul-vivo);background:#fff;box-shadow:0 0 0 3px rgba(25,118,210,0.1);}
+.sub-tag{background:var(--azul-claro);color:var(--azul-oscuro);padding:3px 9px;border-radius:6px;font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px;margin:3px;}
+.sub-tag button{background:none;border:none;cursor:pointer;color:#E53935;font-size:13px;}
+.prod-img{width:42px;height:42px;border-radius:8px;object-fit:cover;border:1px solid var(--borde);}
+.prod-img-placeholder{width:42px;height:42px;border-radius:8px;background:var(--azul-claro);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--texto-suave);}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--azul-noche);color:#fff;padding:12px 18px;border-radius:11px;font-size:13.5px;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:320px;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.verde{background:#1B5E20;}.toast.naranja{background:#E65100;}.toast.rojo{background:#B71C1C;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,80,0.5);z-index:400;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:18px;padding:28px;max-width:500px;width:100%;position:relative;animation:slideUp 0.25s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-close{position:absolute;top:12px;right:12px;background:var(--gris);border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.modal h2{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:4px;}
+.modal-sub{color:var(--texto-suave);font-size:13px;margin-bottom:18px;}
+.img-uploader{border:2px dashed var(--azul-medio);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--azul-claro);transition:0.2s;}
+.img-uploader:hover{border-color:var(--azul-vivo);}
+.img-uploader input{display:none;}
+.img-preview{width:100%;height:100px;object-fit:cover;border-radius:8px;margin-top:10px;display:none;}
+.chip-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.chip{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--borde);border-radius:20px;padding:6px 12px;font-size:13px;font-weight:600;}
+.chip .del{background:none;border:none;cursor:pointer;color:#E53935;font-size:14px;line-height:1;padding:0 0 0 4px;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;padding:4px;}
+.hamburger span{width:22px;height:2.5px;background:var(--texto);border-radius:2px;display:block;}
+.loading-row td{text-align:center;padding:24px;color:var(--texto-suave);font-size:13px;}
+
+/* ── PEDIDOS — búsqueda por ID ── */
+.pedido-search-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.pedido-search-bar input{padding:9px 14px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;outline:none;background:var(--gris);transition:0.2s;width:180px;}
+.pedido-search-bar input:focus{border-color:var(--azul-vivo);background:#fff;box-shadow:0 0 0 3px rgba(25,118,210,0.1);}
+.pedido-id-badge{display:inline-block;background:var(--azul-noche);color:#fff;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:800;letter-spacing:0.5px;margin-right:4px;}
+.pedido-highlight td{background:#EDF4FF!important;animation:highlightRow 1.2s ease;}
+@keyframes highlightRow{0%{background:#BDD8FF!important;}100%{background:#EDF4FF!important;}}
+.items-list{margin:0;padding:0;list-style:none;}
+.items-list li{font-size:12px;color:var(--texto-suave);padding:2px 0;}
+.items-list li::before{content:'•';color:var(--azul-vivo);margin-right:5px;}
+
+@media(max-width:900px){.sidebar{transform:translateX(-100%);}.sidebar.open{transform:translateX(0);}.main{margin-left:0;}.hamburger{display:flex;}.form-grid{grid-template-columns:1fr;}}
+</style>
+<style>
+/* ── CUPONES ── */
+/* ── CUPONES ── */
+.cupon-visual{
+  border-radius:16px;
+  padding:0;
+  display:flex;
+  align-items:stretch;
+  position:relative;
+  overflow:hidden;
+  min-height:90px;
+  box-shadow:0 8px 28px rgba(0,0,0,0.18);
+}
+.cupon-visual.tienda{
+  background:linear-gradient(135deg,#7B1FA2 0%,#C2185B 50%,#E91E63 100%);
+  color:#fff;
+}
+.cupon-visual.peluqueria{
+  background:linear-gradient(135deg,#0D47A1 0%,#1565C0 50%,#1976D2 100%);
+  color:#fff;
+}
+
+/* Franja izquierda con ícono grande */
+.cupon-strip-left{
+  width:80px;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(0,0,0,0.15);
+  font-size:36px;
+  position:relative;
+}
+.cupon-strip-left::after{
+  content:'';
+  position:absolute;
+  right:-14px;
+  top:0; bottom:0;
+  width:28px;
+  background:inherit;
+  clip-path:ellipse(14px 50% at 0% 50%);
+}
+
+/* Cuerpo central */
+.cupon-strip-body{
+  flex:1;
+  padding:14px 16px 14px 22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:4px;
+}
+.cupon-strip-body .cupon-tipo-label{
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  opacity:0.75;
+}
+.cupon-strip-body .cupon-nombre{
+  font-family:'Playfair Display',serif;
+  font-size:17px;
+  font-weight:900;
+  line-height:1.1;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+.cupon-strip-body .cupon-codigo-new{
+  font-family:monospace;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:3px;
+  background:rgba(255,255,255,0.2);
+  padding:3px 9px;
+  border-radius:5px;
+  display:inline-block;
+  margin-top:2px;
+  width:fit-content;
+}
+.cupon-strip-body .cupon-valido{
+  font-size:10px;
+  opacity:0.7;
+  margin-top:2px;
+}
+
+/* Franja derecha con % */
+.cupon-strip-right{
+  width:80px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,0.15);
+  border-left:2px dashed rgba(255,255,255,0.3);
+  position:relative;
+  gap:0;
+}
+.cupon-strip-right::before{
+  content:'';
+  position:absolute;
+  top:-12px; left:50%;
+  transform:translateX(-50%);
+  width:24px; height:24px;
+  background:var(--gris);
+  border-radius:50%;
+}
+.cupon-strip-right::after{
+  content:'';
+  position:absolute;
+  bottom:-12px; left:50%;
+  transform:translateX(-50%);
+  width:24px; height:24px;
+  background:var(--gris);
+  border-radius:50%;
+}
+.cupon-strip-right .pct-big{
+  font-size:30px;
+  font-weight:900;
+  line-height:1;
+}
+.cupon-strip-right .pct-off{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1px;
+  opacity:0.85;
+}
+
+/* Mini cupón en tabla */
+.cupon-mini{
+  border-radius:10px;
+  overflow:hidden;
+  display:flex;
+  align-items:stretch;
+  min-width:210px;
+  max-width:240px;
+  box-shadow:0 4px 14px rgba(0,0,0,0.15);
+  min-height:60px;
+}
+.cupon-mini.tienda{ background:linear-gradient(135deg,#7B1FA2,#E91E63); color:#fff; }
+.cupon-mini.peluqueria{ background:linear-gradient(135deg,#0D47A1,#1976D2); color:#fff; }
+.cupon-mini-left{
+  width:48px; flex-shrink:0;
+  background:rgba(0,0,0,0.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+}
+.cupon-mini-body{
+  flex:1; padding:8px 10px;
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+}
+.cupon-mini-body .mini-label{
+  font-size:8px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; opacity:.75;
+}
+.cupon-mini-body .mini-codigo{
+  font-family:monospace; font-size:11px; font-weight:900; letter-spacing:2px;
+  background:rgba(255,255,255,.2); padding:1px 5px; border-radius:4px; width:fit-content;
+}
+.cupon-mini-right{
+  width:48px; flex-shrink:0;
+  background:rgba(255,255,255,0.15);
+  border-left:1.5px dashed rgba(255,255,255,0.3);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.cupon-mini-right .mini-pct{ font-size:18px; font-weight:900; line-height:1; }
+.cupon-mini-right .mini-off{ font-size:8px; font-weight:800; opacity:.85; }
+
+/* Badge tipo */
+.b-tienda{background:#F3E5F5;color:#7B1FA2;}
+.b-pelq{background:#E3F2FD;color:#0D47A1;}
+
+/* Modal usuarios scroll */
+.user-pick-list{max-height:220px;overflow-y:auto;border:1.5px solid var(--borde);border-radius:10px;padding:6px;}
+.user-pick-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:0.18s;font-size:13.5px;}
+.user-pick-item:hover{background:var(--azul-claro);}
+.user-pick-item.sel{background:var(--azul-claro);border:1.5px solid var(--azul-vivo);}
+.user-pick-avatar{width:30px;height:30px;border-radius:50%;background:var(--azul-vivo);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+</style>
+<style>
+/* Ficha admin ya hereda los estilos de card, btn, etc. del admin.html */
+.ficha-doc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--gris);
+  border-radius: 9px;
+  border: 1px solid var(--borde);
+}
+.ficha-doc-row a {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--azul-oscuro);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ficha-doc-row a:hover { text-decoration: underline; }
+</style>
+
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-logo">
+  <img src="Imagenes/Logo.png" alt="Jezreel Vet"
+       style="height:56px;width:auto;object-fit:contain;filter:brightness(0) invert(1);"
+       onerror="this.style.display='none';document.getElementById('logoFallbackAdmin').style.display='block';">
+  <h1 id="logoFallbackAdmin" style="display:none;">Jezreel<span>Vet</span></h1>
+  <p>Panel de Administración</p>
+</div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <button class="nav-item active" onclick="ir('dashboard')"><span class="icon">📊</span>Dashboard</button>
+    <button class="nav-item" onclick="ir('usuarios')"><span class="icon">👥</span>Usuarios</button>
+    <button class="nav-item" onclick="ir('estrellas')"><span class="icon">⭐</span>Estrellas</button>
+    <button class="nav-item" onclick="ir('citas')"><span class="icon">📅</span>Citas</button>
+    <button class="nav-item" onclick="ir('pedidos')"><span class="icon">📦</span>Pedidos</button>
+    <button class="nav-item" onclick="ir('cupones')"><span class="icon">🎟️</span>Cupones</button>
+    <button class="nav-item" onclick="ir('qr')"><span class="icon">📱</span>Código QR</button>
+    <div class="nav-section">Tienda</div>
+    <button class="nav-item" onclick="ir('productos')"><span class="icon">🛍️</span>Productos</button>
+    <button class="nav-item" onclick="ir('categorias')"><span class="icon">🐾</span>Categorías</button>
+    <button class="nav-item" onclick="ir('subcategorias')"><span class="icon">🏷️</span>Subcategorías</button>
+    <button class="nav-item" onclick="ir('marcas')"><span class="icon">🔖</span>Marcas</button>
+    <div class="nav-section">Clínica</div>
+    <button class="nav-item" onclick="ir('fichas')"><span class="icon">🐾</span>Fichas Mascotas</button>
+    <button class="nav-item" onclick="ir('servicios')"><span class="icon">🩺</span>Servicios</button>
+    <button class="nav-item" onclick="ir('vacunas')"><span class="icon">💉</span>Vacunas</button>
+  </nav>
+  <div class="sidebar-user">
+    <div class="sidebar-user-info">
+      <div class="avatar" id="avatarLetter">A</div>
+      <div><p id="sidebarNombre">Admin</p><span>Administrador</span></div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="hamburger" onclick="document.getElementById('sidebar').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <h2 id="pageTitle">Dashboard</h2>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-admin">👑 Admin</span>
+  
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card sc1"><div class="stat-icon">👥</div><div class="stat-val" id="st-usuarios">—</div><div class="stat-label">Usuarios registrados</div></div>
+        <div class="stat-card sc2"><div class="stat-icon">🛒</div><div class="stat-val" id="st-productos">—</div><div class="stat-label">Productos en tienda</div></div>
+        <div class="stat-card sc3"><div class="stat-icon">💉</div><div class="stat-val" id="st-vacunas">—</div><div class="stat-label">Vacunas disponibles</div></div>
+        <div class="stat-card sc4"><div class="stat-icon">🩺</div><div class="stat-val" id="st-servicios">—</div><div class="stat-label">Servicios activos</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>Bienvenido al Panel Jezreel Vet</h3></div>
+        <div style="padding:24px;font-size:14px;color:var(--texto-suave);line-height:1.7;">Gestiona usuarios, productos, vacunas, servicios y el programa de fidelidad desde el menú lateral.</div>
+      </div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div class="section" id="sec-usuarios">
+      <div class="card">
+        <div class="card-header"><h3>Usuarios Registrados</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('mCrearUser')">+ Crear usuario</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Nombre / Email</th><th>Cédula</th><th>Teléfono</th><th>Mascota</th><th>⭐</th><th>Carnet</th><th>Acciones</th></tr></thead>
+          <tbody id="tbUsuarios"><tr class="loading-row"><td colspan="7">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ESTRELLAS -->
+    <div class="section" id="sec-estrellas">
+      <div class="card">
+        <div class="card-header"><h3>Programa de Fidelidad ⭐</h3><span style="font-size:13px;color:var(--texto-suave);">10 estrellas = 20% descuento</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cliente</th><th>Teléfono</th><th>Estrellas</th><th>Estado</th><th>Notificar</th></tr></thead>
+          <tbody id="tbEstrellas"><tr class="loading-row"><td colspan="5">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- CITAS -->
+    <div class="section" id="sec-citas">
+      <div class="card">
+        <div class="card-header"><h3>Citas Solicitadas</h3><button class="btn btn-verde btn-sm" onclick="cargarCitas()">↻ Actualizar</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Cliente</th><th>Mascota</th><th>Servicio</th><th>Fecha</th><th>Notas</th><th>Estado</th><th></th></tr></thead>
+          <tbody id="tbCitas"><tr class="loading-row"><td colspan="7">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ══ PEDIDOS ══════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-pedidos">
+      <div class="card">
+        <div class="card-header">
+          <h3>Pedidos de la Tienda 📦</h3>
+          <div class="pedido-search-bar">
+            <input type="number" id="searchPedidoId" placeholder="🔍 Buscar por ID…" min="1"
+                   onkeydown="if(event.key==='Enter')buscarPedido()">
+            <button class="btn btn-azul btn-sm" onclick="buscarPedido()">
+              🔍 Buscar
+            </button>
+            <button class="btn btn-verde btn-sm" onclick="limpiarBusquedaPedido()">↻ Ver todos</button>
+          </div>
+        </div>
+        <!-- Resultado de búsqueda -->
+        <div id="pedidoBuscadoBox" style="display:none;margin:0 20px 16px;padding:14px 16px;border-radius:10px;border:1.5px solid var(--azul-medio);background:var(--azul-claro);">
+          <div style="font-size:12px;font-weight:700;color:var(--azul-oscuro);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Pedido encontrado</div>
+          <div id="pedidoBuscadoContent"></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>ID</th><th>Cliente</th><th>Teléfono</th><th>Productos</th><th>Total</th><th>Fecha</th><th></th></tr></thead>
+          <tbody id="tbPedidos"><tr class="loading-row"><td colspan="7">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+      <!-- Cupones -->
+    <div class="section" id="sec-cupones">
+  <div class="card">
+    <div class="card-header">
+      <h3>Cupones de Descuento 🎟️</h3>
+      <button class="btn btn-primary btn-sm" onclick="abrirModal('mCupon')">+ Crear cupón</button>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Visual</th><th>Código</th><th>Tipo</th><th>Descuento</th><th>Expira</th><th>Usos</th><th>Estado</th><th>Enviar a</th><th></th></tr></thead>
+      <tbody id="tbCupones"><tr class="loading-row"><td colspan="9">Cargando...</td></tr></tbody>
+    </table></div>
+  </div>
+</div>
+    <!-- QR -->
+    <div class="section" id="sec-qr">
+      <div class="card">
+        <div class="card-header"><h3>Código QR del Sitio</h3></div>
+        <div style="padding:25px;text-align:center;">
+          <p style="font-size:14px;color:var(--texto-suave);margin-bottom:15px;">El QR dirige a los clientes a la página principal.</p>
+          <canvas id="qrCanvas" style="margin-bottom:15px;"></canvas>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;">
+            <button class="btn btn-verde" onclick="generarQR()">🔄 Actualizar QR</button>
+            <button class="btn btn-azul" onclick="descargarQR()">⬇ Descargar</button>
+          </div>
+          <input type="text" id="qrUrl" value="https://jezreelvet.com" style="padding:10px 14px;border:1.5px solid var(--borde);border-radius:9px;width:100%;max-width:350px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <div class="section" id="sec-productos">
+      <div class="card">
+        <div class="card-header"><h3>Inventario de Productos</h3><button class="btn btn-primary btn-sm" onclick="abrirModalProducto()">+ Agregar</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Img</th><th>Nombre</th><th>Categoría</th><th>Subcategoría</th><th>Marca</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+          <tbody id="tbProductos"><tr class="loading-row"><td colspan="8">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- CATEGORÍAS -->
+    <div class="section" id="sec-categorias">
+      <div class="card">
+        <div class="card-header"><h3>Categorías (Tipo de animal)</h3></div>
+        <div style="padding:20px;">
+          <p style="font-size:13px;color:var(--texto-suave);margin-bottom:14px;">Ej: Perro, Gato, Ave, Conejo…</p>
+          <div class="chip-list" id="catList"></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="catEmoji" placeholder="🐶" style="width:56px;padding:9px;border:1.5px solid var(--borde);border-radius:9px;font-size:16px;text-align:center;outline:none;">
+            <input type="text" id="catNombre" placeholder="Nombre (ej: Perro)" style="flex:1;min-width:140px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;outline:none;">
+            <button class="btn btn-verde" onclick="crearCategoria()">+ Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBCATEGORÍAS -->
+    <div class="section" id="sec-subcategorias">
+      <div class="card">
+        <div class="card-header"><h3>Subcategorías (Tipo de producto)</h3></div>
+        <div style="padding:20px;">
+          <p style="font-size:13px;color:var(--texto-suave);margin-bottom:14px;">Ej: Alimento, Medicina, Accesorio, Higiene…</p>
+          <div class="chip-list" id="subcatList"></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="subcatEmoji" placeholder="🥩" style="width:56px;padding:9px;border:1.5px solid var(--borde);border-radius:9px;font-size:16px;text-align:center;outline:none;">
+            <input type="text" id="subcatNombre" placeholder="Nombre (ej: Alimento)" style="flex:1;min-width:140px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;outline:none;">
+            <button class="btn btn-verde" onclick="crearSubcategoria()">+ Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARCAS -->
+    <div class="section" id="sec-marcas">
+      <div class="card">
+        <div class="card-header"><h3>Marcas</h3></div>
+        <div style="padding:20px;">
+          <p style="font-size:13px;color:var(--texto-suave);margin-bottom:14px;">Ej: Royal Canin, Pedigree, Purina…</p>
+          <div class="chip-list" id="marcaList"></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="marcaNombre" placeholder="Nombre de la marca" style="flex:1;min-width:160px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;outline:none;">
+            <button class="btn btn-verde" onclick="crearMarca()">+ Añadir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICIOS -->
+    <div class="section" id="sec-servicios">
+      <div class="card">
+        <div class="card-header"><h3>Servicios y Precios</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('mServicio')">+ Añadir</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Servicio</th><th>Precio</th><th>Mensaje</th><th>Sub-opciones</th><th>Acciones</th></tr></thead>
+          <tbody id="tbServicios"><tr class="loading-row"><td colspan="5">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- VACUNAS -->
+    <div class="section" id="sec-vacunas">
+      <div class="card">
+        <div class="card-header"><h3>Catálogo de Vacunas</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('mVacuna')">+ Añadir</button></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Vacuna</th><th>Animal</th><th>Frecuencia</th><th>Precio</th><th>Descripción</th><th></th></tr></thead>
+          <tbody id="tbVacunas"><tr class="loading-row"><td colspan="6">Cargando...</td></tr></tbody>
+        </table></div>
+      </div>
+    </div>
+
+
+
+    
+<!-- FICHAS MASCOTAS — solo admin (el Dr.) puede editar comentario y subir docs -->
+<div class="section" id="sec-fichas">
+  <div class="card">
+    <div class="card-header">
+      <h3>Fichas de Mascotas 🐾</h3>
+      <span style="font-size:13px;color:var(--texto-suave);">El Dr. puede agregar comentarios y documentos PDF</span>
+    </div>
+ 
+    <!-- Barra de búsqueda de usuario -->
+    <div style="padding:16px 20px;border-bottom:1px solid var(--borde);">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <select id="fichaUserSelect" onchange="cargarFichaDeUsuario(this.value)"
+          style="flex:1;min-width:200px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;outline:none;background:var(--gris);">
+          <option value="">Seleccionar cliente...</option>
+        </select>
+        <button class="btn btn-verde btn-sm" onclick="cargarSelectUsuarios()">↻ Actualizar lista</button>
+      </div>
+    </div>
+ 
+    <!-- Panel de ficha del usuario seleccionado -->
+    <div id="fichaAdminPanel" style="display:none;padding:20px;">
+ 
+      <!-- Info de la mascota (datos del cliente) -->
+      <div style="background:var(--azul-claro);border-radius:12px;padding:16px 20px;margin-bottom:20px;border:1px solid var(--azul-medio);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--azul-oscuro);margin-bottom:10px;">📋 Datos ingresados por el cliente</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;" id="fichaClienteInfo"></div>
+      </div>
+ 
+      <!-- Comentario del Dr. -->
+      <div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+        <div class="card-header" style="background:linear-gradient(135deg,var(--azul-claro),#fff);">
+          <h3>📝 Comentario del Dr.</h3>
+          <span class="badge b-azul" style="font-size:11px;">Solo editable por Admin</span>
+        </div>
+        <div style="padding:16px;">
+          <textarea id="fichaComentarioDr" rows="4"
+            placeholder="Escribe la última revisión, diagnóstico, observaciones médicas..."
+            style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;color:var(--texto);background:var(--gris);resize:vertical;outline:none;transition:0.2s;"
+            onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+            onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+          <button class="btn btn-primary btn-sm" style="margin-top:10px;" onclick="guardarComentarioDr()">
+            💾 Guardar comentario
+          </button>
+        </div>
+      </div>
+ 
+      <!-- Documentos PDF -->
+      <div class="card" style="border:none;box-shadow:none;border:1.5px solid var(--borde);">
+        <div class="card-header" style="background:linear-gradient(135deg,#FFF8E1,#fff);">
+          <h3>📄 Documentos (PDFs e imágenes)</h3>
+          <span class="badge b-acento" style="font-size:11px;">Visibles para el cliente</span>
+        </div>
+        <div style="padding:16px;">
+ 
+          <!-- Upload -->
+          <div class="img-uploader" onclick="document.getElementById('fichaDocFile').click()"
+            style="margin-bottom:14px;border-color:var(--acento);background:#FFFDE7;">
+            <input type="file" id="fichaDocFile" accept=".pdf,.jpg,.jpeg,.png"
+              onchange="prevDocUpload(event)">
+            <div style="font-size:30px;margin-bottom:6px">📎</div>
+            <p style="font-size:13px;color:var(--texto-suave)"><strong style="color:var(--acento)">Clic</strong> para subir PDF o imagen</p>
+          </div>
+          <div id="fichaDocPreviewNombre" style="display:none;padding:8px 12px;background:var(--acento-claro);border-radius:8px;font-size:13px;font-weight:600;color:#E65100;margin-bottom:10px;">
+            📎 <span id="fichaDocNombreSpan"></span>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+            <input type="text" id="fichaDocNombre" placeholder="Nombre del documento (opcional)"
+              style="flex:1;min-width:160px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:13.5px;outline:none;font-family:inherit;">
+            <button class="btn btn-naranja" onclick="subirDocFicha()">⬆ Subir</button>
+          </div>
+ 
+          <!-- Lista de documentos -->
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);margin-bottom:10px;">Documentos guardados</div>
+          <div id="fichaDocsList" style="display:flex;flex-direction:column;gap:8px;">
+            <p style="color:var(--texto-suave);font-size:13px;">Sin documentos.</p>
+          </div>
+ 
+        </div>
+      </div>
+ 
+    </div>
+ 
+    <!-- Placeholder cuando no hay usuario seleccionado -->
+    <div id="fichaAdminEmpty" style="padding:40px;text-align:center;color:var(--texto-suave);">
+      <div style="font-size:48px;margin-bottom:12px">🐾</div>
+      <p style="font-size:14px;">Selecciona un cliente para ver y editar su ficha</p>
+    </div>
+ 
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- MODALES -->
+<!-- Crear Usuario -->
+<div class="modal-overlay" id="mCrearUser">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrar('mCrearUser')">✕</button>
+    <h2>Crear Usuario</h2><p class="modal-sub">Solo el admin puede crear cuentas</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Nombre</label><input type="text" id="nu_nombre" placeholder="Nombre completo"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="nu_email" placeholder="correo@ejemplo.com"></div>
+      <div class="form-group"><label>Cédula</label><input type="text" id="nu_cedula" placeholder="1234567890"></div>
+      <div class="form-group"><label>Celular</label><input type="tel" id="nu_tel" placeholder="0999..."></div>
+    </div>
+    <div class="form-group"><label>Mascota</label><input type="text" id="nu_mascota" placeholder="Nombre de mascota"></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Especie</label>
+        <select id="nu_especie"><option value="">Seleccionar...</option><option>Canino</option><option>Felino</option><option>Otro</option></select>
+      </div>
+      <div class="form-group"><label>Raza</label><input type="text" id="nu_raza" placeholder="Raza"></div>
+    </div>
+    <div style="background:var(--azul-claro);border-radius:9px;padding:12px;font-size:13px;color:var(--azul-oscuro);margin-bottom:16px;">
+      🔑 La contraseña temporal será la <strong>cédula</strong> (o "123456" si no hay cédula).
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="crearUsuario()">Crear Usuario</button>
+  </div>
+</div>
+
+<!-- Agregar Producto -->
+<div class="modal-overlay" id="mProd">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrar('mProd')">✕</button>
+    <h2>Agregar Producto</h2><p class="modal-sub">Completa los datos del producto</p>
+    <div class="form-group">
+      <label>Imagen</label>
+      <div class="img-uploader" onclick="document.getElementById('prodImg').click()">
+        <input type="file" id="prodImg" accept="image/*" onchange="prevImg(this,'prodPreview')">
+        <div style="font-size:30px;margin-bottom:6px">🖼</div>
+        <p style="font-size:13px;color:var(--texto-suave)"><strong style="color:var(--azul-vivo)">Clic</strong> para subir imagen</p>
+      </div>
+      <img id="prodPreview" class="img-preview" alt="preview">
+    </div>
+    <div class="form-group"><label>Nombre</label><input type="text" id="pr_nombre" placeholder="Nombre del producto"></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Categoría (animal)</label>
+        <select id="pr_cat_id"><option value="">Sin categoría</option></select>
+      </div>
+      <div class="form-group"><label>Subcategoría</label>
+        <select id="pr_subcat_id"><option value="">Sin subcategoría</option></select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Marca</label>
+        <select id="pr_marca_id"><option value="">Sin marca</option></select>
+      </div>
+      <div class="form-group"><label>Precio ($)</label><input type="number" id="pr_precio" placeholder="0.00" step="0.01" min="0"></div>
+    </div>
+    <div class="form-group"><label>Stock</label><input type="number" id="pr_stock" placeholder="0" min="0"></div>
+    <button class="btn btn-primary" style="width:100%;" onclick="agregarProducto()">Agregar Producto</button>
+  </div>
+</div>
+
+<!-- Agregar Servicio -->
+<div class="modal-overlay" id="mServicio">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrar('mServicio')">✕</button>
+    <h2>Agregar Servicio</h2><p class="modal-sub">Nuevo servicio para las citas</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Emoji</label><input type="text" id="as_emoji" placeholder="🐾" maxlength="4"></div>
+      <div class="form-group"><label>Precio base ($)</label><input type="number" id="as_precio" placeholder="0.00" step="0.01" min="0"></div>
+    </div>
+    <div class="form-group"><label>Nombre del servicio</label><input type="text" id="as_nombre" placeholder="Nombre"></div>
+    <div class="form-group"><label>Mensaje al cliente</label><input type="text" id="as_msg" placeholder="Info que verá el cliente"></div>
+    <div class="form-group">
+      <label>Sub-opciones</label>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <input type="text" id="as_sub_n" placeholder="Opción" style="flex:1;padding:8px 11px;border:1.5px solid var(--borde);border-radius:8px;font-size:13px;outline:none;">
+        <input type="number" id="as_sub_p" placeholder="$ precio" style="width:90px;padding:8px 11px;border:1.5px solid var(--borde);border-radius:8px;font-size:13px;outline:none;" step="0.01">
+        <button class="btn btn-azul btn-sm" onclick="addTempSub()">+</button>
+      </div>
+      <div id="tempSubs"></div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="guardarServicio()">Crear Servicio</button>
+  </div>
+</div>
+
+<!-- Agregar Vacuna -->
+<div class="modal-overlay" id="mVacuna">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrar('mVacuna')">✕</button>
+    <h2>Agregar Vacuna</h2><p class="modal-sub">Nueva vacuna en el catálogo</p>
+    <div class="form-grid">
+      <div class="form-group"><label>Emoji</label><input type="text" id="av_emoji" placeholder="💉" maxlength="4"></div>
+      <div class="form-group"><label>Precio ($)</label><input type="number" id="av_precio" placeholder="0.00" step="0.01" min="0"></div>
+    </div>
+    <div class="form-group"><label>Nombre</label><input type="text" id="av_nombre" placeholder="Nombre de la vacuna"></div>
+    <div class="form-group"><label>Descripción</label><textarea id="av_desc" rows="2" style="padding:9px 12px;border:1.5px solid var(--borde);border-radius:9px;font-size:13.5px;width:100%;outline:none;font-family:inherit;resize:none;"></textarea></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Frecuencia</label><input type="text" id="av_freq" placeholder="Anual"></div>
+      <div class="form-group"><label>Animal</label>
+        <select id="av_animal">
+          <option value="ambos">Todos (Perro y Gato)</option>
+          <option value="perro">Solo Perro</option>
+          <option value="gato">Solo Gato</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="guardarVacuna()">Agregar Vacuna</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="mCupon">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="cerrar('mCupon')">✕</button>
+    <h2>Crear Cupón</h2>
+    <p class="modal-sub">El código se genera automáticamente, o puedes personalizarlo</p>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Tipo</label>
+        <select id="mc_tipo">
+          <option value="tienda">🛍️ Descuento Tienda</option>
+          <option value="peluqueria">✂️ Descuento Peluquería</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Descuento (%)</label>
+        <input type="number" id="mc_desc" value="10" min="1" max="20" placeholder="1-20">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Código (opcional)</label>
+        <input type="text" id="mc_codigo" placeholder="JV-AUTO (se genera solo)" style="text-transform:uppercase;">
+      </div>
+      <div class="form-group">
+        <label>Fecha de expiración</label>
+        <input type="date" id="mc_fecha">
+      </div>
+    </div>
+
+    <!-- Preview visual del cupón -->
+    <div style="margin-bottom:16px;" id="cuponPreviewWrap">
+      <label style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px;">Vista previa</label>
+      <div id="cuponPreview" class="cupon-visual tienda">
+        <div class="cupon-strip-left">
+          <span id="cpv_icon">🛍️</span>
+        </div>
+        <div class="cupon-strip-body">
+          <div class="cupon-tipo-label" id="cpv_tipo_label">Descuento Tienda</div>
+          <div class="cupon-nombre" id="cpv_nombre">Cupón de<br>Descuento</div>
+          <div class="cupon-codigo-new" id="cpv_codigo">JV-AUTO</div>
+          <div class="cupon-valido" id="cpv_expira">Válido hasta: —</div>
+        </div>
+        <div class="cupon-strip-right">
+          <div class="pct-big" id="cpv_pct">10</div>
+          <div class="pct-off">%OFF</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;" onclick="crearCupon()">✅ Crear Cupón</button>
+  </div>
+</div>
+
+<!-- Modal asignar cupón a usuario -->
+<div class="modal-overlay" id="mAsignarCupon">
+  <div class="modal" style="max-width:460px;">
+    <button class="modal-close" onclick="cerrar('mAsignarCupon')">✕</button>
+    <h2>Enviar Cupón</h2>
+    <p class="modal-sub" id="mAsignarSub">Selecciona el cliente que recibirá este cupón</p>
+    <div style="margin-bottom:12px;">
+      <input type="text" id="buscarUsuarioCupon" placeholder="Buscar por nombre..." oninput="filtrarUsersPick()"
+        style="width:100%;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:13.5px;outline:none;">
+    </div>
+    <div class="user-pick-list" id="userPickList"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:14px;" onclick="enviarCuponAUsuario()">📤 Enviar notificación</button>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal-overlay" id="mNotificarEstrellas">
+  <div class="modal" style="max-width:460px;">
+    <button class="modal-close" onclick="cerrar('mNotificarEstrellas')">✕</button>
+    <h2>🎟️ Crear y Enviar Cupón</h2>
+    <p class="modal-sub">
+      Cliente: <strong id="mEstrellasNombre"></strong> —
+      <strong id="mEstrellasEstrellas"></strong> estrellas
+    </p>
+
+    <!-- Alerta 10 estrellas -->
+    <div id="mEstrellasAlerta" style="display:none;align-items:center;gap:10px;
+         background:#FFF8E1;border:1.5px solid #FFD54F;border-radius:10px;
+         padding:12px 14px;margin-bottom:16px;font-size:13px;color:#E65100;">
+      🌟 <strong>¡Este cliente alcanzó 10 estrellas!</strong> Merece su descuento especial.
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Tipo de cupón</label>
+        <select id="me_tipo">
+          <option value="tienda">🛍️ Tienda</option>
+          <option value="peluqueria">✂️ Peluquería</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Descuento (%)</label>
+        <input type="number" id="me_desc" value="20" min="1" max="50">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Válido hasta</label>
+      <input type="date" id="me_fecha">
+    </div>
+
+    <div style="background:var(--azul-claro);border-radius:10px;padding:12px 14px;
+                font-size:13px;color:var(--azul-oscuro);margin-bottom:16px;">
+      ✅ Se creará el cupón, se enviará la notificación interna al cliente y se abrirá WhatsApp con el mensaje listo.
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;" onclick="crearYEnviarCuponEstrellas()">
+      🚀 Crear cupón y abrir WhatsApp
+    </button>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+// ─────────────────── Actualizar titles & loaders ───────────────────
+// Agrega 'cupones':'Cupones' al objeto titles
+// titles.cupones = 'Cupones';
+// Y en loaders: cupones: cargarCupones
+ 
+// ── ESTADO ──
+let _cupones = [];
+let _cuponAsignarId = null;
+let _usuarioPickSel = null;
+ 
+// ── PREVIEW en tiempo real ──
+['mc_tipo','mc_desc','mc_codigo','mc_fecha'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', actualizarPreviewCupon);
+});
+function actualizarPreviewCupon(){
+  const tipo   = document.getElementById('mc_tipo')?.value || 'tienda';
+  const desc   = document.getElementById('mc_desc')?.value || '10';
+  const codigo = document.getElementById('mc_codigo')?.value.toUpperCase() || 'JV-AUTO';
+  const fecha  = document.getElementById('mc_fecha')?.value || '';
+  const prev   = document.getElementById('cuponPreview');
+  if(!prev) return;
+
+  prev.className = 'cupon-visual ' + tipo;
+
+  const icoMap   = {tienda:'🛍️', peluqueria:'✂️'};
+  const labelMap = {tienda:'Descuento Tienda', peluqueria:'Descuento Peluquería'};
+  const nomMap   = {tienda:'Cupón de\nDescuento', peluqueria:'Cupón de\nPeluquería'};
+
+  document.getElementById('cpv_icon').textContent       = icoMap[tipo] || '🎟️';
+  document.getElementById('cpv_tipo_label').textContent = labelMap[tipo] || '';
+  document.getElementById('cpv_nombre').innerHTML       = (nomMap[tipo]||'').replace('\n','<br>');
+  document.getElementById('cpv_codigo').textContent     = codigo || 'JV-AUTO';
+  document.getElementById('cpv_pct').textContent        = desc || '0';
+  document.getElementById('cpv_expira').textContent     = fecha
+    ? 'Válido hasta: ' + new Date(fecha+'T00:00:00').toLocaleDateString('es-EC',{day:'2-digit',month:'long',year:'numeric'})
+    : 'Válido hasta: —';
+}
+ 
+// ── CARGAR CUPONES ──
+async function cargarCupones(){
+  document.getElementById('tbCupones').innerHTML = '<tr class="loading-row"><td colspan="9">Cargando...</td></tr>';
+  const d = await apiFetch('/api/cupones', {headers:authH()});
+  if(!d.ok){ toast('Error cargando cupones','rojo'); return; }
+  _cupones = d.cupones || [];
+  renderTablaCupones();
+}
+ 
+
+
+function parseFechaLocal(fechaStr) {
+  if (!fechaStr) return null;
+  const parte = String(fechaStr).split('T')[0].split(' ')[0];
+  const [y, m, d] = parte.split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+function renderTablaCupones(){
+  const hoy = new Date(); 
+  hoy.setHours(0,0,0,0);
+
+  document.getElementById('tbCupones').innerHTML = _cupones.length
+    ? _cupones.map(c => {
+
+       const exp = parseFechaLocal(c.fecha_expira);
+       const expirado = exp ? exp < hoy : false; 
+
+        const tipoLabel = c.tipo === 'tienda' ? '🛍️ Tienda' : '✂️ Peluquería';
+        const badgeCls  = c.tipo === 'tienda' ? 'b-tienda' : 'b-pelq';
+
+     const usosActuales = Number(c.usos_actuales ?? 0);
+     const canjeado = usosActuales >= Number(c.usos_max);
+
+const estadoBadge = expirado
+  ? '<span class="badge b-rojo">Expirado</span>'
+  : canjeado
+    ? '<span class="badge b-gris">Canjeado</span>'
+    : (c.activo
+        ? '<span class="badge b-verde">Activo</span>'
+        : '<span class="badge b-gris">Inactivo</span>'
+      );
+
+        const miniCupon = `<div class="cupon-visual ${c.tipo}" style="padding:10px 14px;min-width:200px;max-width:240px;border-radius:10px;font-size:12px;">
+          <div class="cupon-dots-left"></div>
+          <div style="font-size:22px;flex-shrink:0;">${c.tipo==='tienda'?'🛍️':'✂️'}</div>
+          <div style="flex:1;">
+            <div style="font-weight:800;text-transform:uppercase;font-size:10px;opacity:.85;">
+              ${c.tipo==='tienda'?'Descuento Tienda':'Descuento Peluquería'}
+            </div>
+            <div style="font-family:monospace;font-size:13px;font-weight:900;background:rgba(255,255,255,.2);padding:2px 6px;border-radius:5px;margin-top:2px;">
+              ${c.codigo}
+            </div>
+          </div>
+          <div style="text-align:center;flex-shrink:0;">
+            <span style="font-size:22px;font-weight:900;">${c.descuento}</span>
+            <span style="font-size:11px;font-weight:700;">%</span>
+          </div>
+          <div class="cupon-dots-right"></div>
+        </div>`;
+
+        return `<tr>
+          <td>${miniCupon}</td>
+          <td><span style="font-family:monospace;font-weight:800;">${c.codigo}</span></td>
+          <td><span class="badge ${badgeCls}">${tipoLabel}</span></td>
+          <td><strong style="color:var(--azul-noche)">${c.descuento}%</strong></td>
+          <td style="font-size:12px;color:${expirado?'#E53935':'inherit'};">${exp ? exp.toLocaleDateString('es-EC',{day:'2-digit',month:'short',year:'numeric'}) : '<span style="color:#E53935">Sin fecha</span>'}</td>          <td><span class="badge b-azul">${c.usos_actuales}/${c.usos_max}</span></td>
+          <td>${estadoBadge}</td>
+          <td><button class="btn btn-sm btn-naranja" onclick="abrirAsignarCupon(${c.id})">📤 Enviar</button></td>
+          <td><button class="btn btn-sm btn-rojo" onclick="eliminarCupon(${c.id})">✕</button></td>
+        </tr>`;
+        
+      }).join('')
+    : '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--texto-suave)">Sin cupones creados</td></tr>';
+}
+async function crearCupon(){
+  const tipo   = document.getElementById('mc_tipo').value;
+  const desc   = parseInt(document.getElementById('mc_desc').value)||10;
+  const codigo = document.getElementById('mc_codigo').value.trim().toUpperCase()||null;
+  const fecha  = document.getElementById('mc_fecha').value;  // ← YYYY-MM-DD
+  
+  if(!fecha){ toast('Ingresa la fecha de expiración','rojo'); return; }
+  
+  const d = await apiFetch('/api/cupones',{
+    method:'POST',
+    headers:authH(),
+    body: JSON.stringify({
+      tipo,
+      descuento: desc,
+      codigo,
+      fecha_expira: fecha,   // ← este campo
+      usos_max: 1
+    })
+  });
+  
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast(`✅ Cupón ${d.codigo} creado`,'verde');
+  cerrar('mCupon');
+  ['mc_codigo','mc_fecha'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mc_desc').value='10';
+  cargarCupones();
+}
+ 
+async function eliminarCupon(id){
+  if(!confirm('¿Eliminar este cupón? Se eliminará también de los usuarios que lo tengan.')) return;
+  const d = await apiFetch(`/api/cupones/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Cupón eliminado','naranja'); cargarCupones();
+}
+ 
+// ── ASIGNAR CUPÓN A USUARIO ──
+async function abrirAsignarCupon(cid){
+  _cuponAsignarId = cid;
+  _usuarioPickSel = null;
+  const cupon = _cupones.find(c=>c.id===cid);
+  document.getElementById('mAsignarSub').textContent = cupon
+    ? `Cupón ${cupon.codigo} · ${cupon.descuento}% ${cupon.tipo==='tienda'?'Tienda':'Peluquería'}`
+    : 'Selecciona el cliente';
+  document.getElementById('buscarUsuarioCupon').value='';
+  document.getElementById('userPickList').innerHTML = '<p style="padding:10px;color:var(--texto-suave);font-size:13px;">Cargando usuarios...</p>';
+  abrirModal('mAsignarCupon');
+
+  if(!_usuarios.length){
+    const d = await apiFetch('/api/usuarios', {headers:authH()});
+    _usuarios = d.usuarios || [];
+  }
+  renderUserPick(_usuarios);
+}
+ 
+function renderUserPick(lista){
+  document.getElementById('userPickList').innerHTML = lista.map(u=>`
+    <div class="user-pick-item ${_usuarioPickSel===u.id?'sel':''}" onclick="selUserPick(${u.id},this)">
+      <div class="user-pick-avatar">${(u.nombre||'U')[0].toUpperCase()}</div>
+      <div>
+        <strong style="font-size:13px;">${u.nombre}</strong>
+        <div style="font-size:11.5px;color:var(--texto-suave);">${u.email||''} ${u.telefono?'· '+u.telefono:''}</div>
+      </div>
+    </div>`).join('')||'<p style="padding:10px;color:var(--texto-suave);font-size:13px;">Sin usuarios</p>';
+}
+ 
+function selUserPick(id, el){
+  _usuarioPickSel = id;
+  document.querySelectorAll('.user-pick-item').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+ 
+function filtrarUsersPick(){
+  const q = document.getElementById('buscarUsuarioCupon').value.toLowerCase();
+  const lista = _usuarios.filter(u=>(u.nombre||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+  renderUserPick(lista);
+}
+ 
+async function enviarCuponAUsuario(){
+  if(!_cuponAsignarId){ toast('Selecciona un cupón'); return; }
+  if(!_usuarioPickSel){ toast('Selecciona un usuario','rojo'); return; }
+  const d = await apiFetch(`/api/cupones/${_cuponAsignarId}/asignar`,{method:'POST',headers:authH(),body:JSON.stringify({usuario_id:_usuarioPickSel})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  const user = _usuarios.find(u=>u.id===_usuarioPickSel);
+  toast(`✅ Cupón enviado a ${user?.nombre||'usuario'}`,'verde');
+  cerrar('mAsignarCupon');
+  _cuponAsignarId = null; _usuarioPickSel = null;
+}
+</script>
+
+
+<script>
+const API = 'http://localhost:5000';
+
+function getToken(){ return localStorage.getItem('jv_token'); }
+function getUser(){  return JSON.parse(localStorage.getItem('jv_user')||'{}'); }
+function authH()    { return {'Content-Type':'application/json','Authorization':'Bearer '+getToken()}; }
+function authHNC()  { return {'Authorization':'Bearer '+getToken()}; }
+
+function logout(){
+  localStorage.removeItem('jv_token'); localStorage.removeItem('jv_user');
+  window.location.href='login.html';
+}
+
+// Verificar admin
+(function(){
+  const user=getUser();
+  if(!getToken()||user.rol!=='admin'){ window.location.href='login.html'; return; }
+  document.getElementById('sidebarNombre').textContent=user.nombre||'Admin';
+  document.getElementById('avatarLetter').textContent=(user.nombre||'A')[0].toUpperCase();
+})();
+
+async function apiFetch(url,opts={}){
+  try{
+    const res=await fetch(API+url,opts);
+    const data=await res.json();
+    return data;
+  }catch(e){ console.error(e); return {ok:false,error:'Error de conexión'}; }
+}
+
+const titles={dashboard:'Dashboard',usuarios:'Usuarios',estrellas:'Programa de Estrellas',
+  citas:'Citas',pedidos:'Pedidos',qr:'Código QR',productos:'Productos',categorias:'Categorías',
+  subcategorias:'Subcategorías',marcas:'Marcas',servicios:'Servicios',vacunas:'Vacunas'};
+
+function ir(sec){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+sec).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  const btn=document.querySelector(`.nav-item[onclick="ir('${sec}')"]`);
+  if(btn)btn.classList.add('active');
+  document.getElementById('pageTitle').textContent=titles[sec]||sec;
+  document.getElementById('sidebar').classList.remove('open');
+  const loaders={dashboard:cargarDashboard,usuarios:cargarUsuarios,estrellas:cargarEstrellas,
+    citas:cargarCitas,pedidos:cargarPedidos,cupones:cargarCupones,qr:()=>generarQR(),
+    productos:cargarProductos,categorias:cargarCategorias,subcategorias:cargarSubcategorias,
+    marcas:cargarMarcas,servicios:cargarServicios,vacunas:cargarVacunas,
+    fichas:()=>{ cargarSelectUsuarios(); }};
+  if(loaders[sec]) loaders[sec]() ;
+  fichas: () => { cargarSelectUsuarios(); }
+}
+function abrirModal(id){ document.getElementById(id).classList.add('open'); }
+function cerrar(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) cerrar(o.id); });
+});
+
+function toast(msg,tipo=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+tipo+' show';
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3400);
+}
+
+function prevImg(input,id){
+  const file=input.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=ev=>{ const img=document.getElementById(id); img.src=ev.target.result; img.style.display='block'; };
+  r.readAsDataURL(file);
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────────
+async function cargarDashboard(){
+  const d=await apiFetch('/api/stats',{headers:authH()});
+  if(!d.ok){ toast('Error al cargar stats','rojo'); return; }
+  document.getElementById('st-usuarios').textContent=d.usuarios;
+  document.getElementById('st-productos').textContent=d.productos;
+  document.getElementById('st-vacunas').textContent=d.vacunas;
+  document.getElementById('st-servicios').textContent=d.servicios;
+}
+
+// ── USUARIOS ───────────────────────────────────────────────────────────────────
+let _usuarios=[];
+let _estrellaUserSel = null;
+async function cargarUsuarios(){
+  document.getElementById('tbUsuarios').innerHTML='<tr class="loading-row"><td colspan="7">Cargando...</td></tr>';
+  const d=await apiFetch('/api/usuarios',{headers:authH()});
+  if(!d.ok){ toast('Error: '+d.error,'rojo'); return; }
+  _usuarios=d.usuarios||[];
+  document.getElementById('tbUsuarios').innerHTML=_usuarios.length
+    ? _usuarios.map(u=>`<tr>
+        <td><strong>${u.nombre}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${u.email||'--'}</span></td>
+        <td>${u.cedula||'--'}</td><td>${u.telefono||'--'}</td>
+        <td><strong>${u.mascota_nombre||'--'}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${u.especie||''} ${u.raza?'· '+u.raza:''}</span></td>
+        <td><strong style="color:var(--acento)">${u.estrellas}/10</strong></td>
+        <td>${u.carnet_url?`<a href="${u.carnet_url}" target="_blank" class="btn btn-sm btn-azul">Ver</a>`:'<span class="badge b-gris">Sin carnet</span>'}</td>
+        <td><button class="btn btn-sm btn-rojo" onclick="eliminarUsuario(${u.id})">Eliminar</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+}
+
+async function crearUsuario(){
+  const nombre=document.getElementById('nu_nombre').value.trim();
+  const email=document.getElementById('nu_email').value.trim();
+  const cedula=document.getElementById('nu_cedula').value.trim();
+  const telefono=document.getElementById('nu_tel').value.trim();
+  const mascota=document.getElementById('nu_mascota').value.trim();
+  const especie=document.getElementById('nu_especie').value;
+  const raza=document.getElementById('nu_raza').value.trim();
+  if(!nombre||!email){ toast('Nombre y email son obligatorios','rojo'); return; }
+  const d=await apiFetch('/api/usuarios',{method:'POST',headers:authH(),body:JSON.stringify({nombre,email,cedula,telefono,mascota,especie,raza})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast(`✅ Usuario creado. Contraseña: ${d.password_temporal}`,'verde');
+  cerrar('mCrearUser');
+  ['nu_nombre','nu_email','nu_cedula','nu_tel','nu_mascota','nu_raza'].forEach(id=>document.getElementById(id).value='');
+  cargarUsuarios(); cargarDashboard();
+}
+
+async function eliminarUsuario(id){
+  if(!confirm('¿Eliminar este usuario?')) return;
+  const d=await apiFetch(`/api/usuarios/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Usuario eliminado','naranja'); cargarUsuarios(); cargarDashboard();
+}
+
+// ── ESTRELLAS ──────────────────────────────────────────────────────────────────
+async function cargarEstrellas(){
+  const d = await apiFetch('/api/usuarios', {headers:authH()});
+  if(!d.ok){ toast('Error','rojo'); return; }
+  _usuarios = d.usuarios || [];
+  document.getElementById('tbEstrellas').innerHTML = _usuarios.length
+    ? _usuarios.map(u => `<tr>
+        <td><strong>${u.nombre}</strong></td>
+        <td>${u.telefono||'--'}</td>
+        <td><div class="stars-ctrl">
+          <button class="btn btn-sm btn-naranja" onclick="cambiarEstrellas(${u.id},-1)">−</button>
+          <span class="num">${u.estrellas}</span>
+          <button class="btn btn-sm btn-verde" onclick="cambiarEstrellas(${u.id},1)">+</button>
+        </div></td>
+        <td>${u.estrellas>=10
+          ? '<span class="badge b-acento">¡Premio listo!</span>'
+          : `<span class="badge b-azul">${10-u.estrellas} para descuento</span>`}
+        </td>
+        <td><button class="btn btn-sm btn-naranja" onclick="abrirNotificarEstrellas(${u.id})">🎟️ Cupón + WA</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+}
+
+function abrirNotificarEstrellas(uid){
+  const u = _usuarios.find(x => x.id === uid);
+  if(!u) return;
+  _estrellaUserSel = u;
+
+  document.getElementById('mEstrellasNombre').textContent  = u.nombre;
+  document.getElementById('mEstrellasEstrellas').textContent = u.estrellas + '/10';
+  document.getElementById('mEstrellasAlerta').style.display = u.estrellas >= 10 ? 'flex' : 'none';
+
+  // Preseleccionar tipo según estrellas
+  document.getElementById('me_tipo').value = 'tienda';
+  document.getElementById('me_desc').value = u.estrellas >= 10 ? '20' : '10';
+  const hoy = new Date(); hoy.setMonth(hoy.getMonth()+1);
+  document.getElementById('me_fecha').value = hoy.toISOString().split('T')[0];
+
+  abrirModal('mNotificarEstrellas');
+}
+
+async function crearYEnviarCuponEstrellas(){
+  const u = _estrellaUserSel;
+  if(!u){ toast('Sin usuario','rojo'); return; }
+
+  const tipo  = document.getElementById('me_tipo').value;
+  const desc  = parseInt(document.getElementById('me_desc').value)||10;
+  const fecha = document.getElementById('me_fecha').value;
+  if(!fecha){ toast('Ingresa fecha de expiración','rojo'); return; }
+
+  // 1. Crear cupón
+  const dc = await apiFetch('/api/cupones',{
+    method:'POST', headers:authH(),
+    body: JSON.stringify({tipo, descuento:desc, fecha_expira:fecha, usos_max:1})
+  });
+  if(!dc.ok){ toast(dc.error||'Error al crear cupón','rojo'); return; }
+
+  // 2. Asignar al usuario (envía notificación interna)
+  const da = await apiFetch(`/api/cupones/${dc.id}/asignar`,{
+    method:'POST', headers:authH(),
+    body: JSON.stringify({usuario_id: u.id})
+  });
+  if(!da.ok){ toast(da.error||'Error al asignar','rojo'); return; }
+
+  // 3. Abrir WhatsApp con el cupón
+  const tipoLabel = tipo==='tienda' ? 'Tienda' : 'Peluquería';
+  const fechaFmt  = new Date(fecha+'T00:00:00').toLocaleDateString('es-EC',{day:'2-digit',month:'long',year:'numeric'});
+  const tel = (u.telefono||'').replace(/\D/g,'').slice(-9);
+  const msg =
+` *¡Hola ${u.nombre.split(' ')[0]}!*
+
+Has acumulado *${u.estrellas} estrellas* en Jezreel Vet 🐾 y tienes un premio especial:
+
+ *CUPÓN DE DESCUENTO ${tipoLabel.toUpperCase()}*
+ *${desc}% de descuento*
+ *Código:* ${dc.codigo}
+ *Válido hasta:* ${fechaFmt}
+
+Preséntalo en tu próxima visita o úsalo en nuestra tienda en línea. ¡Gracias por tu fidelidad! 
+
+_Jezreel Vet — Cuidamos a tu familia peluda_ `;
+
+  window.open(`https://wa.me/593${tel}?text=${encodeURIComponent(msg)}`,'_blank');
+  toast(`✅ Cupón ${dc.codigo} creado y enviado a ${u.nombre}`,'verde');
+  cerrar('mNotificarEstrellas');
+  cargarCupones();
+}
+
+async function cambiarEstrellas(id,delta){
+  const d=await apiFetch(`/api/usuarios/${id}/estrellas`,{method:'PATCH',headers:authH(),body:JSON.stringify({delta})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  if(d.estrellas>=10) toast('🌟 ¡'+(_usuarios.find(u=>u.id===id)?.nombre||'Cliente')+' alcanzó 10 estrellas!','verde');
+  cargarEstrellas();
+}
+
+function notificarWA(id){
+  const u=_usuarios.find(u=>u.id===id); if(!u) return;
+  const msg=u.estrellas>=10
+    ?`¡Hola ${u.nombre.split(' ')[0]}! Has acumulado 10 estrellas en Jezreel Vet 🌟. ¡Tienes un 20% de descuento en tu próxima visita!`
+    :`¡Hola ${u.nombre.split(' ')[0]}! Tienes ${u.estrellas} de 10 estrellas en Jezreel Vet 🐾. ¡Sigue visitándonos!`;
+  const num=(u.telefono||'').replace(/\D/g,'');
+  window.open(`https://wa.me/593${num.slice(-9)}?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ── CITAS ──────────────────────────────────────────────────────────────────────
+async function cargarCitas(){
+  document.getElementById('tbCitas').innerHTML='<tr class="loading-row"><td colspan="7">Cargando...</td></tr>';
+  const d=await apiFetch('/api/citas',{headers:authH()});
+  if(!d.ok){ toast('Error: '+d.error,'rojo'); return; }
+  const citas=d.citas||[];
+  document.getElementById('tbCitas').innerHTML=citas.length
+    ? citas.map(c=>`<tr>
+        <td><strong>${c.nombre||'--'}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${c.telefono||''}</span></td>
+        <td>${c.mascota||'--'} <span class="badge b-azul" style="font-size:10px">${c.especie||''}</span></td>
+        <td>${c.servicio||'--'}<br><span style="font-size:11px;color:var(--azul-vivo)">${c.precio||''}</span></td>
+        <td style="font-size:12px">${c.fecha_solicitada||'--'}</td>
+        <td style="font-size:12px;max-width:140px;color:var(--texto-suave)">${c.notas||'--'}</td>
+        <td><span class="badge ${c.estado==='confirmada'?'b-verde':c.estado==='cancelada'?'b-rojo':'b-azul'}">${c.estado||'pendiente'}</span></td>
+        <td><button class="btn btn-sm btn-rojo" onclick="eliminarCita(${c.id})">✕</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin citas</td></tr>';
+}
+
+async function eliminarCita(id){
+  if(!confirm('¿Eliminar esta cita?')) return;
+  const d=await apiFetch(`/api/citas/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Cita eliminada','naranja'); cargarCitas();
+}
+
+// ── PEDIDOS ────────────────────────────────────────────────────────────────────
+let _pedidos = [];
+
+async function cargarPedidos(){
+  document.getElementById('tbPedidos').innerHTML='<tr class="loading-row"><td colspan="7">Cargando...</td></tr>';
+  document.getElementById('pedidoBuscadoBox').style.display='none';
+  const d = await apiFetch('/api/pedidos', {headers:authH()});
+  if(!d.ok){ toast('Error: '+d.error,'rojo'); return; }
+  _pedidos = d.pedidos || [];
+  renderTablaPedidos(_pedidos);
+}
+
+function renderTablaPedidos(lista){
+  document.getElementById('tbPedidos').innerHTML = lista.length
+    ? lista.map(p => {
+        let items = [];
+        try { items = typeof p.items_json === 'string' ? JSON.parse(p.items_json.replace(/'/g,'"')) : (p.items_json || []); } catch(e){}
+        const itemsHtml = items.length
+          ? `<ul class="items-list">${items.map(i=>`<li>${i.nombre||i.name||'—'} x${i.qty||1} <strong>$${Number(i.subtotal||0).toFixed(2)}</strong></li>`).join('')}</ul>`
+          : '<span style="color:var(--texto-suave);font-size:12px;">Sin detalle</span>';
+        const fecha = p.created_at
+          ? new Date(p.created_at).toLocaleString('es-EC',{dateStyle:'short',timeStyle:'short'})
+          : '--';
+        return `<tr id="pedido-row-${p.id}">
+          <td><span class="pedido-id-badge">#${p.id}</span></td>
+          <td><strong>${p.nombre||'--'}</strong></td>
+          <td>${p.telefono||'--'}</td>
+          <td>${itemsHtml}</td>
+          <td><strong style="color:var(--azul-noche)">$${Number(p.total||0).toFixed(2)}</strong></td>
+          <td style="font-size:12px;color:var(--texto-suave)">${fecha}</td>
+          <td><button class="btn btn-sm btn-rojo" onclick="eliminarPedido(${p.id})">✕</button></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--texto-suave)">Sin pedidos registrados</td></tr>';
+}
+
+async function eliminarPedido(id){
+  if(!confirm('¿Eliminar el pedido #'+id+'?')) return;
+  const d=await apiFetch(`/api/pedidos/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Pedido eliminado','naranja');
+  _pedidos=_pedidos.filter(p=>p.id!==id);
+  renderTablaPedidos(_pedidos);
+  document.getElementById('pedidoBuscadoBox').style.display='none';
+}
+
+function buscarPedido(){
+  const idBuscado = parseInt(document.getElementById('searchPedidoId').value);
+  if(!idBuscado || isNaN(idBuscado)){ toast('Ingresa un ID válido','rojo'); return; }
+
+  // Primero buscar en los pedidos ya cargados
+  const encontrado = _pedidos.find(p => p.id === idBuscado);
+
+  // Quitar highlight previo
+  document.querySelectorAll('tr.pedido-highlight').forEach(r => r.classList.remove('pedido-highlight'));
+
+  if(encontrado){
+    mostrarPedidoBuscado(encontrado);
+    // Scroll + highlight en la tabla
+    const fila = document.getElementById(`pedido-row-${encontrado.id}`);
+    if(fila){
+      fila.classList.add('pedido-highlight');
+      fila.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  } else {
+    // Intentar desde la API
+    buscarPedidoAPI(idBuscado);
+  }
+}
+
+async function buscarPedidoAPI(id){
+  const d = await apiFetch(`/api/pedidos/${id}`, {headers:authH()});
+  if(!d.ok || !d.pedido){
+    document.getElementById('pedidoBuscadoBox').style.display='none';
+    toast(`Pedido #${id} no encontrado`,'rojo');
+    return;
+  }
+  mostrarPedidoBuscado(d.pedido);
+}
+
+function mostrarPedidoBuscado(p){
+  let items = [];
+  try { items = typeof p.items_json === 'string' ? JSON.parse(p.items_json.replace(/'/g,'"')) : (p.items_json || []); } catch(e){}
+  const itemsHtml = items.length
+    ? items.map(i=>`<div style="font-size:13px;padding:3px 0;">• ${i.nombre||i.name||'—'} x${i.qty||1} — <strong>$${Number(i.subtotal||0).toFixed(2)}</strong></div>`).join('')
+    : '<span style="font-size:13px;color:var(--texto-suave)">Sin detalle de productos</span>';
+  const fecha = p.created_at
+    ? new Date(p.created_at).toLocaleString('es-EC',{dateStyle:'long',timeStyle:'short'})
+    : '--';
+
+  document.getElementById('pedidoBuscadoContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div><span style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;">ID</span><br><span class="pedido-id-badge" style="font-size:13px;">#${p.id}</span></div>
+      <div><span style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;">Total</span><br><strong style="font-size:16px;color:var(--azul-noche)">$${Number(p.total||0).toFixed(2)}</strong></div>
+      <div><span style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;">Cliente</span><br><strong>${p.nombre||'--'}</strong></div>
+      <div><span style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;">Teléfono</span><br>${p.telefono||'--'}</div>
+      <div style="grid-column:1/-1;"><span style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;">Fecha</span><br><span style="font-size:13px;">${fecha}</span></div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--texto-suave);text-transform:uppercase;margin-bottom:6px;">Productos</div>
+    ${itemsHtml}`;
+  document.getElementById('pedidoBuscadoBox').style.display='block';
+  toast(`Pedido #${p.id} encontrado ✅`,'verde');
+}
+
+function limpiarBusquedaPedido(){
+  document.getElementById('searchPedidoId').value='';
+  document.getElementById('pedidoBuscadoBox').style.display='none';
+  document.querySelectorAll('tr.pedido-highlight').forEach(r=>r.classList.remove('pedido-highlight'));
+  cargarPedidos();
+}
+
+// ── QR ─────────────────────────────────────────────────────────────────────────
+function generarQR(){
+  const url=document.getElementById('qrUrl').value||'https://jezreelvet.com';
+  QRCode.toCanvas(document.getElementById('qrCanvas'),url,{width:220,margin:2},err=>{
+    if(err){ toast('Error generando QR','rojo'); return; }
+    toast('QR generado','verde');
+  });
+}
+function descargarQR(){
+  const a=document.createElement('a');
+  a.download='qr-jezreelvet.png';
+  a.href=document.getElementById('qrCanvas').toDataURL();
+  a.click();
+}
+
+// ── CATEGORÍAS ─────────────────────────────────────────────────────────────────
+let _cats=[],_subcats=[],_marcas=[];
+
+async function cargarCategorias(){
+  const d=await apiFetch('/api/categorias');
+  _cats=d.categorias||[];
+  document.getElementById('catList').innerHTML=_cats.map(c=>`
+    <div class="chip">
+      <span>${c.emoji||''}</span><span>${c.nombre}</span>
+      <button class="del" onclick="eliminarCategoria(${c.id})">×</button>
+    </div>`).join('')||'<p style="color:var(--texto-suave);font-size:13px">Sin categorías</p>';
+  const sel=document.getElementById('pr_cat_id');
+  if(sel) sel.innerHTML='<option value="">Sin categoría</option>'+
+    _cats.map(c=>`<option value="${c.id}">${c.emoji||''} ${c.nombre}</option>`).join('');
+}
+
+async function crearCategoria(){
+  const emoji=document.getElementById('catEmoji').value.trim();
+  const nombre=document.getElementById('catNombre').value.trim();
+  if(!nombre){ toast('Ingresa un nombre','rojo'); return; }
+  const d=await apiFetch('/api/categorias',{method:'POST',headers:authH(),body:JSON.stringify({nombre,emoji})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  document.getElementById('catEmoji').value=''; document.getElementById('catNombre').value='';
+  toast(`Categoría "${nombre}" creada`,'verde'); cargarCategorias();
+}
+
+async function eliminarCategoria(id){
+  if(!confirm('¿Eliminar esta categoría?')) return;
+  const d=await apiFetch(`/api/categorias/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Categoría eliminada','naranja'); cargarCategorias();
+}
+
+// ── SUBCATEGORÍAS ──────────────────────────────────────────────────────────────
+async function cargarSubcategorias(){
+  const d=await apiFetch('/api/subcategorias');
+  _subcats=d.subcategorias||[];
+  document.getElementById('subcatList').innerHTML=_subcats.map(s=>`
+    <div class="chip">
+      <span>${s.emoji||''}</span><span>${s.nombre}</span>
+      <button class="del" onclick="eliminarSubcategoria(${s.id})">×</button>
+    </div>`).join('')||'<p style="color:var(--texto-suave);font-size:13px">Sin subcategorías</p>';
+  const sel=document.getElementById('pr_subcat_id');
+  if(sel) sel.innerHTML='<option value="">Sin subcategoría</option>'+
+    _subcats.map(s=>`<option value="${s.id}">${s.emoji||''} ${s.nombre}</option>`).join('');
+}
+
+async function crearSubcategoria(){
+  const emoji=document.getElementById('subcatEmoji').value.trim();
+  const nombre=document.getElementById('subcatNombre').value.trim();
+  if(!nombre){ toast('Ingresa un nombre','rojo'); return; }
+  const d=await apiFetch('/api/subcategorias',{method:'POST',headers:authH(),body:JSON.stringify({nombre,emoji})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  document.getElementById('subcatEmoji').value=''; document.getElementById('subcatNombre').value='';
+  toast(`Subcategoría "${nombre}" creada`,'verde'); cargarSubcategorias();
+}
+
+async function eliminarSubcategoria(id){
+  if(!confirm('¿Eliminar esta subcategoría?')) return;
+  const d=await apiFetch(`/api/subcategorias/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Subcategoría eliminada','naranja'); cargarSubcategorias();
+}
+
+// ── MARCAS ─────────────────────────────────────────────────────────────────────
+async function cargarMarcas(){
+  const d=await apiFetch('/api/marcas');
+  _marcas=d.marcas||[];
+  document.getElementById('marcaList').innerHTML=_marcas.map(m=>`
+    <div class="chip">
+      <span>${m.nombre}</span>
+      <button class="del" onclick="eliminarMarca(${m.id})">×</button>
+    </div>`).join('')||'<p style="color:var(--texto-suave);font-size:13px">Sin marcas</p>';
+  const sel=document.getElementById('pr_marca_id');
+  if(sel) sel.innerHTML='<option value="">Sin marca</option>'+
+    _marcas.map(m=>`<option value="${m.id}">${m.nombre}</option>`).join('');
+}
+
+async function crearMarca(){
+  const nombre=document.getElementById('marcaNombre').value.trim();
+  if(!nombre){ toast('Ingresa un nombre','rojo'); return; }
+  const d=await apiFetch('/api/marcas',{method:'POST',headers:authH(),body:JSON.stringify({nombre})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  document.getElementById('marcaNombre').value='';
+  toast(`Marca "${nombre}" creada`,'verde'); cargarMarcas();
+}
+
+async function eliminarMarca(id){
+  if(!confirm('¿Eliminar esta marca?')) return;
+  const d=await apiFetch(`/api/marcas/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Marca eliminada','naranja'); cargarMarcas();
+}
+
+// ── PRODUCTOS ──────────────────────────────────────────────────────────────────
+async function abrirModalProducto(){
+  await Promise.all([cargarCategorias(),cargarSubcategorias(),cargarMarcas()]);
+  abrirModal('mProd');
+}
+
+async function cargarProductos(){
+  document.getElementById('tbProductos').innerHTML='<tr class="loading-row"><td colspan="8">Cargando...</td></tr>';
+  const [pd,cd,sd,md]=await Promise.all([
+    apiFetch('/api/productos'),
+    apiFetch('/api/categorias'),
+    apiFetch('/api/subcategorias'),
+    apiFetch('/api/marcas'),
+  ]);
+  _cats=cd.categorias||[]; _subcats=sd.subcategorias||[]; _marcas=md.marcas||[];
+  const selC=document.getElementById('pr_cat_id');
+  if(selC) selC.innerHTML='<option value="">Sin categoría</option>'+_cats.map(c=>`<option value="${c.id}">${c.emoji||''} ${c.nombre}</option>`).join('');
+  const selS=document.getElementById('pr_subcat_id');
+  if(selS) selS.innerHTML='<option value="">Sin subcategoría</option>'+_subcats.map(s=>`<option value="${s.id}">${s.emoji||''} ${s.nombre}</option>`).join('');
+  const selM=document.getElementById('pr_marca_id');
+  if(selM) selM.innerHTML='<option value="">Sin marca</option>'+_marcas.map(m=>`<option value="${m.id}">${m.nombre}</option>`).join('');
+
+  const productos=pd.productos||[];
+  document.getElementById('tbProductos').innerHTML=productos.length
+    ? productos.map(p=>{
+        const sc=p.stock===0?'b-rojo':p.stock<5?'b-acento':'b-verde';
+        return `<tr>
+          <td>${p.img_url?`<img src="${p.img_url}" class="prod-img" alt="${p.nombre}">`:'<div class="prod-img-placeholder">Sin img</div>'}</td>
+          <td><strong>${p.nombre}</strong></td>
+          <td>${p.categoria_emoji||''} ${p.categoria_nombre||p.categoria||'--'}</td>
+          <td>${p.subcategoria_emoji||''} ${p.subcategoria_nombre||'--'}</td>
+          <td>${p.marca_nombre||'--'}</td>
+          <td>$${Number(p.precio).toFixed(2)}</td>
+          <td><span class="badge ${sc}">${p.stock===0?'Sin stock':p.stock}</span></td>
+          <td><button class="btn btn-sm btn-rojo" onclick="eliminarProducto(${p.id})">✕</button></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin productos</td></tr>';
+}
+
+async function agregarProducto(){
+  const nombre=document.getElementById('pr_nombre').value.trim();
+  const cat_id=document.getElementById('pr_cat_id').value;
+  const sub_id=document.getElementById('pr_subcat_id').value;
+  const marca_id=document.getElementById('pr_marca_id').value;
+  const precio=document.getElementById('pr_precio').value||'0';
+  const stock=document.getElementById('pr_stock').value||'0';
+  const file=document.getElementById('prodImg').files[0];
+  if(!nombre){ toast('Ingresa el nombre del producto','rojo'); return; }
+  const fd=new FormData();
+  fd.append('nombre',nombre);
+  if(cat_id)   fd.append('categoria_id',cat_id);
+  if(sub_id)   fd.append('subcategoria_id',sub_id);
+  if(marca_id) fd.append('marca_id',marca_id);
+  fd.append('precio',precio); fd.append('stock',stock);
+  if(file) fd.append('imagen',file);
+  const d=await apiFetch('/api/productos',{method:'POST',headers:authHNC(),body:fd});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast(`"${nombre}" agregado`,'verde');
+  cerrar('mProd');
+  ['pr_nombre','pr_precio','pr_stock'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('prodImg').value='';
+  document.getElementById('prodPreview').style.display='none';
+  cargarProductos(); cargarDashboard();
+}
+
+async function eliminarProducto(id){
+  if(!confirm('¿Eliminar este producto?')) return;
+  const d=await apiFetch(`/api/productos/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Producto eliminado','naranja'); cargarProductos(); cargarDashboard();
+}
+
+// ── SERVICIOS ──────────────────────────────────────────────────────────────────
+let _tempSubs=[];
+function addTempSub(){
+  const n=document.getElementById('as_sub_n').value.trim();
+  const p=parseFloat(document.getElementById('as_sub_p').value)||0;
+  if(!n) return;
+  _tempSubs.push({nombre:n,precio:p});
+  document.getElementById('as_sub_n').value=''; document.getElementById('as_sub_p').value='';
+  renderTempSubs();
+}
+function renderTempSubs(){
+  document.getElementById('tempSubs').innerHTML=_tempSubs.map((s,i)=>
+    `<span class="sub-tag">${s.nombre} ($${s.precio.toFixed(2)}) <button onclick="_tempSubs.splice(${i},1);renderTempSubs()">×</button></span>`
+  ).join('');
+}
+
+async function cargarServicios(){
+  document.getElementById('tbServicios').innerHTML='<tr class="loading-row"><td colspan="5">Cargando...</td></tr>';
+  const d=await apiFetch('/api/servicios');
+  if(!d.ok){ toast('Error','rojo'); return; }
+  const servicios=d.servicios||[];
+  document.getElementById('tbServicios').innerHTML=servicios.length
+    ? servicios.map(s=>`<tr>
+        <td>${s.emoji} <strong>${s.nombre}</strong></td>
+        <td><input type="number" value="${s.precio}" id="sp_${s.id}" style="width:70px;padding:5px 8px;border:1.5px solid var(--borde);border-radius:7px;font-size:13px;" step="0.01"></td>
+        <td><input type="text" value="${s.mensaje||''}" id="sm_${s.id}" style="width:100%;min-width:150px;padding:5px 8px;border:1.5px solid var(--borde);border-radius:7px;font-size:12px;"></td>
+        <td>
+          <div>${(s.subOpciones||[]).map(op=>`<span class="sub-tag">${op.nombre} ($${Number(op.precio).toFixed(2)}) <button onclick="eliminarOpcion(${op.id})">×</button></span>`).join('')}</div>
+          <div style="display:flex;gap:5px;margin-top:5px;">
+            <input type="text" id="sn_${s.id}" placeholder="Nueva opción" style="flex:1;padding:4px 8px;border:1.5px solid var(--borde);border-radius:7px;font-size:12px;outline:none;">
+            <input type="number" id="sp2_${s.id}" placeholder="$" style="width:65px;padding:4px 8px;border:1.5px solid var(--borde);border-radius:7px;font-size:12px;outline:none;" step="0.01">
+            <button class="btn btn-sm btn-verde" onclick="addOpcion(${s.id})">+</button>
+          </div>
+        </td>
+        <td style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-verde" onclick="actualizarServicio(${s.id})">Guardar</button>
+          <button class="btn btn-sm btn-rojo" onclick="eliminarServicio(${s.id})">✕</button>
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin servicios</td></tr>';
+}
+
+async function guardarServicio(){
+  const emoji=document.getElementById('as_emoji').value||'🐾';
+  const nombre=document.getElementById('as_nombre').value.trim();
+  const precio=parseFloat(document.getElementById('as_precio').value)||0;
+  const msg=document.getElementById('as_msg').value.trim();
+  if(!nombre){ toast('Nombre requerido','rojo'); return; }
+  const d=await apiFetch('/api/servicios',{method:'POST',headers:authH(),body:JSON.stringify({emoji,nombre,precio,msg,subOpciones:_tempSubs})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  _tempSubs=[]; renderTempSubs();
+  ['as_emoji','as_nombre','as_precio','as_msg'].forEach(id=>document.getElementById(id).value='');
+  toast(`Servicio "${nombre}" creado`,'verde'); cerrar('mServicio'); cargarServicios(); cargarDashboard();
+}
+
+async function actualizarServicio(id){
+  const precio=document.getElementById(`sp_${id}`)?.value;
+  const msg=document.getElementById(`sm_${id}`)?.value;
+  const d=await apiFetch(`/api/servicios/${id}`,{method:'PUT',headers:authH(),body:JSON.stringify({precio,msg})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Servicio actualizado','verde'); cargarServicios();
+}
+
+async function eliminarServicio(id){
+  if(!confirm('¿Eliminar este servicio?')) return;
+  const d=await apiFetch(`/api/servicios/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Servicio eliminado','naranja'); cargarServicios(); cargarDashboard();
+}
+
+async function addOpcion(sid){
+  const n=document.getElementById(`sn_${sid}`)?.value.trim();
+  const p=parseFloat(document.getElementById(`sp2_${sid}`)?.value)||0;
+  if(!n) return;
+  const d=await apiFetch(`/api/servicios/${sid}/opciones`,{method:'POST',headers:authH(),body:JSON.stringify({nombre:n,precio:p})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Opción añadida','verde'); cargarServicios();
+}
+
+async function eliminarOpcion(oid){
+  const d=await apiFetch(`/api/servicios/opciones/${oid}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Opción eliminada','naranja'); cargarServicios();
+}
+
+// ── VACUNAS ────────────────────────────────────────────────────────────────────
+const animalLabel={perro:'🐶 Perro',gato:'🐱 Gato',ambos:'✅ Ambos',otro:'🐾 Otro'};
+
+async function cargarVacunas(){
+  document.getElementById('tbVacunas').innerHTML='<tr class="loading-row"><td colspan="6">Cargando...</td></tr>';
+  const d=await apiFetch('/api/vacunas');
+  if(!d.ok){ toast('Error','rojo'); return; }
+  const vacunas=d.vacunas||[];
+  document.getElementById('tbVacunas').innerHTML=vacunas.length
+    ? vacunas.map(v=>`<tr>
+        <td>${v.emoji||'💉'} <strong>${v.nombre}</strong></td>
+        <td><span class="badge b-azul">${animalLabel[v.animal]||v.animal}</span></td>
+        <td>${v.frecuencia||'--'}</td>
+        <td>$${Number(v.precio).toFixed(2)}</td>
+        <td style="font-size:12px;color:var(--texto-suave);max-width:200px">${v.descripcion||'--'}</td>
+        <td><button class="btn btn-sm btn-rojo" onclick="eliminarVacuna(${v.id})">✕</button></td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin vacunas</td></tr>';
+}
+
+async function guardarVacuna(){
+  const emoji=document.getElementById('av_emoji').value||'💉';
+  const nombre=document.getElementById('av_nombre').value.trim();
+  const desc=document.getElementById('av_desc').value.trim();
+  const freq=document.getElementById('av_freq').value.trim()||'Anual';
+  const precio=parseFloat(document.getElementById('av_precio').value)||0;
+  const animal=document.getElementById('av_animal').value;
+  if(!nombre){ toast('Nombre requerido','rojo'); return; }
+  const d=await apiFetch('/api/vacunas',{method:'POST',headers:authH(),body:JSON.stringify({emoji,nombre,descripcion:desc,frecuencia:freq,precio,animal})});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast(`Vacuna "${nombre}" añadida`,'verde'); cerrar('mVacuna');
+  ['av_emoji','av_nombre','av_desc','av_freq','av_precio'].forEach(id=>document.getElementById(id).value='');
+  cargarVacunas(); cargarDashboard();
+}
+
+async function eliminarVacuna(id){
+  if(!confirm('¿Eliminar esta vacuna?')) return;
+  const d=await apiFetch(`/api/vacunas/${id}`,{method:'DELETE',headers:authH()});
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('Vacuna eliminada','naranja'); cargarVacunas(); cargarDashboard();
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────────
+cargarDashboard();
+</script>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+// FICHAS MASCOTAS — Panel Admin
+// ══════════════════════════════════════════════════════════════════════════
+ 
+let _fichaUsuarioId = null;
+let _fichaDocFile   = null;
+ 
+async function cargarSelectUsuarios() {
+  const d = await apiFetch('/api/usuarios', { headers: authH() });
+  if (!d.ok) { toast('Error cargando usuarios', 'rojo'); return; }
+  _usuarios = d.usuarios || [];
+  const sel = document.getElementById('fichaUserSelect');
+  sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
+    _usuarios.map(u => `<option value="${u.id}">${u.nombre}${u.mascota_nombre ? ' — ' + u.mascota_nombre : ''}</option>`).join('');
+}
+ 
+async function cargarFichaDeUsuario(uid) {
+  _fichaUsuarioId = uid || null;
+  const empty  = document.getElementById('fichaAdminEmpty');
+  const panel  = document.getElementById('fichaAdminPanel');
+ 
+  if (!uid) {
+    empty.style.display  = 'block';
+    panel.style.display  = 'none';
+    return;
+  }
+ 
+  empty.style.display = 'none';
+  panel.style.display = 'block';
+ 
+  // Cargar ficha del usuario
+  const d = await apiFetch(`/api/ficha-mascota/${uid}`, { headers: authH() });
+  const ficha = d.ficha || {};
+ 
+  // Info del cliente (datos que él puso)
+  const u = _usuarios.find(x => String(x.id) === String(uid)) || {};
+  document.getElementById('fichaClienteInfo').innerHTML = [
+    ['Nombre',  ficha.nombre || u.mascota_nombre || '—'],
+    ['Edad',    ficha.edad   || '—'],
+    ['Peso',    ficha.peso   ? ficha.peso + ' kg' : '—'],
+    ['Raza',    ficha.raza   || u.raza || '—'],
+    ['Especie', u.especie    || '—'],
+  ].map(([l, v]) => `
+    <div style="background:#fff;border-radius:9px;padding:9px 12px;border:1px solid var(--azul-medio);">
+      <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--azul-oscuro);margin-bottom:3px;">${l}</div>
+      <div style="font-size:13.5px;font-weight:600;color:var(--texto);">${v}</div>
+    </div>
+  `).join('');
+ 
+  // Comentario del Dr.
+  document.getElementById('fichaComentarioDr').value = ficha.comentario_dr || '';
+ 
+  // Documentos
+  renderDocsAdmin(ficha.documentos || []);
+}
+ 
+function renderDocsAdmin(docs) {
+  const list = document.getElementById('fichaDocsList');
+  if (!docs.length) {
+    list.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin documentos.</p>';
+    return;
+  }
+  list.innerHTML = docs.map(d => `
+    <div class="ficha-doc-row">
+      <span style="font-size:18px;">📄</span>
+      <a href="${d.url}" target="_blank">${d.nombre || 'Documento'}</a>
+      <button class="btn btn-sm btn-rojo" onclick="eliminarDocFicha(${d.id})">✕</button>
+    </div>
+  `).join('');
+}
+ 
+async function guardarComentarioDr() {
+  if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
+  const comentario = document.getElementById('fichaComentarioDr').value.trim();
+  const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/comentario`, {
+    method: 'PUT',
+    headers: authH(),
+    body: JSON.stringify({ comentario_dr: comentario })
+  });
+  if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
+  toast('Comentario del Dr. guardado', 'verde');
+}
+ 
+function prevDocUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  _fichaDocFile = file;
+  document.getElementById('fichaDocPreviewNombre').style.display = 'block';
+  document.getElementById('fichaDocNombreSpan').textContent = file.name;
+}
+ 
+async function subirDocFicha() {
+  if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
+  if (!_fichaDocFile)   { toast('Selecciona un archivo', 'rojo'); return; }
+ 
+  const nombre = document.getElementById('fichaDocNombre').value.trim()
+    || _fichaDocFile.name;
+ 
+  const fd = new FormData();
+  fd.append('archivo', _fichaDocFile);
+  fd.append('nombre', nombre);
+ 
+  const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/documentos`, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + getToken() },
+    body: fd
+  });
+ 
+  if (!d.ok) { toast(d.error || 'Error al subir', 'rojo'); return; }
+  toast('Documento subido', 'verde');
+  _fichaDocFile = null;
+  document.getElementById('fichaDocFile').value = '';
+  document.getElementById('fichaDocNombre').value = '';
+  document.getElementById('fichaDocPreviewNombre').style.display = 'none';
+  // Recargar ficha
+  cargarFichaDeUsuario(_fichaUsuarioId);
+}
+ 
+async function eliminarDocFicha(docId) {
+  if (!confirm('¿Eliminar este documento?')) return;
+  const d = await apiFetch(`/api/ficha-mascota/documentos/${docId}`, {
+    method: 'DELETE',
+    headers: authH()
+  });
+  if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
+  toast('Documento eliminado', 'naranja');
+  cargarFichaDeUsuario(_fichaUsuarioId);
+}
+</script>
+
+</body>
+</html>

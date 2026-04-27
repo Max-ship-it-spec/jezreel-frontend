@@ -1,0 +1,4031 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link rel="icon" type="image/png" href="Imagenes/Logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jezreel Vet - Clínica Veterinaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --azul:#1565C0;--azul-vivo:#1976D2;--azul-claro:#E3F2FD;--azul-medio:#BBDEFB;
+  --azul-oscuro:#0D47A1;--azul-noche:#0A2E6B;--acento:#FF6F00;--acento-claro:#FFF3E0;
+  --gris:#F4F6FB;--texto:#0D1B3E;--texto-suave:#4A5568;--blanco:#FFFFFF;
+  --borde:rgba(21,101,192,0.15);--radio:14px;
+  --sombra:0 4px 20px rgba(13,71,161,0.1);--sombra-hover:0 12px 36px rgba(13,71,161,0.18);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gris);color:var(--texto);overflow-x:hidden;}
+
+/* NAV */
+nav{background:#fff;position:fixed;top:0;left:0;right:0;z-index:200;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;min-height:70px;flex-wrap:wrap;gap:6px;box-shadow:0 2px 20px rgba(13,71,161,0.12);}
+body{padding-top:70px;}
+.nav-left{display:flex;flex-direction:column;align-items:flex-start;padding:8px 0;gap:4px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:48px;width:auto;object-fit:contain;display:block;}
+.nav-stars{display:flex;gap:3px;}
+.nav-star{font-size:13px;color:#e0e0e0;}
+.nav-star.llena{color:#FFA726;}
+.nav-links{display:flex;gap:4px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--texto-suave);font-size:13.5px;font-weight:600;padding:7px 13px;border-radius:8px;transition:all 0.2s;}
+.nav-links a:hover,.nav-links a.active{background:var(--azul-claro);color:var(--azul-oscuro);}
+.nav-cta{background:var(--acento)!important;color:#fff!important;font-weight:700!important;}
+.nav-cta:hover{background:#E65100!important;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;flex-direction:column;gap:5px;}
+.hamburger span{width:22px;height:2px;background:var(--texto);border-radius:2px;}
+
+/* ── Usuario en nav ── */
+.nav-user{display:flex;align-items:center;gap:8px;}
+.nav-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--azul-vivo);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;cursor:pointer;transition:0.2s;}
+.nav-user-avatar:hover{background:var(--azul-oscuro);}
+.nav-user-name{font-size:13px;font-weight:700;color:var(--texto);max-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nav-user-dropdown{position:relative;}
+.nav-user-menu{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:#fff;border-radius:12px;border:1px solid var(--borde);
+  box-shadow:0 8px 28px rgba(13,71,161,0.15);
+  min-width:180px;padding:8px;z-index:300;
+  display:none;animation:fadeIn 0.18s ease;
+}
+.nav-user-menu.open{display:block;}
+.nav-user-menu a,.nav-user-menu button{
+  display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;
+  border-radius:8px;font-size:13px;font-weight:600;color:var(--texto);
+  text-decoration:none;background:none;border:none;cursor:pointer;transition:0.15s;
+}
+.nav-user-menu a:hover,.nav-user-menu button:hover{background:var(--gris);}
+.nav-user-menu .sep{height:1px;background:var(--borde);margin:6px 0;}
+.nav-user-menu .btn-logout-menu{color:#C62828;}
+.nav-user-menu .btn-logout-menu:hover{background:#FFEBEE;}
+
+/* Btn login (cuando no hay sesión) */
+.nav-login-btn{
+  background:var(--azul);color:#fff;border:none;padding:8px 16px;
+  border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;transition:0.2s;
+}
+.nav-login-btn:hover{background:var(--azul-oscuro);}
+
+/* Carrito */
+.nav-cart-btn{background:var(--acento-claro);color:var(--acento);border:1.5px solid var(--acento);padding:8px 14px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;position:relative;}
+.nav-cart-btn:hover{background:var(--acento);color:#fff;}
+.cart-badge{background:var(--acento);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;position:absolute;top:-5px;right:-5px;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--azul-noche) 0%,var(--azul-oscuro) 50%,var(--azul-vivo) 100%);color:#fff;padding:80px 2rem 90px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-40%;right:-15%;width:450px;height:450px;background:rgba(255,255,255,0.04);border-radius:50%;}
+.hero-icon{font-size:52px;margin-bottom:14px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,52px);font-weight:900;margin-bottom:14px;}
+.hero p{font-size:17px;opacity:.82;max-width:480px;margin:0 auto 32px;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-hero-p{background:#fff;color:var(--azul-oscuro);padding:13px 26px;border-radius:11px;font-size:15px;font-weight:700;text-decoration:none;border:none;cursor:pointer;transition:all 0.2s;}
+.btn-hero-p:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.2);}
+.btn-hero-s{background:rgba(255,255,255,0.13);color:#fff;padding:13px 26px;border-radius:11px;font-size:15px;font-weight:600;text-decoration:none;border:1.5px solid rgba(255,255,255,0.35);transition:all 0.2s;cursor:pointer;}
+.btn-hero-s:hover{background:rgba(255,255,255,0.22);}
+
+/* SECCIONES */
+section{display:none;}section.active{display:block;}
+.section-inner{max-width:1100px;margin:0 auto;padding:56px 1.5rem;}
+.section-title{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;margin-bottom:6px;}
+.section-sub{color:var(--texto-suave);font-size:15px;margin-bottom:36px;}
+
+/* CARDS INICIO */
+.cards-inicio{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+.card-inicio{background:var(--blanco);border-radius:var(--radio);padding:22px;border:1px solid var(--borde);box-shadow:var(--sombra);transition:all 0.3s;cursor:pointer;position:relative;overflow:hidden;}
+.card-inicio::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.card-inicio.c1::before{background:linear-gradient(90deg,var(--azul-oscuro),var(--azul-vivo));}
+.card-inicio.c2::before{background:linear-gradient(90deg,var(--acento),#FFB300);}
+.card-inicio.c3::before{background:linear-gradient(90deg,#00897B,#26A69A);}
+.card-inicio:hover{transform:translateY(-4px);box-shadow:var(--sombra-hover);}
+.ci-icon{font-size:28px;margin-bottom:10px;}
+.card-inicio h3{font-size:16px;font-weight:700;margin-bottom:6px;}
+.card-inicio p{font-size:13.5px;color:var(--texto-suave);line-height:1.5;margin-bottom:14px;}
+.ci-badge{display:inline-block;font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:6px;}
+.b-azul{background:var(--azul-claro);color:var(--azul-oscuro);}
+.b-acento{background:var(--acento-claro);color:#E65100;}
+.b-teal{background:#E0F2F1;color:#00695C;}
+
+/* QUIÉNES SOMOS */
+.qs-banner{width:100%;max-height:420px;overflow:hidden;position:relative;}
+.qs-banner img{width:100%;height:420px;object-fit:cover;object-position:center top;display:block;}
+.qs-banner-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,46,107,0.6) 0%,rgba(10,46,107,0.1) 60%,transparent 100%);}
+.qs-banner-txt{position:absolute;left:60px;top:50%;transform:translateY(-50%);color:#fff;}
+.qs-banner-txt h1{font-family:'Playfair Display',serif;font-size:clamp(32px,4vw,56px);font-weight:900;line-height:1.1;}
+.qs-historia{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-bottom:56px;}
+.qs-historia-txt h2{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,36px);font-weight:900;color:var(--azul-noche);margin-bottom:20px;line-height:1.2;}
+.qs-historia-txt h2 span{color:#1976D2;}
+.qs-historia-txt p{font-size:14.5px;color:var(--texto-suave);line-height:1.8;margin-bottom:14px;text-align:justify;}
+.qs-historia-txt .highlight{font-style:italic;font-weight:700;color:var(--azul-oscuro);font-size:16px;line-height:1.5;border-left:4px solid var(--acento);padding-left:16px;margin:20px 0;}
+.qs-historia-img img{width:100%;border-radius:16px;box-shadow:var(--sombra-hover);}
+.qs-bienvenida{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;background:#fff;border-radius:20px;overflow:hidden;box-shadow:var(--sombra);}
+.qs-bienvenida-img img{width:100%;height:340px;object-fit:cover;display:block;}
+.qs-bienvenida-txt{padding:40px 36px;}
+.qs-bienvenida-txt h2{font-family:'Playfair Display',serif;font-size:clamp(16px,2vw,24px);font-weight:900;color:var(--azul-noche);text-transform:uppercase;letter-spacing:0.5px;line-height:1.4;margin-bottom:4px;}
+.qs-bienvenida-txt h2 span{color:var(--acento);}
+@media(max-width:800px){.qs-historia{grid-template-columns:1fr;}.qs-bienvenida{grid-template-columns:1fr;}.qs-banner-txt{left:24px;}}
+
+/* VACUNAS */
+.vacunas-filtros{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:24px;}
+.vac-filter-btn{padding:8px 18px;border-radius:20px;border:1.5px solid var(--borde);background:var(--blanco);font-size:13.5px;font-weight:600;cursor:pointer;transition:0.2s;color:var(--texto-suave);}
+.vac-filter-btn:hover,.vac-filter-btn.active{border-color:var(--azul-vivo);color:var(--azul-oscuro);background:var(--azul-claro);}
+.vacunas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px;margin-bottom:36px;}
+.vacuna-card{background:var(--blanco);border-radius:var(--radio);padding:22px;border:1px solid var(--borde);box-shadow:var(--sombra);transition:all 0.3s;position:relative;overflow:hidden;}
+.vacuna-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.vc1::before{background:linear-gradient(90deg,#1565C0,#42A5F5);}
+.vc2::before{background:linear-gradient(90deg,#C62828,#EF5350);}
+.vc3::before{background:linear-gradient(90deg,#6A1B9A,#AB47BC);}
+.vc4::before{background:linear-gradient(90deg,#E65100,#FFA726);}
+.vc5::before{background:linear-gradient(90deg,#2E7D32,#66BB6A);}
+.vc6::before{background:linear-gradient(90deg,#00838F,#26C6DA);}
+.vc7::before{background:linear-gradient(90deg,#880E4F,#E91E63);}
+.vc8::before{background:linear-gradient(90deg,#37474F,#78909C);}
+.vacuna-card:hover{transform:translateY(-3px);box-shadow:var(--sombra-hover);}
+.vacuna-icon{font-size:28px;margin-bottom:10px;}
+.vacuna-card h3{font-size:16px;font-weight:700;margin-bottom:5px;}
+.vacuna-card p{font-size:13px;color:var(--texto-suave);line-height:1.5;margin-bottom:12px;}
+.vacuna-animal-tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:5px;margin-left:6px;}
+
+/* FORM CITAS */
+.cita-wrap{max-width:640px;}
+.form-steps{display:flex;border-radius:11px;overflow:hidden;border:1px solid var(--borde);margin-bottom:28px;}
+.form-step{flex:1;padding:11px;text-align:center;font-size:13px;font-weight:600;color:var(--texto-suave);background:var(--gris);transition:0.2s;}
+.form-step.active{background:var(--azul);color:#fff;}
+.form-step.done{background:var(--azul-claro);color:var(--azul-oscuro);}
+.form-group{margin-bottom:17px;}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--texto-suave);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;font-size:14.5px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--texto);background:var(--gris);transition:0.2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--azul-vivo);background:#fff;box-shadow:0 0 0 3px rgba(25,118,210,0.12);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:540px){.form-row{grid-template-columns:1fr;}}
+
+/* SERVICIOS */
+.servicios-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.serv-opcion{padding:12px 14px;border:1.5px solid var(--borde);border-radius:10px;cursor:pointer;transition:0.2s;background:var(--gris);font-size:13.5px;font-weight:500;display:flex;align-items:center;gap:8px;}
+.serv-opcion:hover,.serv-opcion.sel{border-color:var(--azul-vivo);background:var(--azul-claro);color:var(--azul-oscuro);}
+.serv-precio{font-size:12px;font-weight:700;color:var(--azul);margin-left:auto;}
+.serv-msg{background:var(--azul-claro);color:var(--azul-oscuro);padding:13px 15px;border-radius:9px;font-size:13.5px;margin-top:12px;border-left:4px solid var(--azul-vivo);display:none;}
+.serv-msg.vis{display:block;animation:fadeIn 0.3s ease;}
+.sub-opciones{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.sub-op{padding:7px 13px;border:1.5px solid var(--borde);border-radius:8px;cursor:pointer;font-size:12.5px;font-weight:600;background:var(--gris);transition:0.2s;display:flex;align-items:center;gap:6px;}
+.sub-op:hover,.sub-op.sel{border-color:var(--azul-vivo);background:var(--azul-claro);color:var(--azul-oscuro);}
+.sub-op-precio{font-size:11px;font-weight:700;color:var(--azul);margin-left:4px;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-5px);}to{opacity:1;transform:translateY(0);}}
+
+/* BUTTONS */
+.btn-primary{background:var(--azul);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--azul-oscuro);transform:translateY(-1px);}
+.btn-wa{background:#25D366;color:#fff;border:none;padding:15px 26px;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;justify-content:center;transition:all 0.2s;margin-top:22px;}
+.btn-wa:hover{background:#1ebe5d;transform:translateY(-1px);box-shadow:0 8px 22px rgba(37,211,102,0.3);}
+
+
+
+
+/* TIENDA */
+.filtros{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:30px;
+}
+
+.filtro-btn{
+  padding:7px 16px;
+  border-radius:20px;
+  border:1px solid #e5e5e5;
+  background:#fff;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s;
+  color:#666;
+}
+
+.filtro-btn:hover,
+.filtro-btn.active{
+  border-color:#000;
+  color:#000;
+  background:#f5f5f5;
+}
+
+/* GRID */
+.productos-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:22px;
+}
+
+/* CARD */
+.producto-card{
+  background:#fff;
+  border-radius:14px;
+  border:1.5px solid #d0d0d0; /* 🔥 más oscuro */
+  padding:14px;
+  transition:all 0.25s ease;
+}
+
+.producto-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  border-color:#bdbdbd; /* 🔥 efecto elegante */
+}
+/* IMAGEN */
+.producto-img{
+  width:100%;
+  height:180px;
+  background:#ffffff;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  margin-bottom:14px;
+
+  /* 🔥 NUEVO */
+  border:1.5px solid #dcdcdc;
+}
+
+.producto-img img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+
+/* BODY */
+.producto-body{
+  padding:0;
+}
+
+/* CATEGORIA (opcional ocultar) */
+.prod-cat{
+  font-size:11px;
+  font-weight:600;
+  color:#888;
+  margin-bottom:6px;
+}
+
+/* NOMBRE */
+.prod-nombre{
+  font-size:14.5px;
+  font-weight:600;
+  color:#111;
+  margin-bottom:10px;
+  min-height:38px;
+}
+
+/* PRECIO */
+.prod-precio{
+  font-size:20px;
+  font-weight:800;
+  color:#000;
+  margin-bottom:12px;
+}
+
+/* STOCK */
+.prod-stock{
+  font-size:12.5px;
+  color:#777;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:6px;
+}
+
+/* DOT */
+.s-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+}
+
+.s-ok{background:#4CAF50;}
+.s-low{background:#FF9800;}
+.s-out{background:#F44336;}
+
+/* BOTON */
+.btn-reservar{
+  width:100%;
+  padding:10px;
+  border-radius:20px;
+  background:#fff;
+  color:#000;
+  border:1px solid #ddd;
+  font-size:12.5px;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.25s;
+}
+
+.btn-reservar:hover{
+  background:#000;
+  color:#fff;
+  border-color:#000;
+}
+
+.btn-reservar:disabled{
+  background:#eee;
+  color:#999;
+  cursor:not-allowed;
+}
+/* CARRITO */
+.carrito-panel{position:fixed;right:-420px;top:70px;bottom:0;width:400px;background:#fff;box-shadow:-4px 0 24px rgba(0,0,0,0.12);z-index:300;transition:right 0.3s ease;display:flex;flex-direction:column;}
+.carrito-panel.open{right:0;}
+.carrito-header{padding:20px;border-bottom:1px solid var(--borde);display:flex;justify-content:space-between;align-items:center;}
+.carrito-header h3{font-family:'Playfair Display',serif;font-size:20px;}
+.carrito-items{flex:1;overflow-y:auto;padding:16px;}
+.carrito-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--borde);}
+.carrito-item-img{width:56px;height:56px;border-radius:8px;background:var(--azul-claro);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
+.carrito-item-img img{width:100%;height:100%;object-fit:cover;}
+.carrito-item-info{flex:1;}
+.carrito-item-info strong{font-size:13.5px;display:block;margin-bottom:3px;}
+.carrito-item-info span{font-size:12.5px;color:var(--texto-suave);}
+.carrito-item-ctrl{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.carrito-qty{display:flex;align-items:center;gap:6px;}
+.qty-btn{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--borde);background:var(--gris);cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:0.2s;}
+.qty-btn:hover{background:var(--azul);color:#fff;border-color:var(--azul);}
+.qty-num{font-size:14px;font-weight:700;min-width:18px;text-align:center;}
+.carrito-item-precio{font-weight:700;color:var(--azul-oscuro);font-size:14px;}
+.btn-remove{background:none;border:none;cursor:pointer;color:#E53935;font-size:16px;padding:2px;}
+.carrito-footer{padding:20px;border-top:1px solid var(--borde);}
+.carrito-total{display:flex;justify-content:space-between;align-items:center;font-size:17px;font-weight:700;margin-bottom:14px;}
+.carrito-empty{text-align:center;padding:40px 20px;color:var(--texto-suave);}
+.carrito-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:299;}
+.carrito-overlay.open{display:block;}
+
+/* MODALES */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,80,0.55);z-index:400;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--blanco);border-radius:18px;padding:32px;max-width:480px;width:100%;position:relative;animation:slideUp 0.28s ease;max-height:92vh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(28px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-close{position:absolute;top:14px;right:14px;background:var(--gris);border:none;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;z-index:1;}
+.modal h2{font-family:'Playfair Display',serif;font-size:21px;margin-bottom:6px;}
+.modal-sub{color:var(--texto-suave);font-size:13.5px;margin-bottom:20px;}
+
+/* Bienvenida modal */
+.welcome-hero{background:linear-gradient(135deg,var(--azul-noche),var(--azul-vivo));padding:28px;text-align:center;color:#fff;border-radius:18px 18px 0 0;}
+.welcome-hero .big-icon{font-size:48px;margin-bottom:8px;}
+.welcome-hero h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:6px;}
+.welcome-hero p{font-size:14px;opacity:0.85;}
+.welcome-body{padding:24px 32px 32px;}
+
+/* Mascota tag */
+.mascota-tag{display:inline-flex;align-items:center;gap:6px;background:var(--azul-claro);color:var(--azul-oscuro);padding:5px 12px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:16px;}
+
+/* Carnet */
+.upload-zone{border:2px dashed var(--azul-medio);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--azul-claro);}
+.upload-zone:hover{border-color:var(--azul-vivo);background:#DDEEFF;}
+.upload-zone input{display:none;}
+.carnet-preview-img{margin-top:16px;display:none;border-radius:10px;overflow:hidden;border:1px solid var(--borde);}
+.carnet-preview-img img{width:100%;display:block;max-height:320px;object-fit:contain;background:#f0f0f0;}
+
+/* Info row */
+.info-row{display:flex;gap:8px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--borde);font-size:13.5px;}
+.info-row:last-child{border-bottom:none;}
+.info-label{font-weight:700;min-width:130px;color:var(--texto-suave);font-size:12px;text-transform:uppercase;letter-spacing:0.4px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--azul-noche);color:#fff;padding:13px 18px;border-radius:11px;font-size:13.5px;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:300px;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.verde{background:#1B5E20;}
+.toast.naranja{background:#E65100;}
+
+/* FOOTER */
+footer{background:#0A2E6B;color:rgba(255,255,255,0.7);padding:44px 2rem 0;}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1px auto 1px 1fr;gap:0 32px;align-items:start;padding-bottom:40px;}
+.f-logo-col{display:flex;flex-direction:column;align-items:flex-start;gap:10px;}
+.f-logo-img{height:52px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
+.f-desc{font-size:13px;max-width:220px;line-height:1.7;color:rgba(255,255,255,0.6);}
+.f-divider-v{background:rgba(255,255,255,0.12);width:1px;align-self:stretch;margin:0 4px;}
+.f-links-col{display:flex;flex-direction:column;gap:12px;align-items:center;}
+.f-links-col a{color:rgba(255,255,255,0.65);text-decoration:none;font-size:13.5px;font-weight:500;transition:0.2s;text-align:center;}
+.f-links-col a:hover{color:#fff;}
+.f-contact-col{display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
+.f-contact-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:rgba(255,255,255,0.7);}
+.f-contact-item svg{flex-shrink:0;margin-top:2px;}
+.f-social{display:flex;gap:14px;margin-top:40px;}
+.f-social a{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);text-decoration:none;transition:all 0.25s;}
+.f-social a:hover{background:rgba(255,255,255,0.25);color:#fff;transform:translateY(-2px);}
+.f-social a.wa:hover{background:#25D366;}
+.f-social a.ig:hover{background:radial-gradient(circle at 30% 107%,#fdf497 0%,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285AEB 90%);}
+.f-bottom{border-top:1px solid rgba(255,255,255,0.1);padding:16px 0;text-align:center;font-size:12px;color:rgba(255,255,255,0.3);max-width:1100px;margin:0 auto;}
+
+@media(max-width:900px){.footer-inner{grid-template-columns:1fr;gap:28px;}.f-divider-v{display:none;}.f-links-col,.f-contact-col{align-items:flex-start;}}
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:fixed;top:70px;left:0;right:0;background:#fff;padding:14px;border-bottom:1px solid var(--borde);gap:4px;z-index:199;box-shadow:0 8px 20px rgba(0,0,0,0.1);}
+  .nav-links.open{display:flex;}
+  .hamburger{display:flex;}
+  .servicios-grid{grid-template-columns:1fr;}
+  .productos-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+  .carrito-panel{width:100%;}
+}
+
+/* Loading spinner para tienda/vacunas */
+.loader{text-align:center;padding:40px;color:var(--texto-suave);font-size:14px;}
+.loader::before{content:'⏳';font-size:28px;display:block;margin-bottom:8px;}
+
+
+.seccion-citypet {
+    background: linear-gradient(135deg, var(--azul-claro), var(--gris));
+    padding: 80px 10%;
+}
+
+.contenido-citypet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+/* TEXTO */
+.texto-citypet {
+    max-width: 520px;
+}
+
+.texto-citypet h2 {
+    font-size: 42px;
+    color: var(--azul-noche);
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+.texto-citypet h2 span {
+    font-weight: 800;
+    display: block;
+    color: var(--azul);
+}
+
+.texto-citypet p {
+    color: var(--texto-suave);
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 15px;
+     text-align: justify;
+}
+
+/* BOTÓN */
+.btn-citypet {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--azul), var(--azul-vivo));
+    color: white;
+    padding: 13px 32px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: var(--sombra);
+}
+
+.btn-citypet:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-hover);
+}
+
+/* IMAGEN */
+.imagen-citypet img {
+    width: 480px;
+    max-width: 100%;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .contenido-citypet {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .imagen-citypet img {
+        width: 320px;
+    }
+}
+
+
+
+
+.seccion {
+    display: none;
+}
+
+.seccion.active {
+    display: block;
+}
+
+
+
+.contacto-hero {
+  background: linear-gradient(135deg, var(--azul-noche) 0%, var(--azul-oscuro) 55%, var(--azul-vivo) 100%);
+  border-radius: 20px;
+  margin: 0 0 40px 0;
+  padding: 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+.contacto-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 280px; height: 280px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.contacto-hero-txt h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 3vw, 34px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.2;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.contacto-hero-txt h2 strong {
+  font-weight: 900;
+  color: #fff;
+  display: block;
+  font-size: clamp(26px, 3.5vw, 42px);
+}
+.contacto-hero-img {
+  position: relative;
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.contacto-hero-circle {
+  width: 210px;
+  height: 210px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+}
+.contacto-hero-img img {
+  position: relative;
+  z-index: 2;
+  width: 290px;
+  height: 220px;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.25));
+}
+ 
+/* ── CONTACTO — TARJETAS DE ACCIÓN ──────────────────────────── */
+.contacto-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 56px;
+}
+.contacto-card {
+  background: #EAF4ED;
+  border-radius: 18px;
+  padding: 44px 24px 36px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.28s ease;
+  border: 1.5px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+.contacto-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(13,71,161,0.05), rgba(25,118,210,0.05));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.contacto-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--azul-medio);
+  box-shadow: 0 14px 36px rgba(13,71,161,0.14);
+}
+.contacto-card:hover::before { opacity: 1; }
+.contacto-card-icon {
+  width: 58px; height: 58px;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+.contacto-card-icon svg {
+  width: 100%; height: 100%;
+}
+.contacto-card a,
+.contacto-card span {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a7a55;
+  text-decoration: none;
+  display: block;
+  transition: color 0.2s;
+}
+.contacto-card:hover a,
+.contacto-card:hover span {
+  color: var(--azul-oscuro);
+}
+ 
+/* ── CONTACTO — FAQ ─────────────────────────────────────────── */
+.faq-section {
+  margin-bottom: 20px;
+}
+.faq-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 900;
+  text-align: center;
+  color: var(--texto);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.faq-item {
+  background: #fff;
+  border: 1.5px solid #e8e8e8;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.faq-item.open {
+  border-color: var(--azul-medio);
+  box-shadow: 0 4px 18px rgba(13,71,161,0.10);
+}
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--texto);
+  transition: color 0.2s;
+}
+.faq-item.open .faq-question {
+  color: var(--azul-oscuro);
+  border-bottom: 1px solid #f0f0f0;
+}
+.faq-chevron {
+  width: 20px; height: 20px;
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  color: #999;
+}
+.faq-item.open .faq-chevron {
+  transform: rotate(180deg);
+  color: var(--azul-vivo);
+}
+.faq-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.42s cubic-bezier(0.4,0,0.2,1),
+              padding 0.3s ease,
+              opacity 0.3s ease;
+  opacity: 0;
+  padding: 0 24px;
+}
+.faq-item.open .faq-body {
+  max-height: 400px;
+  padding: 18px 24px 22px;
+  opacity: 1;
+}
+.faq-body p {
+  font-size: 13.5px;
+  color: var(--texto-suave);
+  line-height: 1.8;
+  margin-bottom: 10px;
+}
+.faq-body p:last-child { margin-bottom: 0; }
+ 
+/* RESPONSIVE */
+@media(max-width:680px) {
+  .contacto-hero { padding: 24px 20px; flex-direction: column; text-align: center; gap: 16px; min-height: auto; }
+  .contacto-hero-img { width: 160px; }
+  .contacto-hero-img img { width: 160px; height: 140px; }
+  .contacto-hero-circle { width: 140px; height: 140px; }
+  .contacto-cards { grid-template-columns: 1fr; }
+}
+
+
+
+
+
+/* CONTENEDOR */
+.pet-banners-section {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* TARJETAS */
+.pet-banner-card {
+  flex: 1;
+  max-width: 600px;
+  cursor: pointer;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.pet-banner-card:hover {
+  transform: scale(1.03);
+}
+
+/* IMÁGENES */
+.pet-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* ======== RESPONSIVE CELULAR ======== */
+@media (max-width: 768px) {
+  .pet-banners-section {
+    flex-direction: column;
+    padding: 10px;
+    gap: 15px;
+  }
+
+  .pet-banner-card {
+    max-width: 100%;
+  }
+
+  .pet-banner-img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+#bannerCategoria {
+  animation: fadeIn 0.4s ease;
+}
+#bannerCategoriaImg {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+@media(max-width: 768px) {
+  #bannerCategoriaImg {
+    max-height: 180px;
+    border-radius: 10px;
+  }
+  #bannerCategoriaTitulo {
+    font-size: 26px !important;
+    letter-spacing: 2px;
+  }
+}
+
+
+
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   ══════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* NAV */
+  body { padding-top: 60px; }
+
+  nav {
+    padding: 0 1rem;
+    min-height: 60px;
+  }
+
+  .nav-logo img { height: 36px; }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 60px;
+    left: 0; right: 0;
+    background: #fff;
+    padding: 12px;
+    border-bottom: 1px solid var(--borde);
+    gap: 4px;
+    z-index: 199;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+
+  .nav-links.open { display: flex; }
+  .hamburger { display: flex; }
+
+  .nav-user-name { display: none; }
+
+  .nav-cart-btn {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .nav-login-btn {
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 50px 1.2rem 60px;
+  }
+
+  .hero-icon { font-size: 38px; }
+
+  .hero h1 { font-size: clamp(22px, 6vw, 34px); }
+
+  .hero p { font-size: 14.5px; }
+
+  .btn-hero-p,
+  .btn-hero-s {
+    padding: 11px 18px;
+    font-size: 13.5px;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .hero-btns {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  /* BANNERS PERROS/GATOS */
+  .pet-banners-section {
+    flex-direction: column;
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .pet-banner-card { max-width: 100%; }
+
+  /* SECTION INNER */
+  .section-inner {
+    padding: 36px 1rem;
+  }
+
+  .section-title { font-size: 22px; }
+  .section-sub   { font-size: 13.5px; }
+
+  /* CARDS INICIO */
+  .cards-inicio {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* SECCIÓN CITYPET */
+  .seccion-citypet {
+    padding: 48px 5%;
+  }
+
+  .contenido-citypet {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+
+  .texto-citypet h2 { font-size: 28px; }
+  .texto-citypet p  { font-size: 14px; text-align: center; }
+
+  .imagen-citypet img { width: 260px; }
+
+  /* UBICACIÓN */
+  .ubicacion-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mapa-box { min-height: 240px; }
+
+
+
+  /* QUIÉNES SOMOS — BANNER */
+  .qs-banner img { height: 220px; }
+
+  .qs-banner-txt {
+    left: 20px;
+  }
+
+  .qs-banner-txt h1 { font-size: clamp(24px, 7vw, 38px); }
+
+  /* QUIÉNES SOMOS — HISTORIA */
+  .qs-historia {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .qs-historia-txt h2 { font-size: clamp(20px, 5vw, 28px); }
+
+  .qs-historia-txt .highlight { font-size: 14px; }
+
+  /* QUIÉNES SOMOS — BIENVENIDA */
+  .qs-bienvenida {
+    grid-template-columns: 1fr;
+  }
+
+  .qs-bienvenida-img img { height: 220px; }
+
+  .qs-bienvenida-txt {
+    padding: 24px 20px;
+  }
+
+  .qs-bienvenida-txt h2 { font-size: clamp(14px, 3.5vw, 18px); }
+
+  /* CAROUSEL SERVICIOS */
+  .carousel-wrapper { padding: 0 28px; }
+
+  .card { min-width: 50%; height: 280px; }
+
+  .card span { font-size: 14px; }
+
+  .arrow.left  { left: -6px; }
+  .arrow.right { right: -6px; }
+
+  /* VACUNAS */
+  .vacunas-filtros { gap: 7px; }
+
+  .vac-filter-btn {
+    padding: 7px 13px;
+    font-size: 12.5px;
+  }
+
+  .vacunas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* CITAS — FORM */
+  .cita-wrap { max-width: 100%; }
+
+  .form-steps { font-size: 11.5px; }
+
+  .form-step { padding: 9px 6px; }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .servicios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-wa { font-size: 14px; padding: 13px 18px; }
+
+  /* TIENDA */
+  .section-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .filtros-avanzados {
+    gap: 8px;
+  }
+
+  .filtro-select-wrap select {
+    min-width: 110px;
+    font-size: 12px;
+    padding: 8px 28px 8px 12px;
+  }
+
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .producto-img { height: 140px; }
+
+  .prod-nombre  { font-size: 13px; min-height: 34px; }
+  .prod-precio  { font-size: 17px; }
+  .prod-stock   { font-size: 11.5px; }
+
+  .btn-reservar { font-size: 11.5px; padding: 9px 6px; }
+
+  /* CARRITO */
+  .carrito-panel { width: 100%; right: -100%; }
+  .carrito-panel.open { right: 0; }
+
+  /* CONTACTO */
+  .contacto-hero {
+    padding: 24px 16px;
+    flex-direction: column;
+    text-align: center;
+    min-height: auto;
+    gap: 12px;
+  }
+
+  .contacto-hero-img {
+    width: 140px;
+  }
+
+  .contacto-hero-img img {
+    width: 140px;
+    height: 120px;
+  }
+
+  .contacto-hero-circle {
+    width: 120px;
+    height: 120px;
+  }
+
+  .contacto-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .contacto-card { padding: 28px 16px 24px; }
+
+  .faq-title { font-size: clamp(18px, 4vw, 24px); letter-spacing: 1px; }
+
+  .faq-question { font-size: 13.5px; padding: 16px 18px; }
+
+  /* BANNER CATEGORÍA */
+  #bannerCategoriaImg {
+    max-height: 160px;
+    border-radius: 10px;
+  }
+
+  #bannerCategoriaTitulo {
+    font-size: 22px !important;
+    letter-spacing: 2px;
+  }
+
+  /* MODAL */
+  .modal {
+    padding: 22px 18px;
+    border-radius: 14px;
+  }
+
+/* ── FOOTER ── */
+footer { padding: 32px 1rem 0; }
+
+.footer-inner {
+  grid-template-columns: 1fr;
+  gap: 22px;
+  padding-bottom: 28px;
+  text-align: center;         /* ✅ Centra todo el contenido */
+  color: #ffffff;             /* ✅ Texto blanco */
+}
+.f-logo-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.f-divider-v { display: none; }
+
+.f-links-col,
+.f-contact-col {
+  align-items: center;        /* ✅ Centra los flex-items (era flex-start) */
+  color: #ffffff;             /* ✅ Texto blanco */
+}
+
+.f-links-col a,
+.f-contact-col a,
+.f-links-col p,
+.f-contact-col p {
+  color: #ffffff;             /* ✅ Fuerza blanco en links y párrafos */
+  text-decoration: none;
+}
+
+.f-logo-img { 
+  height: 100px !important;
+  width: auto !important;
+  display: block;
+  filter: brightness(0) invert(1); /* ✅ mantiene el logo blanco */
+}
+.f-desc {
+  font-size: 12.5px;
+  color: #ffffff;
+}
+
+.f-social {
+  margin-top: 16px;
+  justify-content: center;   /* ✅ Centra íconos sociales */
+}
+
+.f-social a,
+.f-social svg,
+.f-social i {
+  color: #ffffff;             /* ✅ Íconos blancos */
+}
+
+.f-bottom {
+  font-size: 11px;
+  padding: 12px 0;
+  text-align: center;        /* ✅ Centra el copyright */
+  color: #ffffff;
+}
+
+/* ── TOAST ── */
+.toast {
+  bottom: 14px;
+  right: 14px;
+  left: 14px;
+  max-width: 100%;
+  font-size: 13px;
+}
+
+/* ── Pantallas muy pequeñas (< 380px) ── */
+@media (max-width: 380px) {
+
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 { font-size: 20px; }
+
+  .btn-hero-p,
+  .btn-hero-s { font-size: 13px; }
+
+  .card { min-width: 100%; }
+
+  .form-step { font-size: 10px; padding: 8px 4px; }
+}
+}
+
+
+
+
+
+
+
+
+
+/* ── NOTIFICACIONES NAV BADGE ── */
+.notif-wrap{position:relative;}
+.notif-badge{
+  position:absolute;
+  top:-4px;right:-4px;
+  background:#E53935;
+  color:#fff;
+  border-radius:50%;
+  width:17px;height:17px;
+  font-size:9px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #fff;
+  pointer-events:none;
+  animation:notifPop 0.35s ease;
+}
+@keyframes notifPop{0%{transform:scale(0);}80%{transform:scale(1.2);}100%{transform:scale(1);}}
+ 
+/* ── CUPÓN VISUAL ── */
+.cupon-card{
+  border-radius:16px;
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  position:relative;
+  overflow:hidden;
+  border:2.5px dashed rgba(255,255,255,0.35);
+  margin-bottom:14px;
+  cursor:default;
+}
+.cupon-card.tienda{background:linear-gradient(135deg,#7B1FA2,#E91E63);color:#fff;}
+.cupon-card.peluqueria{background:linear-gradient(135deg,#0D47A1,#1976D2);color:#fff;}
+.cupon-card.canjeado{opacity:.5;filter:grayscale(0.6);}
+.cupon-card-icon{font-size:36px;flex-shrink:0;}
+.cupon-card-body{flex:1;}
+.cupon-card-body h4{font-size:13.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+.cupon-card-codigo{
+  font-family:monospace;
+  font-size:19px;
+  font-weight:900;
+  letter-spacing:2px;
+  background:rgba(255,255,255,0.22);
+  padding:4px 12px;
+  border-radius:8px;
+  display:inline-block;
+  margin-bottom:5px;
+}
+.cupon-card-exp{font-size:11px;opacity:.8;}
+.cupon-card-pct{
+  text-align:center;flex-shrink:0;
+  background:rgba(255,255,255,0.18);
+  border-radius:12px;
+  padding:8px 14px;
+}
+.cupon-card-pct .big{font-size:32px;font-weight:900;line-height:1;}
+.cupon-card-pct .lbl{font-size:11px;font-weight:700;opacity:.85;}
+.cupon-canjeado-badge{
+  position:absolute;top:12px;right:12px;
+  background:rgba(0,0,0,0.35);
+  color:#fff;
+  font-size:10px;font-weight:800;
+  padding:3px 8px;border-radius:5px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.cupon-dots-l,.cupon-dots-r{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;background:var(--gris);border-radius:50%;
+}
+.cupon-dots-l{left:-9px;} .cupon-dots-r{right:-9px;}
+ 
+/* ── NOTIFICACIÓN ITEM ── */
+.notif-item{
+  display:flex;gap:12px;
+  padding:14px 16px;
+  border-radius:12px;
+  border:1.5px solid var(--borde);
+  margin-bottom:10px;
+  background:#fff;
+  transition:0.2s;
+  position:relative;
+}
+.notif-item.no-leida{border-color:var(--azul-vivo);background:var(--azul-claro);}
+.notif-item-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.notif-item-body{flex:1;}
+.notif-item-titulo{font-size:14px;font-weight:700;color:var(--texto);margin-bottom:3px;}
+.notif-item-msg{font-size:13px;color:var(--texto-suave);line-height:1.5;}
+.notif-item-fecha{font-size:11px;color:var(--texto-suave);margin-top:5px;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--azul-vivo);position:absolute;top:12px;right:12px;}
+ 
+/* Tabs del modal notificaciones */
+.notif-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.notif-tab{
+  padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;
+  border:1.5px solid var(--borde);background:var(--gris);color:var(--texto-suave);
+  cursor:pointer;transition:0.2s;
+}
+.notif-tab.active{background:var(--azul);color:#fff;border-color:var(--azul);}
+
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a class="nav-logo" href="#" onclick="ir('inicio');return false;">
+      <img src="Imagenes/Logo.png" alt="Jezreel Vet"
+           onerror="this.style.display='none';document.getElementById('logoFallback').style.display='flex';">
+      <span id="logoFallback" style="display:none;align-items:center;gap:8px;font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--azul-oscuro);">
+        Jezreel<span style="color:var(--acento);">Vet</span>
+      </span>
+    </a>
+    <div class="nav-stars" id="navStars"></div>
+  </div>
+
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="ir('inicio');return false;" id="nl-inicio" class="active">Inicio</a></li>
+    <li><a href="#" onclick="ir('quienes');return false;" id="nl-quienes">Quiénes somos</a></li>
+    <li><a href="#" onclick="ir('vacunas');return false;" id="nl-vacunas"><span id="navVacunasLabel">Mi Mascota</span></a></li>
+    <li><a href="#" onclick="ir('citas');return false;" id="nl-citas">Citas</a></li>
+    <li><a href="#" onclick="ir('tienda');return false;" id="nl-tienda">Tienda</a></li>
+    <li><a href="#" onclick="ir('Contacto');return false;" id="nl-Contacto">Contacto</a></li>
+   
+  </ul>
+
+  <div style="display:flex;gap:8px;align-items:center;">
+    <!-- Carrito -->
+    <button class="nav-cart-btn" onclick="toggleCarrito()">
+      🛒 Carrito
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+
+    <!-- Usuario logueado -->
+    <div class="nav-user-dropdown" id="userDropdown" style="display:none;">
+      <div class="nav-user" onclick="toggleUserMenu()">
+        <div class="nav-user-avatar" id="userAvatar">U</div>
+        <span class="nav-user-name" id="userNameNav">Usuario</span>
+        <span style="font-size:10px;color:var(--texto-suave);">▼</span>
+      </div>
+      <div class="nav-user-menu" id="userMenu">
+        <a href="#" onclick="abrirMiPerfil();return false;">👤 Mi perfil</a>
+        <a href="#" onclick="abrirMiCarnet();return false;">📄 Mi carnet</a>
+        <div class="notif-wrap" style="display:contents;">
+  <a href="#" onclick="abrirNotificaciones();return false;" style="position:relative;">
+    🔔 Notificaciones
+    <span class="notif-badge" id="notifBadgeMenu" style="display:none;position:absolute;top:8px;right:10px;">0</span>
+  </a>
+</div>
+        <div class="sep"></div>
+        <button class="btn-logout-menu" onclick="doLogout()">🚪 Cerrar sesión</button>
+      </div>
+    </div>
+
+    <!-- Botón login (sin sesión) -->
+    <button class="nav-login-btn" id="btnLogin" onclick="window.location.href='login.html'">
+      Iniciar sesión
+    </button>
+
+    <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<!-- ══ SECCIONES ══════════════════════════════════════════════════════════════ -->
+
+<!-- INICIO -->
+<section id="sec-inicio" class="active">
+
+<div class="hero-carousel" id="heroCarousel">
+  <div class="hc-track" id="hcTrack">
+
+    <!-- Slide 1 -->
+    <div class="hc-slide">
+      <picture>
+        <source media="(max-width: 768px)" srcset="Imagenes/Imagen_M1.png">
+        <img src="Imagenes/Imagen_C1.png" alt="Banner 1" class="hc-img">
+      </picture>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hc-slide">
+      <picture>
+        <source media="(max-width: 768px)" srcset="Imagenes/Imagen_M2.png">
+        <img src="Imagenes/Imagen_C2.png" alt="Banner 2" class="hc-img">
+      </picture>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="hc-slide">
+      <picture>
+        <source media="(max-width: 768px)" srcset="Imagenes/Imagen_M3.png">
+        <img src="Imagenes/Imagen_C3.png" alt="Banner 3" class="hc-img">
+      </picture>
+    </div>
+
+  </div>
+
+  <button class="hc-arrow hc-prev" onclick="hcPrev()">&#10094;</button>
+  <button class="hc-arrow hc-next" onclick="hcNext()">&#10095;</button>
+  <div class="hc-dots" id="hcDots"></div>
+</div>
+
+<style>
+.hero-carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+  line-height: 0; /* ← elimina espacio blanco debajo de la imagen */
+}
+
+.hc-track {
+  display: flex;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  /* ← clave: sin width fijo, que tome el 100% del padre */
+}
+
+.hc-slide {
+  flex-shrink: 0;
+  width: 100%;
+  min-width: 100%; /* ← fix principal del "chueco" */
+  overflow: hidden;
+  line-height: 0;
+}
+
+.hc-slide picture {
+  display: block;
+  width: 100%;
+  line-height: 0;
+}
+
+.hc-img {
+  width: 100%;
+  height: 480px;       /* altura fija escritorio */
+  display: block;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Flechas */
+.hc-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.85);
+  color: #111;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  transition: background 0.2s, transform 0.15s;
+}
+.hc-arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.07);
+}
+.hc-prev { left: 14px; }
+.hc-next { right: 14px; }
+
+/* Dots */
+.hc-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+  z-index: 10;
+}
+.hc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.25s;
+}
+.hc-dot.active {
+  background: #fff;
+  width: 22px;
+  border-radius: 4px;
+}
+
+/* ── MÓVIL ── */
+@media (max-width: 768px) {
+  .hc-img {
+    height: 480px;
+    object-position: center;
+  }
+  .hc-arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  .hc-prev { left: 6px; }
+  .hc-next { right: 6px; }
+  .hc-dots { bottom: 8px; }
+}
+
+/* ── TABLET ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hc-img {
+    height: 300px;
+  }
+}
+</style>
+
+<script>
+(function(){
+  const track  = document.getElementById('hcTrack');
+  const dotsBox = document.getElementById('hcDots');
+  if (!track) return;
+
+  const slides = track.querySelectorAll('.hc-slide');
+  const total  = slides.length;
+  let idx = 0;
+  let timer = null;
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'hc-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => { goTo(i); start(); };
+    dotsBox.appendChild(d);
+  });
+
+  function goTo(n) {
+    idx = (n + total) % total;
+    track.style.transform = `translateX(-${idx * 100}%)`;
+    dotsBox.querySelectorAll('.hc-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === idx)
+    );
+  }
+
+  function start() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(idx + 1), 4500);
+  }
+
+  /* Swipe táctil */
+  let tx = 0;
+  track.addEventListener('touchstart', e => {
+    tx = e.touches[0].clientX;
+  }, { passive: true });
+
+  track.addEventListener('touchend', e => {
+    const diff = tx - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) goTo(diff > 0 ? idx + 1 : idx - 1);
+    start();
+  });
+
+  window.hcNext = () => { goTo(idx + 1); start(); };
+  window.hcPrev = () => { goTo(idx - 1); start(); };
+
+  goTo(0);
+  start();
+})();
+</script>
+
+
+
+
+
+<!-- BANNERS PERROS / GATOS -->
+<div class="pet-banners-section">
+  <div class="pet-banner-card dog" onclick="filtrarTiendaAnimal('perro')">
+  
+    <img src="Imagenes/Cat-Perros.png" alt="Perros" class="pet-banner-img"
+         onerror="this.src='';this.style.display='none';">
+  </div>
+  <div class="pet-banner-card cat" onclick="filtrarTiendaAnimal('gato')">
+
+    <img src="Imagenes/Cat-Gatos.png" alt="Gatos" class="pet-banner-img"
+         onerror="this.src='';this.style.display='none';">
+  </div>
+</div>
+
+
+  <div class="section-inner">
+    <h2 class="section-title">¿En qué te ayudamos hoy?</h2>
+    <p class="section-sub">Todos nuestros servicios en un solo lugar</p>
+
+    <div class="cards-inicio">
+
+      <div class="card-inicio c1" onclick="ir('vacunas')">
+        <div class="ci-icon">💉</div>
+        <h3>Vacunas y Plan Sanitario</h3>
+        <p>Vacunas disponibles según el tipo de mascota.</p>
+        <span class="ci-badge b-azul">Ver vacunas</span>
+      </div>
+
+      <div class="card-inicio c2" onclick="ir('citas')">
+        <div class="ci-icon">📅</div>
+        <h3>Agendar Cita</h3>
+        <p>Reserva fácil y confirmación directa por WhatsApp.</p>
+        <span class="ci-badge b-acento">Envío WhatsApp</span>
+      </div>
+
+      <div class="card-inicio c3" onclick="ir('tienda')">
+        <div class="ci-icon">🛒</div>
+        <h3>Pet Store</h3>
+        <p>Alimentos, medicinas y accesorios.</p>
+        <span class="ci-badge b-teal">Ver productos</span>
+      </div>
+
+    </div>
+    
+  </div>
+
+
+
+<div  class="seccion-citypet">
+  <div class="contenido-citypet">
+
+    <div class="texto-citypet">
+      <h2>
+        CONOCE MÁS <br>
+        <span>Jezreel Vet</span>
+      </h2>
+
+      <p>
+        Somos un equipo apasionado, formado por personas que, día a día, se ganan la confianza de los tutores y amantes de sus compañeros de vida.
+      </p>
+
+      <p>
+        En nuestra tienda creamos un ambiente único, cálido y cercano, donde encontrarás productos de la mejor calidad, servicios especializados y una atención verdaderamente humana, pensada para ti y para tu peludito.
+      </p>
+
+      <a href="#" onclick="ir('tienda')" class="btn-citypet">VER PRODUCTOS</a>
+    </div>
+
+    <div class="imagen-citypet">
+      <img src="Imagenes/Imagen_Tienda1.png" alt="City Pet">
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+<!-- 📍 UBICACIÓN -->
+
+
+  <div class="section-inner ">
+
+    <h2 class="section-title ">Dónde estamos</h2>
+    <p class="section-sub">Visítanos o contáctanos fácilmente</p>
+
+    <div class="ubicacion-grid">
+
+      <div class="mapa-box">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d498.34087370043403!2d-79.89965717575933!3d-2.255598782459158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x902d6fed082b0023%3A0xb4269ea5f844ea8f!2sCentro%20Veterinario!5e0!3m2!1ses!2sec!4v1776438418943!5m2!1ses!2sec"
+        width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+
+      <div class="info-box">
+
+        <div class="info-item">
+          <strong>📍 Dirección</strong>
+          <p>C. 54 S-O - Don San Juan Bosco</p>
+        </div>
+
+        <div class="info-item">
+          <strong>🕒 Horarios</strong>
+          <p>Lunes a Sábado: 9:30 – 19:00</p>
+        </div>
+
+        <div class="info-item">
+          <strong>📞 Contacto</strong>
+          <p>+593 98 458 6114</p>
+        </div>
+
+        <a href="https://wa.me/593984586114" target="_blank" class="btn-wa">
+          📲 WhatsApp
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+
+<style>.ubicacion-grid{
+  display:grid;
+  grid-template-columns:1.5fr 1fr;
+  gap:20px;
+  align-items:stretch;
+}
+
+/* MAPA */
+.mapa-box{
+  width:100%;
+  height:100%;
+  min-height:350px;
+}
+
+.mapa-box iframe{
+  width:100%;
+  height:100%;
+  border-radius:14px;
+  box-shadow:var(--sombra);
+  display:block;
+}
+
+/* INFO */
+.info-box{
+  background:#fff;
+  border-radius:14px;
+  padding:22px;
+  box-shadow:var(--sombra);
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.info-item strong{
+  display:block;
+  font-size:14px;
+  margin-bottom:4px;
+  color:var(--azul-oscuro);
+}
+
+.info-item p{
+  font-size:13.5px;
+  color:var(--texto-suave);
+}
+
+/* BOTONES */
+.ubicacion-botones{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.btn-maps{
+  flex:1;
+  background:var(--azul-oscuro);
+  color:#fff;
+  text-decoration:none;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+  font-weight:700;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .ubicacion-grid{
+    grid-template-columns:1fr;
+  }
+
+  .ubicacion-botones{
+    flex-direction:column;
+  }
+}</style>
+<style>
+/* ── FICHA MASCOTA ────────────────────────────────────────── */
+.ficha-mascota-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1.5px solid var(--borde);
+  box-shadow: var(--sombra);
+  padding: 22px 24px;
+  margin-bottom: 0;
+  position: relative;
+}
+ 
+.ficha-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--borde);
+}
+ 
+.ficha-avatar {
+  width: 52px; height: 52px;
+  background: var(--azul-claro);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+ 
+.ficha-header-txt { flex: 1; }
+ 
+.ficha-nombre-txt {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--azul-noche);
+  margin: 0 0 3px 0;
+}
+ 
+.ficha-sub {
+  font-size: 12.5px;
+  color: var(--texto-suave);
+}
+ 
+.ficha-edit-btn {
+  background: var(--gris);
+  border: 1.5px solid var(--borde);
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+.ficha-edit-btn:hover {
+  background: var(--azul-claro);
+  border-color: var(--azul-vivo);
+}
+ 
+/* Grid de datos */
+.ficha-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+ 
+.ficha-item {
+  background: var(--gris);
+  border-radius: 10px;
+  padding: 10px 13px;
+  border: 1px solid var(--borde);
+}
+ 
+.ficha-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--texto-suave);
+  margin-bottom: 4px;
+}
+ 
+.ficha-val {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--texto);
+}
+ 
+/* Comentario del Dr. */
+.ficha-dr-box {
+  background: linear-gradient(135deg, #EBF4FF, #F0F9FF);
+  border: 1.5px solid var(--azul-medio);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+ 
+.ficha-dr-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--azul-oscuro);
+  margin-bottom: 8px;
+}
+ 
+.ficha-dr-txt {
+  font-size: 13.5px;
+  color: var(--texto);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+ 
+/* Documentos */
+.ficha-docs-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--texto-suave);
+  margin-bottom: 10px;
+}
+ 
+.ficha-docs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+ 
+.ficha-doc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gris);
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  padding: 9px 14px;
+  text-decoration: none;
+  color: var(--azul-oscuro);
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.ficha-doc-item:hover {
+  background: var(--azul-claro);
+  border-color: var(--azul-vivo);
+}
+ 
+/* Sin sesión banner */
+.ficha-login-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--azul-claro);
+  border-radius: 12px;
+  padding: 16px 18px;
+  border: 1.5px dashed var(--azul-medio);
+  font-size: 14px;
+  color: var(--azul-noche);
+}
+ 
+.btn-sm-ficha {
+  padding: 8px 16px !important;
+  font-size: 13px !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+ 
+/* Form grid */
+.ficha-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+ 
+@media(max-width: 540px) {
+  .ficha-form-grid { grid-template-columns: 1fr; }
+  .ficha-grid { grid-template-columns: 1fr 1fr; }
+  .ficha-login-banner { flex-wrap: wrap; }
+}
+</style>
+
+<!-- QUIÉNES SOMOS -->
+<section id="sec-quienes">
+  <div class="qs-banner">
+    <img src="Imagenes/quienes-banner.jpg" alt="Quiénes somos"
+         onerror="this.style.display='none';document.getElementById('qsBannerFallback').style.display='flex';">
+    <div id="qsBannerFallback" style="display:none;height:320px;background:linear-gradient(135deg,var(--azul-noche),var(--azul-vivo));align-items:center;justify-content:flex-start;padding:0 60px;">
+      <h1 style="font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:#fff;line-height:1.1;">QUIÉNES<br><span style="color:#fff;">SOMOS</span></h1>
+    </div>
+    <div class="qs-banner-overlay"></div>
+    <div class="qs-banner-txt">
+      <h1>QUIÉNES<br><span style="color:#fff;">SOMOS</span></h1>
+    </div>
+  </div>
+  <div class="section-inner">
+    <div class="qs-historia">
+      <div class="qs-historia-txt">
+        <h2>NUESTRA <span>HISTORIA,</span><br>NUESTRA <span>PASIÓN</span></h2>
+        <p>Hace algunos años tuvimos el sueño de crear Jezreel Vet, una clínica veterinaria con altos estándares de calidad. Desde la elección del nombre, queríamos ofrecer un servicio completo para uno de los miembros más queridos de la familia, nuestras mascotas.</p>
+        <p>Comenzamos con una pequeña consulta y, con el tiempo, evolucionamos para convertirnos en la clínica integral que somos hoy, enfocándonos especialmente en un servicio completo. Iniciamos un proyecto innovador con consultas especializadas, imagenología y mucho más.</p>
+        <div class="highlight">«PASIÓN POR LA MEDICINA PARA DAR ESPERANZA Y VIDA DIGNA PARA LA MASCOTA Y LA FAMILIA»</div>
+        <p>Después de años junto a las familias guayaquileñas, decidimos ampliar nuestros servicios y construir un Hospital Clínica Veterinaria con atención especializada donde ofrecemos neurología, oftalmología, cirugías complejas y más.</p>
+        <p>Nuestra filosofía está basada en el amor y el cuidado por las mascotas como parte esencial de la familia.</p>
+      </div>
+      <div class="qs-historia-img">
+        <img src="Imagenes/historia.jpg" alt="Historia Jezreel Vet"
+             onerror="this.src='';this.style.cssText='width:100%;height:360px;background:var(--azul-claro);border-radius:16px;display:block;';">
+      </div>
+    </div>
+    <div class="qs-bienvenida">
+      <div class="qs-bienvenida-img">
+        <img src="Imagenes/bienvenida.jpg" alt="Bienvenida"
+             onerror="this.src='';this.style.cssText='width:100%;height:340px;background:linear-gradient(135deg,var(--azul-claro),var(--azul-medio));display:block;';">
+      </div>
+      <div class="qs-bienvenida-txt">
+        <h2>¡<span>BIENVENIDOS</span> A UN MUNDO AMIGABLE,<br>PROFESIONAL Y APASIONADO POR LA<br><span>MEDICINA VETERINARIA!</span></h2>
+        <br>
+        <h2>¡<span>BIENVENIDOS</span> AL MUNDO<br><span>JEZREEL VET!</span></h2>
+        <br>
+        <button class="btn-primary" style="margin-top:8px;" onclick="ir('citas')">Agendar una cita</button>
+      </div>
+      
+    </div>
+  </div>
+
+
+
+<div class="servicios-carousel">
+  <h2 class="serv-title">NUESTROS <span>SERVICIOS</span></h2>
+
+  <div class="sc-wrapper">
+    <button class="sc-arrow sc-prev" onclick="scPrev()">&#10094;</button>
+    <div class="sc-viewport">
+      <div class="sc-track" id="scTrack">
+        <div class="sc-card"><img src="Imagenes/TRAUMATOLOGIA.jpg" alt="Odontología"><span>ODONTOLOGÍA</span></div>
+        <div class="sc-card"><img src="Imagenes/TRAUMATOLOGIA.jpg" alt="Oftalmología"><span>OFTALMOLOGÍA</span></div>
+        <div class="sc-card" ><img src="Imagenes/TRAUMATOLOGIA.jpg" alt="Imagenología"><span>IMAGENOLOGÍA</span></div>
+        <div class="sc-card" ><img src="Imagenes/TRAUMATOLOGIA.jpg" alt="Medicina Interna"><span>MEDICINA INTERNA</span></div>
+        <div class="sc-card" ><img src="Imagenes/TRAUMATOLOGIA.jpg" alt="Cirugía"><span>CIRUGÍA</span></div>
+        <div class="sc-card" ><img src="Imagenes/TRAUMATOLOGIA.jpg" alt="Neurología"><span>NEUROLOGÍA</span></div>
+      </div>
+    </div>
+    <button class="sc-arrow sc-next" onclick="scNext()">&#10095;</button>
+  </div>
+
+  <div class="sc-dots" id="scDots"></div>
+
+</div>
+
+<style>
+.servicios-carousel {
+  padding: 56px 0 48px;
+  background: #fff;
+}
+
+.serv-title {
+  text-align: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  color: #0D1B3E;
+}
+.serv-title span { color: #E85D2A; }
+
+.sc-wrapper {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 52px;
+  box-sizing: border-box;
+}
+
+.sc-viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.sc-track {
+  display: flex;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.sc-card {
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  height: 400px;
+  /* ancho se pone por JS, pero fallback: */
+  width: 25%;
+  min-width: 25%;
+}
+
+.sc-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.sc-card:hover img { transform: scale(1.04); }
+
+.sc-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.1) 60%);
+  z-index: 1;
+}
+
+.sc-card span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: clamp(16px, 1.8vw, 22px);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  z-index: 2;
+  padding: 0 14px;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.8);
+  width: 90%;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.sc-card + .sc-card { border-left: 2px solid rgba(255,255,255,0.2); }
+
+.sc-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #0D1B3E;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.sc-arrow:hover { background: #0D47A1; color: #fff; }
+.sc-prev { left: 6px; }
+.sc-next { right: 6px; }
+
+.sc-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.sc-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.25s;
+}
+.sc-dot.active {
+  background: #E85D2A;
+  width: 22px;
+  border-radius: 4px;
+}
+
+.btn-ver {
+  background: #E85D2A;
+  color: #fff;
+  border: none;
+  padding: 11px 28px;
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-ver:hover { background: #c94d1e; }
+
+@media (max-width: 768px) {
+  .sc-wrapper { padding: 0 36px; }
+  .sc-card { height: 280px; }
+}
+@media (max-width: 480px) {
+  .sc-card { height: 220px; }
+  .sc-card span { font-size: 11px; bottom: 14px; }
+}
+
+
+/* Quitar borde entre cards */
+.sc-card + .sc-card {
+  border-left: none;
+}
+
+
+@media (max-width: 768px) {
+  .servicios-carousel { padding: 32px 0 28px; }
+
+  .serv-title { 
+    font-size: 17px; 
+    letter-spacing: 2px; 
+    margin-bottom: 20px; 
+  }
+
+  .sc-wrapper { 
+    padding: 0 34px; 
+  }
+
+  .sc-card { 
+    height: 320px;
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  .sc-card span {
+    font-size: 18px !important;
+    font-weight: 800;
+    letter-spacing: 2px;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90%;
+    bottom: auto !important;
+  }
+
+  .sc-arrow { 
+    width: 30px; 
+    height: 30px; 
+    font-size: 13px;
+  }
+  .sc-prev { left: 2px; }
+  .sc-next { right: 2px; }
+
+  .sc-dot { width: 7px; height: 7px; }
+  .sc-dot.active { width: 18px; }
+
+  .btn-ver { padding: 10px 22px; font-size: 12px; }
+}
+</style>
+
+<script>
+(function () {
+  const track   = document.getElementById('scTrack');
+  const dotsBox = document.getElementById('scDots');
+  if (!track) return;
+
+  const originals = Array.from(track.querySelectorAll('.sc-card'));
+  const TOTAL     = originals.length;
+  let moving      = false;
+  let timer       = null;
+
+  function vis() {
+    return window.innerWidth <= 480 ? 1 : window.innerWidth <= 768 ? 1 : 4;
+  }
+
+  function cw() {
+    const vw = track.parentElement.clientWidth;
+    return vw > 0 ? vw / vis() : 0;
+  }
+
+  // Clonar 1 grupo al inicio y 1 al final
+  originals.forEach(c => track.appendChild(c.cloneNode(true)));
+  [...originals].reverse().forEach(c => track.insertBefore(c.cloneNode(true), track.firstChild));
+
+  const allCards = () => Array.from(track.querySelectorAll('.sc-card'));
+
+  // idx apunta al primer card real (después del 1 grupo de clones al inicio)
+  let idx = TOTAL;
+
+  function setWidths() {
+    const w = cw();
+    if (w === 0) return;
+    allCards().forEach(c => {
+      c.style.width    = w + 'px';
+      c.style.minWidth = w + 'px';
+    });
+  }
+
+  function reposition() {
+    track.style.transition = 'none';
+    track.style.transform  = `translateX(-${cw() * idx}px)`;
+  }
+
+  function goTo(i, animate) {
+    if (moving && animate) return;
+    moving = !!animate;
+    idx    = i;
+    track.style.transition = animate
+      ? 'transform 0.55s cubic-bezier(0.4,0,0.2,1)'
+      : 'none';
+    track.style.transform  = `translateX(-${cw() * idx}px)`;
+    updateDots((idx - TOTAL + TOTAL * 100) % TOTAL);
+    if (!animate) moving = false;
+  }
+
+  track.addEventListener('transitionend', () => {
+    const total = allCards().length; // TOTAL * 3
+
+    // Llegamos al grupo clon del final → saltar al inicio real
+    if (idx >= total - TOTAL) {
+      idx = TOTAL;
+      track.style.transition = 'none';
+      track.style.transform  = `translateX(-${cw() * idx}px)`;
+    }
+    // Llegamos al grupo clon del inicio → saltar al final real
+    if (idx < TOTAL) {
+      idx = total - TOTAL * 2 + idx;
+      track.style.transition = 'none';
+      track.style.transform  = `translateX(-${cw() * idx}px)`;
+    }
+    updateDots((idx - TOTAL + TOTAL * 100) % TOTAL);
+    moving = false;
+  });
+
+  // Dots
+  function buildDots() {
+    dotsBox.innerHTML = '';
+    originals.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'sc-dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => { goTo(TOTAL + i, true); };
+      dotsBox.appendChild(d);
+    });
+  }
+  function updateDots(realIdx) {
+    dotsBox.querySelectorAll('.sc-dot')
+      .forEach((d, i) => d.classList.toggle('active', i === realIdx));
+  }
+
+  // Autoplay — sin pausa en hover
+  function start() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(idx + 1, true), 1500);
+  }
+
+  // Swipe táctil
+  let tx = 0;
+  track.addEventListener('touchstart', e => {
+    tx = e.touches[0].clientX;
+  }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const d = tx - e.changedTouches[0].clientX;
+    if (Math.abs(d) > 40) goTo(d > 0 ? idx + 1 : idx - 1, true);
+  });
+
+  window.addEventListener('resize', () => { setWidths(); reposition(); });
+
+  window._scInit = function () { setWidths(); reposition(); };
+  window.scNext  = () => goTo(idx + 1, true);
+  window.scPrev  = () => goTo(idx - 1, true);
+
+  // Init — sin delay, posicionar directo
+  setWidths();
+  buildDots();
+  goTo(idx, false);
+  start();
+
+})();
+</script>
+
+</section>
+
+
+
+  
+<!-- VACUNAS -->
+<section id="sec-vacunas">
+ 
+  <!-- ── FICHA DE MASCOTA ── -->
+  <div class="section-inner" style="padding-bottom:0;">
+ 
+    <div class="ficha-mascota-card" id="fichaMascotaCard">
+ 
+      <!-- Cabecera de la ficha -->
+      <div class="ficha-header">
+        <div class="ficha-avatar" id="fichaAvatar">🐾</div>
+        <div class="ficha-header-txt">
+          <h3 class="ficha-nombre-txt" id="fichaNombreTxt">Ficha de mi Mascota</h3>
+          <span class="ficha-sub" id="fichaSubTxt">Completa los datos de tu compañero</span>
+        </div>
+        <button class="ficha-edit-btn" id="fichaEditBtn" onclick="toggleFichaEdit()" title="Editar ficha">
+          ✏️
+        </button>
+      </div>
+ 
+      <!-- MODO LECTURA -->
+      <div id="fichaView">
+        <div class="ficha-grid">
+          <div class="ficha-item">
+            <span class="ficha-label">Nombre</span>
+            <span class="ficha-val" id="fv_nombre">—</span>
+          </div>
+          <div class="ficha-item">
+            <span class="ficha-label">Edad</span>
+            <span class="ficha-val" id="fv_edad">—</span>
+          </div>
+          <div class="ficha-item">
+            <span class="ficha-label">Peso</span>
+            <span class="ficha-val" id="fv_peso">—</span>
+          </div>
+          <div class="ficha-item">
+            <span class="ficha-label">Raza</span>
+            <span class="ficha-val" id="fv_raza">—</span>
+          </div>
+        </div>
+ 
+        <!-- Comentario del Dr. -->
+        <div class="ficha-dr-box" id="fichaDrBox" style="display:none">
+          <div class="ficha-dr-label">📋 Comentario del Dr.</div>
+          <div class="ficha-dr-txt" id="fv_comentario_dr"></div>
+        </div>
+ 
+        <!-- Documentos subidos por el Dr. -->
+        <div id="fichaDocs" style="display:none">
+          <div class="ficha-docs-label">📄 Documentos del Dr.</div>
+          <div class="ficha-docs-list" id="fichaDocsList"></div>
+        </div>
+ 
+        <!-- Sin sesión -->
+        <div id="fichaSinSesion" style="display:none">
+          <div class="ficha-login-banner">
+            <span style="font-size:28px;">🔒</span>
+            <div>
+              <strong>Inicia sesión</strong> para guardar y ver la ficha de tu mascota
+            </div>
+            <button class="btn-primary btn-sm-ficha" onclick="window.location.href='login.html'">
+              Iniciar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- MODO EDICIÓN -->
+      <div id="fichaForm" style="display:none">
+        <div class="ficha-form-grid">
+          <div class="form-group">
+            <label>Nombre de la mascota</label>
+            <input type="text" id="ff_nombre" placeholder="¿Cómo se llama?">
+          </div>
+          <div class="form-group">
+            <label>Edad</label>
+            <input type="text" id="ff_edad" placeholder="Ej: 2 años 3 meses">
+          </div>
+          <div class="form-group">
+            <label>Peso (kg)</label>
+            <input type="text" id="ff_peso" placeholder="Ej: 5.2 kg">
+          </div>
+          <div class="form-group">
+            <label>Raza</label>
+            <input type="text" id="ff_raza" placeholder="Escribe la raza">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button onclick="cancelarFichaEdit()" style="background:var(--gris);color:var(--texto);border:1px solid var(--borde);padding:10px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;">
+            Cancelar
+          </button>
+          <button class="btn-primary" style="flex:1;justify-content:center;" onclick="guardarFicha()">
+            Guardar ficha
+          </button>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+  <!-- ── VACUNAS ── -->
+  <div class="section-inner">
+    <h2 class="section-title">Vacunas y Plan Sanitario</h2>
+    <p class="section-sub" id="vacunas-sub">Vacunas disponibles para tu mascota</p>
+    <div class="vacunas-filtros" id="vacunasFiltros"></div>
+    <div class="vacunas-grid" id="vacunasGrid"><div class="loader">Cargando vacunas...</div></div>
+    <button class="btn-primary" style="background:var(--acento)" onclick="ir('citas')">Agendar Vacuna</button>
+  </div>
+</section>
+
+<!-- CITAS -->
+<section id="sec-citas">
+  <div class="section-inner">
+    <h2 class="section-title">Agendar Cita</h2>
+    <p class="section-sub">Completa el formulario — recibirás confirmación por WhatsApp</p>
+    <div class="cita-wrap">
+      <div id="mascota-tag-cita" style="display:none"></div>
+      <div class="form-steps">
+        <div class="form-step active" id="step1">1 - Propietario</div>
+        <div class="form-step" id="step2">2 - Mascota</div>
+        <div class="form-step" id="step3">3 - Servicio</div>
+      </div>
+      <!-- Paso 1 -->
+      <div id="paso1">
+        <div class="form-group"><label>Nombre completo</label><input type="text" id="c_nombre" placeholder="Tu nombre"></div>
+        <div class="form-group"><label>Teléfono / WhatsApp</label><input type="tel" id="c_tel" placeholder="0958601411"></div>
+        <div class="form-group"><label>Correo electrónico</label><input type="email" id="c_email" placeholder="tu@correo.com"></div>
+        <div class="form-group"><label>Dirección</label><input type="text" id="c_dir" placeholder="Tu dirección"></div>
+        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="irPaso(2)">Continuar</button>
+      </div>
+      <!-- Paso 2 -->
+      <div id="paso2" style="display:none">
+        <div class="form-group"><label>Nombre de la mascota</label><input type="text" id="m_nombre" placeholder="¿Cómo se llama?"></div>
+        <div class="form-group"><label>Especie</label><select id="m_especie"><option value="">Seleccionar...</option><option>Perro</option><option>Gato</option><option>Conejo</option><option>Otro</option></select></div>
+        <div class="form-group"><label>Raza</label><input type="text" id="m_raza" placeholder="Raza de tu mascota"></div>
+        <div class="form-group"><label>Edad</label><input type="text" id="m_edad" placeholder="Ej: 2 años 3 meses"></div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="irPaso(1)" style="background:var(--gris);color:var(--texto);border:1px solid var(--borde);padding:11px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">Atrás</button>
+          <button class="btn-primary" style="flex:1;justify-content:center;" onclick="irPaso(3)">Continuar</button>
+        </div>
+      </div>
+      <!-- Paso 3 -->
+      <div id="paso3" style="display:none">
+        <div class="form-group">
+          <label>Selecciona el servicio</label>
+          <div class="servicios-grid" id="serviciosGrid"></div>
+          <div class="serv-msg" id="servMsg"></div>
+          <div id="subOpBox" style="display:none">
+            <label style="font-size:12px;font-weight:700;color:var(--texto-suave);display:block;margin:12px 0 8px;text-transform:uppercase;letter-spacing:0.5px;">Opciones del servicio</label>
+            <div class="sub-opciones" id="subOpciones"></div>
+          </div>
+        </div>
+        <div class="form-group"><label>Fecha y hora preferida</label><input type="datetime-local" id="c_fecha"></div>
+        <div class="form-group"><label>Notas adicionales</label><textarea id="c_notas" rows="3" placeholder="Síntomas, observaciones u otra información relevante..."></textarea></div>
+        <div style="display:flex;gap:10px;margin-bottom:10px;">
+          <button onclick="irPaso(2)" style="background:var(--gris);color:var(--texto);border:1px solid var(--borde);padding:11px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;">Atrás</button>
+        </div>
+        <button class="btn-wa" onclick="enviarCita()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.59-1.377A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.37l-.36-.214-3.713.776.79-3.603-.235-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+          Enviar solicitud por WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+<!-- TIENDA -->
+
+<section id="sec-tienda">
+
+  
+  <div class="section-inner">
+    <h2 class="section-title">
+      <img src="Imagenes/Pet_Store_logo.png" class="section-icon">
+      Pet Store
+    </h2>
+    <p class="section-sub">Alimentos, medicinas, accesorios y más</p>
+<!-- BANNER DE CATEGORÍA ACTIVA -->
+<div id="bannerCategoria" style="display:none; margin-bottom:28px;">
+  <img id="bannerCategoriaImg" src="" alt="Categoría"
+       style="width:100%;max-height:320px;object-fit:cover;border-radius:16px;display:block;">
+  <h2 id="bannerCategoriaTitulo"
+      style="text-align:center;font-family:'Playfair Display',serif;font-size:clamp(22px,4vw,36px);
+             font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-top:18px;
+             color:var(--texto);">
+  </h2>
+</div>
+    <!-- FILTROS DROPDOWN -->
+    <div class="filtros-avanzados" id="filtrosAvanzados">
+      <div class="filtro-select-wrap">
+        <select id="filtroOrden" onchange="aplicarFiltros()">
+          <option value="">Ordenar por</option>
+          <option value="precio_asc">Precio: menor a mayor</option>
+          <option value="precio_desc">Precio: mayor a menor</option>
+        </select>
+        <span class="chevron"></span>
+      </div>
+
+
+
+
+
+
+
+
+
+      
+      <div class="filtro-select-wrap">
+        <select id="filtroCat" onchange="aplicarFiltros()">
+          <option value="">Categorías</option>
+        </select>
+        <span class="chevron"></span>
+      </div>
+      <div class="filtro-select-wrap">
+        <select id="filtroSub" onchange="aplicarFiltros()">
+          <option value="">Subcategorías</option>
+        </select>
+        <span class="chevron"></span>
+      </div>
+      <div class="filtro-select-wrap">
+        <select id="filtroMarca" onchange="aplicarFiltros()">
+          <option value="">Marcas</option>
+        </select>
+        <span class="chevron"></span>
+      </div>
+      <button class="filtro-limpiar" id="btnLimpiar" onclick="limpiarFiltros()" style="display:none">
+        ✕ Limpiar
+      </button>
+    </div>
+    <!-- contador de resultados -->
+    <p id="filtrosResultado" style="font-size:13px;color:var(--texto-suave);margin-bottom:16px;display:none;"></p>
+
+
+
+
+    <div class="productos-grid" id="prodGrid">
+      <div class="loader">Cargando productos...</div>
+    </div>
+  </div>
+</section>
+<style>
+/* FILTROS AVANZADOS */
+/* Flecha moderna */
+.chevron {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #555;
+  border-bottom: 2px solid #555;
+  transform: translateY(-50%) rotate(45deg);
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+
+/* Animación al hacer focus */
+.filtro-select-wrap select:focus + .chevron {
+  transform: translateY(-50%) rotate(-135deg);
+  border-color: #000;
+}
+.filtros-avanzados {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.filtro-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.filtro-select-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 9px 36px 9px 16px;
+  border-radius: 22px;
+  border: 1.5px solid #d0d0d0;
+  background: #fff;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+  min-width: 140px;
+}
+.filtro-select-wrap select:hover {
+  border-color: #999;
+  background: #fafafa;
+}
+.filtro-select-wrap select:focus {
+  border-color: var(--azul-vivo);
+  box-shadow: 0 0 0 3px rgba(25,118,210,0.1);
+}
+.filtro-select-wrap select.activo {
+  border-color: var(--azul-vivo);
+  background: var(--azul-claro);
+  color: var(--azul-oscuro);
+}
+.filtro-select-wrap .chevron {
+  position: absolute;
+  right: 12px;
+  font-size: 15px;
+  color: #888;
+  pointer-events: none;
+  line-height: 1;
+}
+.filtro-limpiar {
+  padding: 9px 16px;
+  border-radius: 22px;
+  border: 1.5px solid #E53935;
+  background: #fff;
+  color: #E53935;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.filtro-limpiar:hover {
+  background: #E53935;
+  color: #fff;
+}
+@media(max-width:600px) {
+  .filtros-avanzados { gap: 8px; }
+  .filtro-select-wrap select { min-width: 120px; font-size: 12.5px; }
+}
+  .section-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color: #1565C0;
+}
+
+.section-icon{
+  width:100px;
+  height:100px;
+  object-fit:contain;
+}
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- CARRITO LATERAL -->
+<div class="carrito-overlay" id="carritoOverlay" onclick="toggleCarrito()"></div>
+<div class="carrito-panel" id="carritoPanel">
+  <div class="carrito-header">
+    <h3>Mi Carrito</h3>
+    <button onclick="toggleCarrito()" style="background:var(--gris);border:none;padding:6px 10px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;">✕ Cerrar</button>
+  </div>
+  <div class="carrito-items" id="carritoItems"></div>
+  <div class="carrito-footer" id="carritoFooter" style="display:none">
+    <div class="carrito-total"><span>Total:</span><span id="carritoTotal">$0.00</span></div>
+     <button onclick="checkoutWA()" style="width:100%;padding:14px;background:var(--azul);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.2s;margin-top:0;" onmouseover="this.style.background='var(--azul-oscuro)'" onmouseout="this.style.background='var(--azul)'">
+    ✅ Finalizar compra
+  </button>
+    <button onclick="vaciarCarrito()" style="width:100%;margin-top:10px;background:none;border:1.5px solid #E53935;color:#E53935;padding:10px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">Vaciar carrito</button>
+  </div>
+</div>
+
+<!-- MODAL: Mi Perfil -->
+<div class="modal-overlay" id="mPerfil">
+  <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="cerrar('mPerfil')">✕</button>
+    <h2>Mi Perfil</h2>
+    <p class="modal-sub">Edita tus datos personales</p>
+    <div id="perfilContent"></div>
+  </div>
+</div>
+
+<!-- MODAL: Mi Carnet -->
+<div class="modal-overlay" id="mCarnet">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="cerrar('mCarnet')">✕</button>
+    <h2>Carnet de Vacunas</h2>
+    <p class="modal-sub">Gestiona el carnet de vacunas de tu mascota</p>
+    <div id="carnetContent"></div>
+  </div>
+</div>
+
+<!-- MODAL: Notificaciones -->
+<div class="modal-overlay" id="mNotificaciones">
+  <div class="modal" style="max-width:520px;max-height:90vh;overflow-y:auto;">
+    <button class="modal-close" onclick="cerrar('mNotificaciones')">✕</button>
+    <h2>Notificaciones</h2>
+    <p class="modal-sub">Tus cupones y mensajes de Jezreel Vet</p>
+ 
+    <div class="notif-tabs">
+      <button class="notif-tab active" onclick="switchNotifTab('todas',this)">Todas</button>
+      <button class="notif-tab" onclick="switchNotifTab('cupones',this)">🎟️ Cupones</button>
+    </div>
+ 
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+      <button onclick="marcarTodasLeidas()" style="background:none;border:none;color:var(--azul-vivo);font-size:12.5px;font-weight:700;cursor:pointer;">✓ Marcar todas como leídas</button>
+    </div>
+ 
+    <div id="notifList">
+      <p style="color:var(--texto-suave);font-size:14px;text-align:center;padding:20px;">Cargando...</p>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Bienvenida post-login -->
+<div class="modal-overlay" id="mBienvenida">
+  <div class="modal" style="text-align:center;max-width:420px;padding:0;overflow:hidden;">
+    <div class="welcome-hero">
+      <div class="big-icon">🎉</div>
+      <h2 id="mBienvenidaTitulo">¡Bienvenido!</h2>
+      <p id="mBienvenidaSub"></p>
+    </div>
+    <div class="welcome-body">
+      <div id="mBienvenidaMascotaBox" style="background:var(--azul-claro);border-radius:12px;padding:16px;margin-bottom:20px;text-align:left;display:none;">
+        <p style="font-size:13.5px;font-weight:600;color:var(--azul-oscuro);margin-bottom:8px;">Tu mascota:</p>
+        <div id="mBienvenidaMascota" style="font-size:14px;color:var(--texto);"></div>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;" onclick="cerrar('mBienvenida')">¡Explorar Jezreel Vet!</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<section id="sec-Contacto">
+  <div class="section-inner">
+ 
+    <!-- BANNER HERO -->
+    <div class="contacto-hero">
+      <div class="contacto-hero-txt">
+        <h2>
+          ATENCIÓN INMEDIATA
+          <strong>Y SIN DEMORAS</strong>
+        </h2>
+      </div>
+      <div class="contacto-hero-img">
+        <div class="contacto-hero-circle"></div>
+        <img src="Imagenes/Gato.png" alt="Gato Jezreel Vet"
+             onerror="this.style.opacity='0.3';">
+      </div>
+    </div>
+ 
+    <!-- TARJETAS -->
+    <div class="contacto-cards">
+ 
+      <!-- Chatea con nosotros → WhatsApp -->
+      <div class="contacto-card" onclick="window.open('https://wa.me/593984586114','_blank')">
+        <div class="contacto-card-icon">
+          <!-- Icono burbuja chat -->
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="24" fill="#d7ede0"/>
+            <path d="M14 16h20a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H18l-6 4v-4a2 2 0 0 1-2-2V18a2 2 0 0 1 2-2Z" fill="#1a9e6e"/>
+            <circle cx="19" cy="23" r="2" fill="white"/>
+            <circle cx="24" cy="23" r="2" fill="white"/>
+            <circle cx="29" cy="23" r="2" fill="white"/>
+          </svg>
+        </div>
+        <span>Chatea con nosotros</span>
+      </div>
+ 
+      <!-- Preguntas frecuentes → scroll a FAQ -->
+      <div class="contacto-card" onclick="document.getElementById('faq-anchor').scrollIntoView({behavior:'smooth'})">
+        <div class="contacto-card-icon">
+          <!-- Icono sobre/email -->
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="24" fill="#d7ede0"/>
+            <rect x="11" y="16" width="26" height="18" rx="2" fill="#1a9e6e"/>
+            <path d="M11 18l13 9 13-9" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span>Preguntas frecuentes</span>
+      </div>
+ 
+    </div>
+ 
+    <!-- FAQ -->
+    <div class="faq-section" id="faq-anchor">
+      <h2 class="faq-title">Preguntas Frecuentes</h2>
+ 
+      <div class="faq-list">
+ 
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            ¿Cómo puedo agendar una cita?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-body">
+            <p>Puedes agendar tu cita directamente desde la sección "Citas" de nuestra página web. Completa el formulario con tus datos y los de tu mascota, selecciona el servicio y te enviaremos la confirmación por WhatsApp.</p>
+            <p>También puedes escribirnos directamente al WhatsApp <strong>+593 98 458 6114</strong> y con gusto te ayudamos.</p>
+          </div>
+        </div>
+ 
+ 
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            ¿Cuáles son los horarios de atención?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-body">
+            <p><strong>Lunes a Sábado:</strong> 9:30 – 19:00</p>
+            <p>Para urgencias fuera del horario habitual, escríbenos por WhatsApp y evaluaremos la situación de tu mascota.</p>
+          </div>
+        </div>
+ 
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            ¿Cómo funciona el programa de estrellas?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-body">
+            <p>Cada vez que visitas Jezreel Vet acumulas estrellas de fidelidad. Al llegar a <strong>10 estrellas</strong> recibes un <strong>Un Gran de Descuento</strong> en tu próxima consulta o servicio.</p>
+            <p>Puedes ver tus estrellas en la barra de navegación una vez que hayas iniciado sesión.</p>
+          </div>
+        </div>
+ 
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            ¿Puedo comprar productos en línea?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-body">
+            <p>Sí. Desde la sección <strong>Pet Store</strong> puedes agregar productos al carrito y enviar tu pedido directamente por WhatsApp. Un asesor te confirmará disponibilidad y coordina la entrega o retiro en nuestra clínica.</p>
+          </div>
+        </div>
+ 
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            ¿Dónde están ubicados?
+            <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-body">
+            <p><strong>Fertisa:</strong> C. 54 S-O - Don San Juan Bosco — Tel: +593 98 458 6114</p>
+            
+          </div>
+        </div>
+ 
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="f-logo-col">
+     <div style="display:flex;justify-content:center;align-items:center;gap:10px;">
+  <img src="Imagenes/Logo.png" alt="Jezreel Vet" class="f-logo-img" style="height:80px !important; width:auto !important;"
+     onerror="this.style.display='none';document.getElementById('fLogoFallback').style.display='block';">
+        <span id="fLogoFallback" style="display:none;font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:#fff;">Jezreel<span style="color:var(--acento);">Vet</span></span>
+      </div>
+      
+    </div>
+    <div class="f-divider-v"></div>
+    <div class="f-links-col">
+      <a href="#" onclick="ir('inicio');return false;">Home</a>
+      <a href="#" onclick="ir('quienes');return false;">Quiénes somos</a>
+      <a href="#" onclick="ir('vacunas');return false;">Vacunas</a>
+      <a href="#" onclick="ir('citas');return false;">Citas</a>
+      <a href="#" onclick="ir('tienda');return false;">Tienda</a>
+    </div>
+    <div class="f-divider-v"></div>
+    <div class="f-contact-col">
+      <div class="f-contact-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        C. 54 S-O - Don San Juan Bosco
+      </div>
+      <div class="f-contact-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.49 12a19.79 19.79 0 01-3.07-8.67A2 2 0 013.4 1.28h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.91 9a16 16 0 006.06 6.06l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        +593 98 458 6114
+      </div>
+    
+      <div class="f-social">
+        <a href="https://wa.me/593984586114" target="_blank" class="wa" title="WhatsApp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.59-1.377A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.37l-.36-.214-3.713.776.79-3.603-.235-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/jezreelvet?igsh=NnJnMWw3M3dtYWgy" target="_blank" class="ig" title="Instagram @jezreelvet">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="f-bottom">© 2026 JezreelVet — Diseñado con amor para las mascotas</div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN
+// ══════════════════════════════════════════════════════════════════════════════
+const API = 'http://localhost:5000'; // ← cambia por tu URL de producción
+const WA  = '593958601411';
+
+// ══════════════════════════════════════════════════════════════════════════════
+// AUTH — sesión del usuario
+// ══════════════════════════════════════════════════════════════════════════════
+let currentUser = null;
+
+function getToken() { return localStorage.getItem('jv_token'); }
+function getStoredUser() { return JSON.parse(localStorage.getItem('jv_user') || 'null'); }
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() };
+}
+function authHeadersNoContent() {
+  return { 'Authorization': 'Bearer ' + getToken() };
+}
+
+async function apiFetch(url, opts = {}) {
+  try {
+    const res  = await fetch(API + url, opts);
+    return res.json();
+  } catch (e) {
+    console.warn('API no disponible:', e.message);
+    return { ok: false, error: 'Sin conexión' };
+  }
+}
+
+async function initSesion() {
+
+  // ── Redirigir a tienda si viene desde checkout (sin bienvenida) ──
+  if (localStorage.getItem('jv_ir_tienda') === '1') {
+    localStorage.removeItem('jv_ir_tienda');
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-tienda').classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('nl-tienda')?.classList.add('active');
+    cargarTienda();
+    // Restaurar sesión sin mostrar bienvenida
+    const token2 = getToken(); const stored2 = getStoredUser();
+    if (token2 && stored2 && stored2.rol !== 'admin') {
+      const data2 = await apiFetch('/api/auth/me', { headers: authHeaders() });
+      if (data2.ok) {
+        currentUser = data2.user;
+        mostrarNavConSesion();
+        actualizarNavVacunas();
+        await cargarFichaMascota();
+      } else { mostrarNavSinSesion(); }
+    } else { mostrarNavSinSesion(); }
+    return; // ← sale aquí, nunca abre modal de bienvenida
+  }
+
+  // ── Flujo normal ──
+  const token = getToken();
+  const stored = getStoredUser();
+  if (!token || !stored) { mostrarNavSinSesion(); return; }
+  if (stored.rol === 'admin') { window.location.href = 'admin.html'; return; }
+  const data = await apiFetch('/api/auth/me', { headers: authHeaders() });
+  if (!data.ok) { doLogout(); return; }
+  currentUser = data.user;
+  mostrarNavConSesion();
+  mostrarBienvenida();
+  actualizarNavVacunas();
+  await cargarFichaMascota();
+}
+
+function mostrarNavConSesion() {
+  const u = currentUser;
+  document.getElementById('userDropdown').style.display = 'flex';
+  document.getElementById('btnLogin').style.display    = 'none';
+  document.getElementById('userNameNav').textContent   = u.nombre?.split(' ')[0] || 'Usuario';
+  document.getElementById('userAvatar').textContent    = (u.nombre || 'U')[0].toUpperCase();
+  renderNavStars();
+}
+
+function mostrarNavSinSesion() {
+  document.getElementById('userDropdown').style.display = 'none';
+  document.getElementById('btnLogin').style.display    = 'block';
+}
+
+function mostrarBienvenida() {
+  const u = currentUser;
+  document.getElementById('mBienvenidaTitulo').textContent = '¡Hola, ' + (u.nombre?.split(' ')[0] || '') + '!';
+  document.getElementById('mBienvenidaSub').textContent    = 'Bienvenido de nuevo a Jezreel Vet 🐾';
+  if (u.mascota_nombre) {
+    document.getElementById('mBienvenidaMascotaBox').style.display = 'block';
+    document.getElementById('mBienvenidaMascota').innerHTML =
+      '<strong>' + u.mascota_nombre + '</strong><br>' +
+      '<span style="font-size:13px;color:var(--texto-suave)">' +
+      (u.especie || '') + (u.raza ? ' · ' + u.raza : '') + '</span>';
+  }
+  abrirModal('mBienvenida');
+}
+
+function doLogout() {
+  localStorage.removeItem('jv_token');
+  localStorage.removeItem('jv_user');
+  currentUser = null;
+  mostrarNavSinSesion();
+  document.getElementById('navStars').innerHTML = '';
+  toast('Sesión cerrada', 'naranja');
+  document.getElementById('navVacunasLabel').textContent = 'Mi Mascota';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ══════════════════════════════════════════════════════════════════════════════
+let pasoActual = 1;
+let servSel    = null;
+let subOpSel   = null;
+let _servicios = [];
+
+function ir(sec) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + sec).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const nl = document.getElementById('nl-' + sec);
+  if (nl) nl.classList.add('active');
+  document.getElementById('navLinks').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (sec === 'citas')   { cargarServicios(); rellenarCitaConDatos(); }
+  if (sec === 'vacunas') { cargarVacunas(); cargarFichaMascota(); }
+  if (sec === 'tienda')    cargarTienda();
+}
+
+function toggleMenu() { document.getElementById('navLinks').classList.toggle('open'); }
+
+function toggleUserMenu() {
+  document.getElementById('userMenu').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const dd = document.getElementById('userDropdown');
+  if (dd && !dd.contains(e.target)) {
+    document.getElementById('userMenu')?.classList.remove('open');
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ESTRELLAS EN NAV
+// ══════════════════════════════════════════════════════════════════════════════
+function renderNavStars() {
+  const c = document.getElementById('navStars');
+  if (!currentUser) { c.innerHTML = ''; return; }
+  c.innerHTML = '';
+  for (let i = 1; i <= 10; i++) {
+    const s = document.createElement('span');
+    s.className = 'nav-star ' + (i <= currentUser.estrellas ? 'llena' : '');
+    s.textContent = '★';
+    c.appendChild(s);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// MODALES
+// ══════════════════════════════════════════════════════════════════════════════
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrar(id)     { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) cerrar(o.id); });
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PERFIL DEL USUARIO
+// ══════════════════════════════════════════════════════════════════════════════
+function abrirMiPerfil() {
+  cerrar('mBienvenida');
+  document.getElementById('userMenu').classList.remove('open');
+  if (!currentUser) { window.location.href = 'login.html'; return; }
+  renderPerfil();
+  abrirModal('mPerfil');
+}
+
+function renderPerfil() {
+  const u = currentUser;
+  document.getElementById('perfilContent').innerHTML = `
+    <div class="form-row">
+      <div class="form-group"><label>Nombre</label><input type="text" id="pf_nombre" value="${u.nombre||''}" placeholder="Tu nombre"></div>
+      <div class="form-group"><label>Cédula</label><input type="text" id="pf_cedula" value="${u.cedula||''}" placeholder="Cédula"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Celular</label><input type="tel" id="pf_tel" value="${u.telefono||''}" placeholder="Celular"></div>
+      <div class="form-group"><label>Fecha de nacimiento</label><input type="date" id="pf_fnac" value="${u.fecha_nacimiento||''}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Email</label><input type="email" id="pf_email" value="${u.email||''}" placeholder="Email"></div>
+      <div class="form-group"><label>Dirección</label><input type="text" id="pf_dir" value="${u.direccion||''}" placeholder="Dirección"></div>
+    </div>
+    <hr style="border:none;border-top:1px solid var(--borde);margin:4px 0 16px;">
+    <div class="form-group"><label>Nombre de la mascota</label><input type="text" id="pf_mascota" value="${u.mascota_nombre||''}" placeholder="Mascota"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Especie</label>
+        <select id="pf_especie">
+          <option value="">Seleccionar</option>
+          <option ${u.especie==='Canino'?'selected':''}>Canino</option>
+          <option ${u.especie==='Felino'?'selected':''}>Felino</option>
+          <option ${u.especie==='Otro'?'selected':''}>Otro</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Raza</label><input type="text" id="pf_raza" value="${u.raza||''}" placeholder="Raza"></div>
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center;margin-top:8px;" onclick="guardarPerfil()">Guardar cambios</button>`;
+}
+
+async function guardarPerfil() {
+  if (!currentUser) return;
+  const body = {
+    nombre:           document.getElementById('pf_nombre').value.trim(),
+    cedula:           document.getElementById('pf_cedula').value.trim(),
+    telefono:         document.getElementById('pf_tel').value.trim(),
+    fecha_nacimiento: document.getElementById('pf_fnac').value,
+    direccion:        document.getElementById('pf_dir').value.trim(),
+    mascota_nombre:   document.getElementById('pf_mascota').value.trim(),
+    especie:          document.getElementById('pf_especie').value,
+    raza:             document.getElementById('pf_raza').value.trim(),
+  };
+  const data = await apiFetch(`/api/usuarios/${currentUser.id}`, {
+    method: 'PUT', headers: authHeaders(), body: JSON.stringify(body)
+  });
+  if (!data.ok) { toast(data.error || 'Error al guardar', 'naranja'); return; }
+  Object.assign(currentUser, {
+    nombre: body.nombre, cedula: body.cedula, telefono: body.telefono,
+    fecha_nacimiento: body.fecha_nacimiento, direccion: body.direccion,
+    mascota_nombre: body.mascota_nombre, especie: body.especie, raza: body.raza
+  });
+  document.getElementById('userNameNav').textContent = currentUser.nombre?.split(' ')[0] || '';
+  document.getElementById('userAvatar').textContent  = (currentUser.nombre || 'U')[0].toUpperCase();
+  cerrar('mPerfil');
+  toast('Perfil actualizado correctamente', 'verde');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CARNET DE VACUNAS
+// ══════════════════════════════════════════════════════════════════════════════
+let _nuevoCarnetFile = null;
+
+function abrirMiCarnet() {
+  document.getElementById('userMenu').classList.remove('open');
+  if (!currentUser) { window.location.href = 'login.html'; return; }
+  renderCarnetModal();
+  abrirModal('mCarnet');
+}
+
+function renderCarnetModal() {
+  const u = currentUser;
+  document.getElementById('carnetContent').innerHTML = `
+    ${u.carnet_url ? `
+      <div style="border-radius:10px;overflow:hidden;border:1px solid var(--borde);margin-bottom:14px;">
+        <img src="${u.carnet_url}" style="width:100%;max-height:260px;object-fit:contain;display:block;background:#f0f0f0;">
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="btn-primary" style="background:#FFEBEE;color:#C62828;flex:1;" onclick="eliminarCarnet()">🗑 Eliminar</button>
+        <a href="${u.carnet_url}" download="carnet_vacunas.png"
+           style="flex:1;background:var(--azul-noche);color:#fff;border-radius:10px;padding:12px;font-size:14px;font-weight:700;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;">
+          ⬇ Descargar
+        </a>
+      </div>` : `<p style="font-size:13.5px;color:var(--texto-suave);margin-bottom:14px;">Sin carnet registrado.</p>`}
+    <div class="upload-zone" onclick="document.getElementById('carnetFile').click()" style="padding:20px;">
+      <input type="file" id="carnetFile" accept="image/*,.pdf" onchange="prevCarnet(event)">
+      <div style="font-size:28px;margin-bottom:6px">📎</div>
+      <p><strong>Haz clic</strong> para ${u.carnet_url ? 'cambiar' : 'subir'} carnet</p>
+      <p style="font-size:11.5px;margin-top:4px;">JPG, PNG o PDF</p>
+    </div>
+    <div class="carnet-preview-img" id="carnetPreviewBox">
+      <img id="carnetPreviewImg" src="" alt="Carnet">
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center;margin-top:14px;" onclick="subirCarnet()">Guardar carnet</button>`;
+}
+
+function prevCarnet(e) {
+  const file = e.target.files[0]; if (!file) return;
+  _nuevoCarnetFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.getElementById('carnetPreviewImg').src = ev.target.result;
+    document.getElementById('carnetPreviewBox').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function subirCarnet() {
+  if (!_nuevoCarnetFile) { toast('Selecciona un archivo primero'); return; }
+  const fd = new FormData();
+  fd.append('carnet', _nuevoCarnetFile);
+  const data = await apiFetch(`/api/usuarios/${currentUser.id}/carnet`, {
+    method: 'POST', headers: authHeadersNoContent(), body: fd
+  });
+  if (!data.ok) { toast(data.error || 'Error al subir', 'naranja'); return; }
+  currentUser.carnet_url = data.url;
+  _nuevoCarnetFile = null;
+  cerrar('mCarnet');
+  toast('Carnet subido correctamente', 'verde');
+}
+
+async function eliminarCarnet() {
+  if (!confirm('¿Eliminar el carnet de vacunas?')) return;
+  const data = await apiFetch(`/api/usuarios/${currentUser.id}/carnet`, {
+    method: 'DELETE', headers: authHeaders()
+  });
+  if (!data.ok) { toast(data.error || 'Error', 'naranja'); return; }
+  currentUser.carnet_url = null;
+  renderCarnetModal();
+  toast('Carnet eliminado', 'naranja');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// VACUNAS — carga desde API
+// ══════════════════════════════════════════════════════════════════════════════
+const vcClases = ['vc1','vc2','vc3','vc4','vc5','vc6','vc7','vc8'];
+const animalColors = {
+  perro: { bg:'#E3F2FD', color:'#1565C0', label:'Perro' },
+  gato:  { bg:'#F3E5F5', color:'#6A1B9A', label:'Gato'  },
+  ambos: { bg:'#E8F5E9', color:'#2E7D32', label:'Ambos' },
+  otro:  { bg:'#ECEFF1', color:'#37474F', label:'Otro'  },
+};
+let _vacunas = [];
+let vacunaFiltro = 'todos';
+
+async function cargarVacunas() {
+  const data = await apiFetch('/api/vacunas');
+  _vacunas = data.vacunas || [];
+  if (currentUser?.especie) {
+    const map = { Canino:'perro', Felino:'gato' };
+    vacunaFiltro = map[currentUser.especie] || 'todos';
+  }
+  renderVacunasFiltros();
+  renderVacunasGrid();
+  const sub = document.getElementById('vacunas-sub');
+  if (currentUser?.mascota_nombre) {
+    sub.textContent = 'Vacunas para ' + currentUser.mascota_nombre + ' (' + (currentUser.especie || 'tu mascota') + ')';
+  } else {
+    sub.textContent = 'Vacunas disponibles para tu mascota';
+  }
+}
+
+function renderVacunasFiltros() {
+  document.getElementById('vacunasFiltros').innerHTML = [
+    ['todos','Todas'], ['perro','Perro'], ['gato','Gato'], ['ambos','Genérica']
+  ].map(([f, l]) =>
+    `<button class="vac-filter-btn ${vacunaFiltro===f?'active':''}" onclick="filtrarVacunas('${f}',this)">${l}</button>`
+  ).join('');
+}
+
+function filtrarVacunas(f, btn) {
+  vacunaFiltro = f;
+  document.querySelectorAll('.vac-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderVacunasGrid();
+}
+
+function renderVacunasGrid() {
+  const lista = vacunaFiltro === 'todos'
+    ? _vacunas
+    : _vacunas.filter(v => v.animal === vacunaFiltro || v.animal === 'ambos');
+  document.getElementById('vacunasGrid').innerHTML = lista.map((v, i) => {
+    const ac = animalColors[v.animal] || animalColors.otro;
+    return `<div class="vacuna-card ${vcClases[i % vcClases.length]}">
+      <div class="vacuna-icon">${v.emoji || '💉'}</div>
+      <h3>${v.nombre} <span class="vacuna-animal-tag" style="background:${ac.bg};color:${ac.color}">${ac.label}</span></h3>
+      <p>${v.descripcion || ''}</p>
+      <span class="ci-badge b-azul">${v.frecuencia || 'Anual'} — $${Number(v.precio).toFixed(2)}</span>
+    </div>`;
+  }).join('') || '<p style="color:var(--texto-suave);font-size:14px;padding:20px 0;">Sin vacunas en esta categoría.</p>';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CITAS — carga servicios desde API
+// ══════════════════════════════════════════════════════════════════════════════
+async function cargarServicios() {
+  const data = await apiFetch('/api/servicios');
+  _servicios = data.servicios || [];
+  renderServicios();
+}
+
+function renderServicios() {
+  const grid = document.getElementById('serviciosGrid');
+  if (!grid) return;
+  grid.innerHTML = _servicios.map((s, i) => `
+    <div class="serv-opcion" onclick="selServicio(this,${i})">
+      <span>${s.emoji || '🐾'}</span>
+      <span>${s.nombre}</span>
+      <span class="serv-precio">$${Number(s.precio).toFixed(2)}</span>
+    </div>`).join('') || '<p style="color:var(--texto-suave);font-size:13px;">Cargando servicios...</p>';
+  servSel = null; subOpSel = null;
+  const msg = document.getElementById('servMsg');
+  if (msg) { msg.classList.remove('vis'); msg.textContent = ''; }
+  document.getElementById('subOpBox').style.display = 'none';
+}
+
+function selServicio(el, i) {
+  document.querySelectorAll('.serv-opcion').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  servSel = _servicios[i];
+  const msg = document.getElementById('servMsg');
+  msg.textContent = servSel.mensaje || '';
+  msg.classList.add('vis');
+  const subBox  = document.getElementById('subOpBox');
+  const subCont = document.getElementById('subOpciones');
+  const subs    = servSel.subOpciones || [];
+  if (subs.length > 0) {
+    subCont.innerHTML = subs.map((op, j) =>
+      `<div class="sub-op" onclick="selSubOp(this,${j})">
+        ${op.nombre}<span class="sub-op-precio">$${Number(op.precio).toFixed(2)}</span>
+      </div>`
+    ).join('');
+    subBox.style.display = 'block';
+    subOpSel = null;
+  } else {
+    subBox.style.display = 'none';
+    subOpSel = null;
+  }
+}
+
+function selSubOp(el, j) {
+  document.querySelectorAll('.sub-op').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  subOpSel = (servSel.subOpciones || [])[j];
+}
+
+function rellenarCitaConDatos() {
+  if (!currentUser) return;
+  document.getElementById('c_nombre').value = currentUser.nombre || '';
+  document.getElementById('c_tel').value    = currentUser.telefono || '';
+  document.getElementById('c_email').value  = currentUser.email || '';
+  document.getElementById('c_dir').value    = currentUser.direccion || '';
+  document.getElementById('m_nombre').value = currentUser.mascota_nombre || '';
+  document.getElementById('m_raza').value   = currentUser.raza || '';
+  const espMap = { Canino:'Perro', Felino:'Gato' };
+  if (currentUser.especie) document.getElementById('m_especie').value = espMap[currentUser.especie] || 'Otro';
+  const tag = document.getElementById('mascota-tag-cita');
+  if (currentUser.mascota_nombre) {
+    tag.style.display = 'flex';
+    tag.innerHTML = `<div class="mascota-tag">🐾 ${currentUser.mascota_nombre}${currentUser.especie?' · '+currentUser.especie:''}</div>`;
+  }
+}
+
+function irPaso(n) {
+  document.getElementById('paso' + pasoActual).style.display = 'none';
+  document.getElementById('paso' + n).style.display = 'block';
+  document.getElementById('step' + pasoActual).className = 'form-step done';
+  document.getElementById('step' + n).className = 'form-step active';
+  pasoActual = n;
+  if (n === 3) renderServicios();
+}
+
+async function enviarCita() {
+  const nombre  = document.getElementById('c_nombre').value.trim();
+  const tel     = document.getElementById('c_tel').value.trim();
+  const mascota = document.getElementById('m_nombre').value.trim();
+  const especie = document.getElementById('m_especie').value;
+  const fecha   = document.getElementById('c_fecha').value;
+  const notas   = document.getElementById('c_notas').value;
+  if (!nombre || !mascota || !servSel) { toast('Completa todos los campos requeridos'); return; }
+  const fechaFmt = fecha
+    ? new Date(fecha).toLocaleString('es-EC', { dateStyle:'long', timeStyle:'short' })
+    : 'Por confirmar';
+  let servicioTexto = servSel.nombre;
+  let precioTexto   = '$' + Number(servSel.precio).toFixed(2);
+  if (subOpSel) {
+    servicioTexto += ' — ' + subOpSel.nombre;
+    precioTexto    = '$' + Number(subOpSel.precio).toFixed(2);
+  }
+  if (getToken()) {
+    const data = await apiFetch('/api/citas', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ nombre, telefono: tel, mascota, especie, servicio: servicioTexto, precio: precioTexto, fecha: fechaFmt, notas: notas || 'Ninguna' })
+    });
+    if (data.ok) {
+      if (data.wa_link) window.open(data.wa_link, '_blank');
+      toast('¡Cita enviada por WhatsApp!', 'verde');
+      return;
+    }
+  }
+  const msg = `🐾 *Nueva Cita - Jezreel Vet*\n\n👤 *Propietario:* ${nombre}\n📞 *Teléfono:* ${tel}\n🐶 *Mascota:* ${mascota} (${especie})\n🩺 *Servicio:* ${servicioTexto}\n💵 *Precio estimado:* ${precioTexto}\n📅 *Fecha:* ${fechaFmt}\n📝 *Notas:* ${notas || 'Ninguna'}\n\n¡Gracias por elegir Jezreel Vet! 💙`;
+  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+  toast('Solicitud enviada por WhatsApp', 'verde');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TIENDA — Filtros avanzados (orden + categoría + subcategoría + marca)
+// ══════════════════════════════════════════════════════════════════════════════
+let _productos  = [];
+let _categorias = [];
+let _subcats    = [];
+let _marcas     = [];
+
+// Estado de filtros activos
+let _filtros = { orden: '', cat: '', sub: '', marca: '' };
+
+async function cargarTienda() {
+  // Carga en paralelo: productos + categorías + subcategorías + marcas
+  const [pd, cd, sd, md] = await Promise.all([
+    apiFetch('/api/productos'),
+    apiFetch('/api/categorias'),
+    apiFetch('/api/subcategorias'),
+    apiFetch('/api/marcas'),
+  ]);
+  _productos  = pd.productos  || [];
+  _categorias = cd.categorias || [];
+  _subcats    = sd.subcategorias || [];
+  _marcas     = md.marcas     || [];
+
+  poblarSelects();
+  renderProductos(_productos);
+}
+
+function poblarSelects() {
+  const selCat = document.getElementById('filtroCat');
+  if (selCat) {
+    selCat.innerHTML = '<option value="">Categorías</option>' +
+      _categorias.map(c => `<option value="${c.id}">${c.emoji || ''} ${c.nombre}</option>`).join('');
+  }
+  const selSub = document.getElementById('filtroSub');
+  if (selSub) {
+    selSub.innerHTML = '<option value="">Subcategorías</option>' +
+      _subcats.map(s => `<option value="${s.id}">${s.emoji || ''} ${s.nombre}</option>`).join('');
+  }
+  const selMarca = document.getElementById('filtroMarca');
+  if (selMarca) {
+    selMarca.innerHTML = '<option value="">Marcas</option>' +
+      _marcas.map(m => `<option value="${m.id}">${m.nombre}</option>`).join('');
+  }
+  mostrarBannerCategoria(null);
+}
+
+function aplicarFiltros() {
+  _filtros.orden = document.getElementById('filtroOrden').value;
+  _filtros.cat   = document.getElementById('filtroCat').value;
+  _filtros.sub   = document.getElementById('filtroSub').value;
+  _filtros.marca = document.getElementById('filtroMarca').value;
+
+  // ── BANNER según categoría seleccionada ──
+if (_filtros.cat) {
+    const selCat  = document.getElementById('filtroCat');
+    const textoOp = selCat.options[selCat.selectedIndex].text.toLowerCase();
+
+    const claves = Object.keys(BANNERS_ANIMAL).filter(k => k !== 'general');
+    const match  = claves.find(k => textoOp.includes(k));
+    mostrarBannerCategoria(match || null);
+  } else {
+    mostrarBannerCategoria(null);
+  }
+  // Marcar selects activos visualmente
+  ['filtroOrden','filtroCat','filtroSub','filtroMarca'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('activo', el.value !== '');
+  });
+
+  // Mostrar/ocultar botón limpiar
+  const hayFiltro = Object.values(_filtros).some(v => v !== '');
+  const btnLimpiar = document.getElementById('btnLimpiar');
+  if (btnLimpiar) btnLimpiar.style.display = hayFiltro ? 'inline-block' : 'none';
+
+  // Filtrar en frontend
+  let lista = [..._productos];
+  if (_filtros.cat)   lista = lista.filter(p => String(p.categoria_id) === _filtros.cat);
+  if (_filtros.sub)   lista = lista.filter(p => String(p.subcategoria_id) === _filtros.sub);
+  if (_filtros.marca) lista = lista.filter(p => String(p.marca_id) === _filtros.marca);
+  if (_filtros.orden === 'precio_asc')  lista.sort((a,b) => a.precio - b.precio);
+  if (_filtros.orden === 'precio_desc') lista.sort((a,b) => b.precio - a.precio);
+
+  // Contador de resultados
+  const res = document.getElementById('filtrosResultado');
+  if (res) {
+    if (hayFiltro) {
+      res.style.display = 'block';
+      res.textContent = lista.length + (lista.length === 1 ? ' producto encontrado' : ' productos encontrados');
+    } else {
+      res.style.display = 'none';
+    }
+  }
+
+  renderProductos(lista);
+}
+function limpiarFiltros() {
+  ['filtroOrden','filtroCat','filtroSub','filtroMarca'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('activo'); }
+  });
+  _filtros = { orden: '', cat: '', sub: '', marca: '' };
+  const btnLimpiar = document.getElementById('btnLimpiar');
+  if (btnLimpiar) btnLimpiar.style.display = 'none';
+  const res = document.getElementById('filtrosResultado');
+  if (res) res.style.display = 'none';
+  renderProductos(_productos);
+}
+
+function renderProductos(lista) {
+  document.getElementById('prodGrid').innerHTML = lista.length
+    ? lista.map(p => {
+        const sc = p.stock === 0 ? 's-out' : p.stock < 5 ? 's-low' : 's-ok';
+        const st = p.stock === 0 ? 'Sin stock' : p.stock < 5 ? 'Solo ' + p.stock + ' disp.' : p.stock + ' en stock';
+        const catLabel = [
+          p.categoria_emoji || '',
+          p.categoria_nombre || p.categoria || '',
+          p.subcategoria_nombre ? '· ' + (p.subcategoria_emoji || '') + ' ' + p.subcategoria_nombre : '',
+        ].filter(Boolean).join(' ').trim();
+        return `<div class="producto-card">
+          <div class="producto-img">
+            ${p.img_url ? `<img src="${p.img_url}" alt="${p.nombre}">` : '<span style="font-size:11px;color:#aaa">Sin imagen</span>'}
+          </div>
+          <div class="producto-body">
+            <div class="prod-cat">${catLabel}</div>
+            <div class="prod-nombre">${p.nombre}</div>
+            ${p.marca_nombre ? `<div style="font-size:11.5px;color:var(--texto-suave);margin-bottom:6px;">🔖 ${p.marca_nombre}</div>` : ''}
+            <div class="prod-precio">$${Number(p.precio).toFixed(2)}</div>
+            <div class="prod-stock"><span class="s-dot ${sc}"></span>${st}</div>
+            <button class="btn-reservar" ${p.stock === 0 ? 'disabled' : ''} onclick="agregarAlCarrito(${p.id})">
+              ${p.stock === 0 ? 'Sin disponibilidad' : 'Agregar al carrito'}
+            </button>
+          </div>
+        </div>`;
+      }).join('')
+    : '<p style="color:var(--texto-suave);font-size:14px;padding:20px 0;grid-column:1/-1;">No hay productos con estos filtros.</p>';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CARRITO
+// ══════════════════════════════════════════════════════════════════════════════
+let carrito = [];
+
+function toggleCarrito() {
+  document.getElementById('carritoPanel').classList.toggle('open');
+  document.getElementById('carritoOverlay').classList.toggle('open');
+  renderCarrito();
+}
+
+function agregarAlCarrito(id) {
+  const p = _productos.find(x => x.id === id);
+  if (!p || p.stock === 0) return;
+  const ex = carrito.find(x => x.id === id);
+  if (ex) ex.qty = Math.min(ex.qty + 1, p.stock);
+  else carrito.push({ id: p.id, nombre: p.nombre, precio: Number(p.precio), img_url: p.img_url, qty: 1, maxStock: p.stock });
+  actualizarBadge();
+  toast(p.nombre + ' agregado al carrito', 'verde');
+}
+
+function actualizarBadge() {
+  document.getElementById('cartBadge').textContent = carrito.reduce((a, i) => a + i.qty, 0);
+}
+
+function renderCarrito() {
+  const cont   = document.getElementById('carritoItems');
+  const footer = document.getElementById('carritoFooter');
+  if (!carrito.length) {
+    cont.innerHTML = '<div class="carrito-empty"><div style="font-size:48px;margin-bottom:12px">🛒</div><p>Tu carrito está vacío</p></div>';
+    footer.style.display = 'none';
+    return;
+  }
+  cont.innerHTML = carrito.map(item => `
+    <div class="carrito-item">
+      <div class="carrito-item-img">
+        ${item.img_url ? `<img src="${item.img_url}" alt="${item.nombre}">` : '📦'}
+      </div>
+      <div class="carrito-item-info">
+        <strong>${item.nombre}</strong>
+        <span>$${item.precio.toFixed(2)} c/u</span>
+        <div class="carrito-item-ctrl">
+          <div class="carrito-qty">
+            <button class="qty-btn" onclick="cambiarQty(${item.id},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="cambiarQty(${item.id},1)">+</button>
+          </div>
+          <span class="carrito-item-precio">$${(item.precio * item.qty).toFixed(2)}</span>
+          <button class="btn-remove" onclick="quitarItem(${item.id})">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+  const total = carrito.reduce((a, i) => a + i.precio * i.qty, 0);
+  document.getElementById('carritoTotal').textContent = '$' + total.toFixed(2);
+  footer.style.display = 'block';
+}
+
+function cambiarQty(id, d) {
+  const item = carrito.find(x => x.id === id); if (!item) return;
+  item.qty = Math.max(1, Math.min(item.qty + d, item.maxStock));
+  renderCarrito(); actualizarBadge();
+}
+function quitarItem(id)  { carrito = carrito.filter(x => x.id !== id); renderCarrito(); actualizarBadge(); }
+function vaciarCarrito() { carrito = []; renderCarrito(); actualizarBadge(); }
+
+async function checkoutWA() {
+  if (!carrito.length) { toast('Tu carrito está vacío'); return; }
+ 
+  // Guardar carrito en localStorage para que checkout.html lo lea
+  localStorage.setItem('jv_carrito', JSON.stringify(
+    carrito.map(i => ({
+      id:      i.id,
+      nombre:  i.nombre,
+      precio:  i.precio,
+      img_url: i.img_url || '',
+      qty:     i.qty,
+      maxStock: i.maxStock
+    }))
+  ));
+ 
+  // Cerrar panel carrito y redirigir
+  document.getElementById('carritoPanel').classList.remove('open');
+  document.getElementById('carritoOverlay').classList.remove('open');
+  window.location.href = 'checkout.html';
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════════════════════
+function toast(msg, tipo = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + tipo + ' show';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3400);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════════════════
+initSesion();
+cargarVacunas();
+cargarTienda();
+cargarServicios();
+
+function mostrarLoginRequerido(contenedorId) {
+  document.getElementById(contenedorId).innerHTML = `
+    <div style="text-align:center;padding:40px 20px;">
+      <div style="font-size:50px;margin-bottom:10px;">🔒</div>
+      <h3 style="margin-bottom:10px;">Inicia sesión para continuar</h3>
+      <p style="color:var(--texto-suave);margin-bottom:20px;">
+        Necesitas una cuenta para acceder a esta sección
+      </p>
+      <button class="btn btn-azul" onclick="window.location.href='login.html'">
+        Iniciar sesión
+      </button>
+    </div>
+  `;
+}
+
+
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+ 
+  // Cierra todos los demás
+  document.querySelectorAll('.faq-item.open').forEach(el => {
+    if (el !== item) el.classList.remove('open');
+  });
+ 
+  // Toggle del actual
+  item.classList.toggle('open', !isOpen);
+}
+
+
+
+// Mapa de banners por animal
+const BANNERS_ANIMAL = {
+  gato:    { img: 'Imagenes/categorias-gatos.png',   titulo: 'Gatos'   },
+  perro:   { img: 'Imagenes/Categorias-general.png', titulo: 'Perros'  },
+  conejo:  { img: 'Imagenes/Categorias-general.png', titulo: 'Conejos' },
+  ave:     { img: 'Imagenes/Categorias-general.png', titulo: 'Aves'    },
+  pez:     { img: 'Imagenes/Categorias-general.png', titulo: 'Peces'   },
+  general: { img: 'Imagenes/Categorias-general.png', titulo: ''        },
+};
+
+function mostrarBannerCategoria(animal) {
+  const banner = document.getElementById('bannerCategoria');
+  const img    = document.getElementById('bannerCategoriaImg');
+  const titulo = document.getElementById('bannerCategoriaTitulo');
+
+  const data = BANNERS_ANIMAL[animal] || BANNERS_ANIMAL['general'];
+  img.src            = data.img;
+  titulo.textContent = data.titulo;
+  banner.style.display = 'block'; // siempre visible
+}
+
+
+function filtrarTiendaAnimal(animal) {
+  ir('tienda');
+  setTimeout(() => {
+    mostrarBannerCategoria(animal);
+
+    const selCat = document.getElementById('filtroCat');
+    if (!selCat) return;
+    const opcion = Array.from(selCat.options).find(o =>
+      o.text.toLowerCase().includes(animal)
+    );
+    if (opcion) {
+      selCat.value = opcion.value;
+      aplicarFiltros();
+    }
+  }, 500);
+}
+</script>
+<script>
+// ── ESTADO ──
+let _notificaciones = [];
+let _notifTabActual = 'todas';
+let _notifInterval  = null;
+ 
+// ── ABRIR / TABS ──
+async function abrirNotificaciones(){
+  document.getElementById('userMenu').classList.remove('open');
+  await cargarNotificaciones();
+  abrirModal('mNotificaciones');
+}
+ 
+function switchNotifTab(tab, btn){
+  _notifTabActual = tab;
+  document.querySelectorAll('.notif-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderNotifList();
+}
+ 
+// ── CARGAR ──
+async function cargarNotificaciones(){
+  if(!getToken()) return;
+  const d = await apiFetch('/api/notificaciones',{headers:authHeaders()});
+  _notificaciones = d.notificaciones || [];
+  renderNotifList();
+  actualizarBadgeNotif();
+}
+ 
+async function actualizarBadgeNotif(){
+  if(!getToken()) return;
+  const d = await apiFetch('/api/notificaciones/no-leidas',{headers:authHeaders()});
+  const total = d.total || 0;
+  const badge1 = document.getElementById('notifBadgeMenu');
+  const badge2 = document.getElementById('notifBadgeNav');
+  [badge1, badge2].forEach(b=>{
+    if(!b) return;
+    if(total > 0){ b.style.display='flex'; b.textContent=total>9?'9+':total; }
+    else b.style.display='none';
+  });
+}
+ 
+// ── RENDER ──
+function renderNotifList(){
+  const lista = _notifTabActual === 'cupones'
+    ? _notificaciones.filter(n=>n.tipo==='cupon')
+    : _notificaciones;
+ 
+  if(!lista.length){
+    document.getElementById('notifList').innerHTML = `
+      <div style="text-align:center;padding:36px 20px;color:var(--texto-suave);">
+        <div style="font-size:40px;margin-bottom:10px;">🔔</div>
+        <p style="font-size:14px;">Sin ${_notifTabActual==='cupones'?'cupones':'notificaciones'} por ahora</p>
+      </div>`;
+    return;
+  }
+ 
+  document.getElementById('notifList').innerHTML = lista.map(n => {
+    const fecha = new Date(n.created_at).toLocaleDateString('es-EC',{day:'2-digit',month:'short',year:'numeric'});
+    const icono = n.tipo==='cupon' ? '🎟️' : 'ℹ️';
+    const noLeida = !n.leida;
+ 
+    // Si tiene cupón, mostrar la tarjeta visual del cupón
+    let cuponHtml = '';
+    if(n.tipo === 'cupon' && n.cupon_id){
+      cuponHtml = renderCuponCard(n);
+    }
+ 
+    return `<div class="notif-item ${noLeida?'no-leida':''}" id="notif-${n.id}" onclick="leerNotif(${n.id})">
+      ${noLeida ? '<div class="notif-dot"></div>' : ''}
+      <div class="notif-item-icon">${icono}</div>
+      <div class="notif-item-body">
+        <div class="notif-item-titulo">${n.titulo}</div>
+        <div class="notif-item-msg">${n.mensaje.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>
+        ${cuponHtml}
+        <div class="notif-item-fecha">${fecha}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+ 
+function renderCuponCard(notif){
+  // Extraer código del mensaje: busca patrón JV-XXXX
+  const codigoMatch = notif.mensaje.match(/JV-[A-Z0-9]+/);
+  const codigo = codigoMatch ? codigoMatch[0] : '???';
+  // Extraer % del mensaje
+  const pctMatch = notif.mensaje.match(/(\d+)%/);
+  const pct = pctMatch ? pctMatch[1] : '?';
+  // Determinar tipo por el título
+  const esPelq = notif.titulo.toLowerCase().includes('peluq');
+  const tipo = esPelq ? 'peluqueria' : 'tienda';
+  const tipoLabel = esPelq ? 'Cupón de descuento de Peluquería' : 'Cupón de descuento de Tienda';
+  const icono = esPelq ? '✂️' : '🛍️';
+ 
+  return `<div class="cupon-card ${tipo}" style="margin:10px 0 6px;">
+    <div class="cupon-dots-l"></div>
+    <div class="cupon-card-icon">${icono}</div>
+    <div class="cupon-card-body">
+      <h4>${tipoLabel}</h4>
+      <div class="cupon-card-codigo">${codigo}</div>
+      <div class="cupon-card-exp">Preséntalo al llegar a Jezreel Vet</div>
+    </div>
+    <div class="cupon-card-pct">
+      <div class="big">${pct}</div>
+      <div class="lbl">%OFF</div>
+    </div>
+    <div class="cupon-dots-r"></div>
+  </div>`;
+}
+ 
+async function leerNotif(id){
+  const n = _notificaciones.find(x=>x.id===id);
+  if(!n || n.leida) return;
+  await apiFetch(`/api/notificaciones/${id}/leer`,{method:'PATCH',headers:authHeaders()});
+  n.leida = 1;
+  renderNotifList();
+  actualizarBadgeNotif();
+}
+ 
+async function marcarTodasLeidas(){
+  await apiFetch('/api/notificaciones/leer-todas',{method:'PATCH',headers:authHeaders()});
+  _notificaciones.forEach(n=>n.leida=1);
+  renderNotifList();
+  actualizarBadgeNotif();
+}
+ 
+// ── POLLING cada 60 segundos para nuevas notificaciones ──
+function iniciarPollingNotif(){
+  if(!getToken()) return;
+  actualizarBadgeNotif();
+  _notifInterval = setInterval(actualizarBadgeNotif, 60000);
+}
+ 
+// ══════════════════════════════════════════════════════════════════════════
+// FICHA MASCOTA — lógica completa
+// ══════════════════════════════════════════════════════════════════════════
+ 
+let _fichaData = null;  // datos actuales de la ficha
+ 
+async function cargarFichaMascota() {
+  const token = getToken();
+ 
+  // Sin sesión → mostrar banner de login
+  if (!token || !currentUser) {
+    document.getElementById('fichaView').style.display = 'block';
+    document.getElementById('fichaSinSesion').style.display = 'block';
+    document.getElementById('fichaEditBtn').style.display = 'none';
+    document.getElementById('fichaNombreTxt').textContent = 'Ficha de mi Mascota';
+    document.getElementById('fichaSubTxt').textContent = 'Inicia sesión para ver tu ficha';
+    return;
+  }
+ 
+  // Cargar ficha desde API
+  const data = await apiFetch('/api/ficha-mascota', { headers: authHeaders() });
+  _fichaData = data.ficha || {};
+ 
+  renderFichaView();
+}
+ 
+function renderFichaView() {
+  const f = _fichaData || {};
+  const u = currentUser || {};
+ 
+  // Nombre en el header de la ficha
+  const nombre = f.nombre || u.mascota_nombre || '';
+  const raza   = f.raza   || u.raza || '';
+  const especie = u.especie || '';
+ 
+  // Actualizar cabecera
+  document.getElementById('fichaNombreTxt').textContent =
+    nombre ? nombre : 'Ficha de mi Mascota';
+  document.getElementById('fichaSubTxt').textContent =
+    [especie, raza].filter(Boolean).join(' · ') || 'Completa los datos de tu compañero';
+ 
+  // Avatar emoji por especie
+  const avatarMap = { Canino: '🐶', Felino: '🐱', Otro: '🐾' };
+  document.getElementById('fichaAvatar').textContent =
+    avatarMap[especie] || '🐾';
+ 
+  // Valores
+  document.getElementById('fv_nombre').textContent = nombre || '—';
+  document.getElementById('fv_edad').textContent   = f.edad  || '—';
+  document.getElementById('fv_peso').textContent   = f.peso  ? f.peso + ' kg' : '—';
+  document.getElementById('fv_raza').textContent   = raza || '—';
+ 
+  // Comentario Dr.
+  const drBox = document.getElementById('fichaDrBox');
+  if (f.comentario_dr) {
+    drBox.style.display = 'block';
+    document.getElementById('fv_comentario_dr').textContent = f.comentario_dr;
+  } else {
+    drBox.style.display = 'none';
+  }
+ 
+  // Documentos del Dr.
+  const docsBox  = document.getElementById('fichaDocs');
+  const docsList = document.getElementById('fichaDocsList');
+  const docs = f.documentos || [];
+  if (docs.length > 0) {
+    docsBox.style.display = 'block';
+    docsList.innerHTML = docs.map(d => `
+      <a href="${d.url}" target="_blank" class="ficha-doc-item">
+        📄 ${d.nombre || 'Documento'}
+      </a>
+    `).join('');
+  } else {
+    docsBox.style.display = 'none';
+  }
+ 
+  // Mostrar modo lectura
+  document.getElementById('fichaView').style.display = 'block';
+  document.getElementById('fichaSinSesion').style.display = 'none';
+  document.getElementById('fichaForm').style.display = 'none';
+  document.getElementById('fichaEditBtn').style.display = 'flex';
+}
+ 
+function toggleFichaEdit() {
+  if (!currentUser) { window.location.href = 'login.html'; return; }
+ 
+  const f = _fichaData || {};
+  const u = currentUser || {};
+ 
+  // Rellenar formulario con datos existentes
+  document.getElementById('ff_nombre').value = f.nombre || u.mascota_nombre || '';
+  document.getElementById('ff_edad').value   = f.edad   || '';
+  document.getElementById('ff_peso').value   = f.peso   || '';
+  document.getElementById('ff_raza').value   = f.raza   || u.raza || '';
+ 
+  document.getElementById('fichaView').style.display = 'none';
+  document.getElementById('fichaForm').style.display = 'block';
+  document.getElementById('fichaEditBtn').style.display = 'none';
+}
+ 
+function cancelarFichaEdit() {
+  document.getElementById('fichaView').style.display = 'block';
+  document.getElementById('fichaForm').style.display = 'none';
+  document.getElementById('fichaEditBtn').style.display = 'flex';
+}
+ 
+async function guardarFicha() {
+  if (!currentUser) return;
+ 
+  const body = {
+    nombre: document.getElementById('ff_nombre').value.trim(),
+    edad:   document.getElementById('ff_edad').value.trim(),
+    peso:   document.getElementById('ff_peso').value.trim(),
+    raza:   document.getElementById('ff_raza').value.trim(),
+  };
+ 
+  const data = await apiFetch('/api/ficha-mascota', {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(body)
+  });
+ 
+  if (!data.ok) { toast(data.error || 'Error al guardar', 'naranja'); return; }
+ 
+  // Actualizar datos en memoria
+  _fichaData = { ..._fichaData, ...body };
+ 
+  // Actualizar nombre nav "Vacunas"
+  actualizarNavVacunas();
+ 
+  cancelarFichaEdit();
+  renderFichaView();
+  toast('Ficha guardada correctamente', 'verde');
+}
+ 
+// ── Actualiza el label del nav con el nombre de la mascota ──
+function actualizarNavVacunas() {
+  const label = document.getElementById('navVacunasLabel');
+  if (!label) return;
+  const nombre = (_fichaData && _fichaData.nombre)
+    || (currentUser && currentUser.mascota_nombre)
+    || '';
+  label.textContent = nombre ? nombre : 'Mi Mascota';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="Imagenes/Logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jezreel Vet — Iniciar Sesión</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#1565C0;--azul-vivo:#1976D2;--azul-claro:#E3F2FD;
+  --azul-oscuro:#0D47A1;--azul-noche:#0A2E6B;--acento:#FF6F00;
+  --gris:#F4F6FB;--texto:#0D1B3E;--texto-suave:#4A5568;--blanco:#FFFFFF;
+  --borde:rgba(21,101,192,0.15);--radio:14px;
+  --sombra:0 4px 20px rgba(13,71,161,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Plus Jakarta Sans',sans-serif;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--azul-noche) 0%,var(--azul-oscuro) 50%,var(--azul-vivo) 100%);
+  position:relative;overflow:hidden;
+}
+body::before{
+  content:'';position:absolute;top:-20%;right:-10%;
+  width:500px;height:500px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+body::after{
+  content:'';position:absolute;bottom:-15%;left:-8%;
+  width:400px;height:400px;border-radius:50%;
+  background:rgba(255,255,255,0.03);
+}
+.card{
+  background:#fff;border-radius:24px;padding:48px 44px;
+  width:100%;max-width:440px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.3);
+  position:relative;z-index:1;
+  animation:slideUp 0.5s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.logo-area{text-align:center;margin-bottom:32px;}
+.logo-icon{font-size:52px;margin-bottom:10px;}
+.logo-text{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--azul-noche);}
+.logo-text span{color:var(--acento);}
+.logo-sub{font-size:13.5px;color:var(--texto-suave);margin-top:4px;}
+
+.form-group{margin-bottom:18px;}
+.form-group label{
+  display:block;font-size:11.5px;font-weight:700;
+  color:var(--texto-suave);margin-bottom:7px;
+  text-transform:uppercase;letter-spacing:0.6px;
+}
+.form-group input{
+  width:100%;padding:13px 16px;
+  border:1.5px solid var(--borde);border-radius:10px;
+  font-size:14.5px;font-family:'Plus Jakarta Sans',sans-serif;
+  color:var(--texto);background:var(--gris);
+  transition:0.2s;outline:none;
+}
+.form-group input:focus{
+  border-color:var(--azul-vivo);background:#fff;
+  box-shadow:0 0 0 3px rgba(25,118,210,0.12);
+}
+.input-wrap{position:relative;}
+.eye-btn{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:18px;
+  color:var(--texto-suave);padding:4px;
+}
+
+.btn-login{
+  width:100%;padding:14px;background:var(--azul);color:#fff;
+  border:none;border-radius:11px;font-size:15px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;margin-top:6px;
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.btn-login:hover{background:var(--azul-oscuro);transform:translateY(-1px);box-shadow:0 8px 22px rgba(13,71,161,0.3);}
+.btn-login:disabled{background:#B0BEC5;cursor:not-allowed;transform:none;}
+
+.error-box{
+  background:#FFEBEE;border:1.5px solid #FFCDD2;border-radius:10px;
+  padding:12px 14px;font-size:13.5px;color:#C62828;font-weight:600;
+  margin-bottom:16px;display:none;
+}
+.error-box.vis{display:block;}
+
+.divider{text-align:center;margin:20px 0;color:var(--texto-suave);font-size:13px;position:relative;}
+.divider::before,.divider::after{
+  content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--borde);
+}
+.divider::before{left:0;}.divider::after{right:0;}
+
+.link-volver{
+  display:block;text-align:center;margin-top:20px;
+  font-size:13.5px;color:var(--texto-suave);text-decoration:none;
+}
+.link-volver span{color:var(--azul-vivo);font-weight:700;}
+.link-volver:hover span{text-decoration:underline;}
+
+.spinner{
+  width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.4);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.7s linear infinite;display:none;margin:0 auto;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+
+/* Contenedor relativo para encimar los elementos */
+.logo-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px; /* Ajusta según el alto de tu logo */
+}
+
+.logo-img {
+  max-width: 200px; /* Ajusta el ancho de tu logo */
+  height: auto;
+  position: absolute;
+  z-index: 2;
+  background: white; /* Cubre el texto de abajo si la imagen carga */
+}
+
+/* El texto original queda debajo, solo se verá si la imagen es transparente o no carga */
+.logo-text {
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+
+</style>
+</head>
+<body>
+<div class="card">
+ <div class="logo-area">
+  <div class="logo-icon">🐾</div>
+  <div class="logo-container">
+    <img src="Imagenes/Logo-Transparente.png" alt="Jezreel Vet" class="logo-img" onerror="this.style.display='none'">
+    
+    <div class="logo-text">Jezreel<span>Vet</span></div>
+  </div>
+  <br>
+  <div class="logo-sub">Inicia sesión en tu cuenta</div>
+</div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="form-group">
+    <label>Correo electrónico</label>
+    <input type="email" id="email" placeholder="tu@correo.com" autocomplete="email">
+  </div>
+
+  <div class="form-group">
+    <label>Contraseña</label>
+    <div class="input-wrap">
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="eye-btn" onclick="togglePass()" tabindex="-1">👁</button>
+    </div>
+  </div>
+
+  <button class="btn-login" id="btnLogin" onclick="doLogin()">
+    <span id="btnTxt">Iniciar sesión</span>
+    <div class="spinner" id="spinner"></div>
+  </button>
+
+  <a class="link-volver" href="index.html">← Volver al inicio sin iniciar sesión <span>→</span></a>
+</div>
+
+<script>
+const API = 'https://jezreel-backend.onrender.com'; // ← cambia por tu URL de backend en producción
+
+function togglePass(){
+  const i = document.getElementById('password');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+function showError(msg){
+  const b = document.getElementById('errorBox');
+  b.textContent = msg; b.classList.add('vis');
+}
+function hideError(){ document.getElementById('errorBox').classList.remove('vis'); }
+
+async function doLogin(){
+  hideError();
+  const email    = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  if(!email || !password){ showError('Completa email y contraseña'); return; }
+
+  const btn = document.getElementById('btnLogin');
+  document.getElementById('btnTxt').style.display = 'none';
+  document.getElementById('spinner').style.display = 'block';
+  btn.disabled = true;
+
+  try{
+    const res  = await fetch(`${API}/api/auth/login`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, password})
+    });
+    const data = await res.json();
+
+    if(!data.ok){ showError(data.error || 'Credenciales incorrectas'); return; }
+
+    // Guardar token y datos de usuario
+    localStorage.setItem('jv_token', data.token);
+    localStorage.setItem('jv_user',  JSON.stringify(data.user));
+
+    // Redirigir según rol
+    if(data.user.rol === 'admin'){
+      window.location.href = 'admin.html';
+    } else {
+      window.location.href = 'index.html';
+    }
+
+  } catch(e){
+    showError('Error de conexión con el servidor. Verifica que el backend esté activo.');
+  } finally {
+    document.getElementById('btnTxt').style.display = 'block';
+    document.getElementById('spinner').style.display = 'none';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

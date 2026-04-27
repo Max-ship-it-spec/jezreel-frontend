@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="Imagenes/Logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jezreel Vet — Finalizar Compra</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#1565C0;--azul-vivo:#1976D2;--azul-claro:#E3F2FD;--azul-medio:#BBDEFB;
+  --azul-oscuro:#0D47A1;--azul-noche:#0A2E6B;--acento:#FF6F00;--acento-claro:#FFF3E0;
+  --gris:#F4F6FB;--texto:#0D1B3E;--texto-suave:#4A5568;--blanco:#FFFFFF;
+  --borde:rgba(21,101,192,0.15);--radio:12px;
+  --sombra:0 4px 20px rgba(13,71,161,0.08);
+  --verde:#2E7D32;--verde-claro:#E8F5E9;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--gris);color:var(--texto);min-height:100vh;}
+
+/* ── NAV ── */
+.topnav{background:#fff;padding:0 1.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(13,71,161,0.08);position:sticky;top:0;z-index:100;}
+.topnav-logo{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--azul-noche);text-decoration:none;}
+.topnav-logo span{color:var(--acento);}
+.topnav-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--texto-suave);background:var(--gris);padding:7px 13px;border-radius:9px;transition:0.2s;cursor:pointer;border:1.5px solid var(--borde);}
+.topnav-back:hover{background:var(--azul-claro);color:var(--azul-oscuro);}
+
+/* ── LAYOUT ── */
+.checkout-wrap{
+  max-width:1080px;margin:0 auto;
+  padding:28px 1.2rem 60px;
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:22px;
+  align-items:start;
+}
+
+/* ── BLOQUES ── */
+.checkout-block{background:#fff;border-radius:16px;border:1.5px solid var(--borde);padding:20px 22px;margin-bottom:18px;box-shadow:var(--sombra);}
+.checkout-block h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:14px;color:var(--azul-noche);}
+.checkout-step-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--texto-suave);margin-bottom:6px;}
+
+/* ── MÉTODO ENTREGA ── */
+.metodo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.metodo-card{border:2px solid var(--borde);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.22s;display:flex;align-items:center;gap:10px;position:relative;}
+.metodo-card:hover{border-color:var(--azul-vivo);background:var(--azul-claro);}
+.metodo-card.sel{border-color:var(--azul-vivo);background:var(--azul-claro);}
+.metodo-card input[type=radio]{accent-color:var(--azul-vivo);width:16px;height:16px;flex-shrink:0;}
+.metodo-card-body strong{font-size:13.5px;font-weight:700;display:block;color:var(--texto);}
+.metodo-card-body span{font-size:11.5px;color:var(--texto-suave);}
+.metodo-card-icon{font-size:20px;}
+.envio-badge{position:absolute;top:7px;right:9px;background:var(--acento-claro);color:var(--acento);font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;}
+.envio-alert{margin-top:10px;background:#FFF3E0;border:1.5px solid #FFB300;border-radius:9px;padding:10px 13px;font-size:12.5px;color:#E65100;display:none;align-items:center;gap:8px;}
+.envio-alert.vis{display:flex;}
+
+/* ── HORA RETIRO ── */
+.hora-retiro-box{
+  margin-top:14px;
+  background:var(--azul-claro);
+  border:1.5px solid var(--azul-medio);
+  border-radius:11px;
+  padding:13px 16px;
+  display:none;
+  animation:fadeIn 0.25s ease;
+}
+.hora-retiro-box.vis{display:block;}
+.hora-retiro-box label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--azul-oscuro);margin-bottom:7px;display:block;}
+.hora-retiro-box input[type=time]{
+  width:100%;padding:10px 13px;
+  border:1.5px solid var(--azul-medio);
+  border-radius:9px;font-size:15px;
+  font-family:inherit;color:var(--texto);
+  background:#fff;outline:none;transition:0.2s;
+}
+.hora-retiro-box input[type=time]:focus{border-color:var(--azul-vivo);box-shadow:0 0 0 3px rgba(25,118,210,0.12);}
+.hora-retiro-box p{font-size:11.5px;color:var(--azul-oscuro);margin-top:7px;opacity:0.8;}
+
+/* ── FORM ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{margin-bottom:13px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--texto-suave);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.form-group label .req{color:#E53935;margin-left:2px;}
+.form-group input,.form-group select{width:100%;padding:10px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;color:var(--texto);background:var(--gris);transition:0.2s;outline:none;}
+.form-group input:focus,.form-group select:focus{border-color:var(--azul-vivo);background:#fff;box-shadow:0 0 0 3px rgba(25,118,210,0.1);}
+.form-group input.prefilled{background:#EBF5FF;border-color:var(--azul-medio);color:var(--azul-oscuro);}
+.tel-wrap{display:flex;gap:8px;}
+.tel-prefix{display:flex;align-items:center;padding:10px 11px;border:1.5px solid var(--borde);border-radius:9px;background:var(--gris);font-size:13px;font-weight:700;color:var(--texto-suave);white-space:nowrap;flex-shrink:0;}
+
+/* ── PAGO ── */
+.pago-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px;}
+.pago-card{border:2px solid var(--borde);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.22s;display:flex;align-items:center;gap:10px;}
+.pago-card:hover{border-color:var(--azul-vivo);background:var(--azul-claro);}
+.pago-card.sel{border-color:var(--azul-vivo);background:var(--azul-claro);}
+.pago-card input[type=radio]{accent-color:var(--azul-vivo);width:16px;height:16px;flex-shrink:0;}
+.pago-card-icon{font-size:20px;}
+.pago-card strong{font-size:13.5px;font-weight:700;display:block;}
+.pago-card span{font-size:11.5px;color:var(--texto-suave);}
+
+.transferencia-box{background:linear-gradient(135deg,#EAF0FB,#E3F2FD);border:2px solid var(--azul-medio);border-radius:12px;padding:16px 18px;display:none;animation:fadeIn 0.25s ease;}
+.transferencia-box.vis{display:block;}
+.trans-title{font-size:13px;font-weight:800;color:var(--azul-oscuro);margin-bottom:11px;display:flex;align-items:center;gap:7px;}
+.trans-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(21,101,192,0.12);font-size:13px;}
+.trans-row:last-of-type{border-bottom:none;}
+.trans-row .lbl{color:var(--texto-suave);font-weight:600;}
+.trans-row .val{font-weight:800;color:var(--azul-noche);}
+.trans-alert{margin-top:12px;background:#FFF8E1;border:1.5px solid #FFD54F;border-radius:9px;padding:11px 13px;font-size:12.5px;color:#E65100;display:flex;gap:8px;align-items:flex-start;line-height:1.55;}
+.trans-alert .icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* ── RESUMEN ── */
+.resumen-block{background:#fff;border-radius:16px;border:1.5px solid var(--borde);padding:20px 22px;box-shadow:var(--sombra);position:sticky;top:76px;}
+.resumen-block h2{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;margin-bottom:14px;color:var(--azul-noche);}
+.resumen-items{margin-bottom:13px;max-height:240px;overflow-y:auto;}
+.resumen-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--borde);}
+.resumen-item:last-child{border-bottom:none;}
+.resumen-img{width:44px;height:44px;border-radius:8px;background:var(--azul-claro);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid var(--borde);}
+.resumen-img img{width:100%;height:100%;object-fit:cover;}
+.resumen-item-info{flex:1;min-width:0;}
+.resumen-item-info strong{font-size:12.5px;display:block;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.resumen-item-info span{font-size:11.5px;color:var(--texto-suave);}
+.resumen-item-precio{font-size:13.5px;font-weight:800;color:var(--azul-noche);flex-shrink:0;}
+
+/* ── CUPÓN ── */
+.cupon-wrap{display:flex;gap:8px;margin-bottom:11px;}
+.cupon-wrap input{flex:1;padding:9px 11px;border:1.5px solid var(--borde);border-radius:9px;font-size:13px;font-family:inherit;outline:none;transition:0.2s;background:var(--gris);text-transform:uppercase;}
+.cupon-wrap input:focus{border-color:var(--azul-vivo);background:#fff;}
+.cupon-wrap button{padding:9px 13px;background:var(--azul-claro);color:var(--azul-oscuro);border:none;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;transition:0.2s;font-family:inherit;white-space:nowrap;}
+.cupon-wrap button:hover{background:var(--azul);color:#fff;}
+.cupon-aplicado-badge{display:flex;align-items:center;gap:8px;background:#E8F5E9;border:1.5px solid #A5D6A7;border-radius:10px;padding:9px 13px;font-size:12.5px;font-weight:700;color:#1B5E20;margin-bottom:11px;animation:fadeIn .3s ease;}
+.cupon-aplicado-badge button{margin-left:auto;background:none;border:none;cursor:pointer;color:#C62828;font-size:16px;line-height:1;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+
+.resumen-lineas{border-top:1px solid var(--borde);padding-top:11px;margin-bottom:14px;}
+.resumen-linea{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px;color:var(--texto-suave);}
+.resumen-linea.descuento{color:var(--verde);font-weight:700;}
+.resumen-linea.total{font-size:16px;font-weight:900;color:var(--texto);border-top:1.5px solid var(--borde);margin-top:7px;padding-top:9px;}
+
+.btn-orden{width:100%;padding:14px;background:var(--azul);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-orden:hover{background:var(--azul-oscuro);transform:translateY(-1px);box-shadow:0 8px 22px rgba(13,71,161,0.25);}
+.btn-orden:disabled{background:#bbb;cursor:not-allowed;transform:none;box-shadow:none;}
+
+.terminos-check{display:flex;align-items:flex-start;gap:8px;margin-bottom:13px;font-size:12px;color:var(--texto-suave);line-height:1.5;}
+.terminos-check input[type=checkbox]{accent-color:var(--azul-vivo);width:15px;height:15px;flex-shrink:0;margin-top:2px;}
+.info-horario{background:var(--verde-claro);border:1px solid #A5D6A7;border-radius:9px;padding:10px 12px;font-size:11.5px;color:#1B5E20;margin-top:13px;line-height:1.5;}
+.info-horario strong{display:block;margin-bottom:2px;}
+.sesion-alert{background:var(--azul-claro);border:1.5px solid var(--azul-medio);border-radius:10px;padding:11px 15px;font-size:13px;color:var(--azul-oscuro);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.sesion-alert a{color:var(--azul-oscuro);font-weight:700;}
+
+/* ── MODAL ÉXITO ── */
+.success-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,80,0.55);z-index:500;align-items:center;justify-content:center;padding:16px;}
+.success-overlay.open{display:flex;}
+.success-modal{background:#fff;border-radius:20px;padding:36px 28px;max-width:420px;width:100%;text-align:center;animation:slideUp 0.3s ease;max-height:90vh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(28px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.success-icon{font-size:52px;margin-bottom:12px;}
+.success-modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:7px;color:var(--azul-noche);}
+.success-modal p{font-size:13.5px;color:var(--texto-suave);line-height:1.6;margin-bottom:16px;}
+.success-id{display:inline-block;background:var(--azul-claro);color:var(--azul-oscuro);font-size:14px;font-weight:900;padding:7px 16px;border-radius:9px;margin-bottom:16px;letter-spacing:1px;}
+.btn-wa-success{width:100%;padding:13px;background:#25D366;color:#fff;border:none;border-radius:11px;font-size:14.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;transition:0.2s;}
+.btn-wa-success:hover{background:#1ebe5d;}
+.btn-volver{margin-top:9px;width:100%;padding:11px;background:var(--gris);border:1.5px solid var(--borde);color:var(--texto-suave);border-radius:11px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:0.2s;}
+.btn-volver:hover{background:var(--azul-claro);color:var(--azul-oscuro);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:18px;right:18px;background:var(--azul-noche);color:#fff;padding:11px 16px;border-radius:11px;font-size:13px;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.3s;max-width:290px;box-shadow:0 8px 24px rgba(0,0,0,0.25);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.verde{background:#1B5E20;}.toast.rojo{background:#B71C1C;}.toast.naranja{background:#E65100;}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE MÓVIL
+   ═══════════════════════════════════════ */
+@media(max-width:800px){
+  .checkout-wrap{
+    grid-template-columns:1fr;
+    padding:16px 0.9rem 48px;
+    gap:0;
+  }
+
+  /* En móvil el resumen va primero (arriba) */
+  .checkout-right{ order:-1; margin-bottom:16px; }
+  .checkout-left { order:1; }
+
+  .resumen-block{ position:static; }
+
+  .metodo-grid,.pago-grid,.form-row{ grid-template-columns:1fr; }
+
+  .checkout-block{ padding:16px; border-radius:13px; }
+  .checkout-block h2{ font-size:15.5px; }
+
+  .topnav{ padding:0 1rem; }
+  .topnav-logo{ font-size:17px; }
+  .topnav-back{ padding:6px 10px; font-size:12px; }
+
+  .toast{ bottom:12px; right:10px; left:10px; max-width:100%; font-size:12.5px; }
+
+  .success-modal{ padding:28px 20px; border-radius:16px; }
+  .success-icon{ font-size:44px; }
+  .success-modal h2{ font-size:19px; }
+}
+
+@media(max-width:400px){
+  .cupon-wrap{ flex-direction:column; }
+  .cupon-wrap input,.cupon-wrap button{ width:100%; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a class="topnav-logo" href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+  <img src="Imagenes/Logo.png" alt="Jezreel Vet"
+       style="height:42px;width:auto;object-fit:contain;"
+       onerror="this.style.display='none';document.getElementById('logoFallbackCO').style.display='flex';">
+  <span id="logoFallbackCO" style="display:none;font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--azul-noche);">
+    Jezreel<span style="color:var(--acento);">Vet</span>
+  </span>
+</a>
+  <button class="topnav-back" onclick="history.back()">← Volver</button>
+</nav>
+
+<div class="checkout-wrap">
+
+  <!-- ═══ COLUMNA IZQUIERDA ═══ -->
+  <div class="checkout-left">
+
+    <div class="sesion-alert" id="alertaSesion" style="display:none;">
+      💡 <span>Tus datos se autorellenarán si <a href="login.html">inicias sesión</a>.</span>
+    </div>
+
+    <!-- PASO 1 — Método de entrega -->
+    <div class="checkout-block">
+      <div class="checkout-step-title">Paso 1</div>
+      <h2>Método de entrega</h2>
+      <div class="metodo-grid">
+
+        <label class="metodo-card sel" id="card-envio" onclick="selMetodo('envio')">
+          <input type="radio" name="metodo" value="envio" id="r-envio" checked>
+          <span class="metodo-card-icon">🚚</span>
+          <div class="metodo-card-body">
+            <strong>Enviar a domicilio</strong>
+            <span>Entrega a tu dirección</span>
+          </div>
+          <span class="envio-badge">+$6</span>
+        </label>
+
+        <label class="metodo-card" id="card-tienda" onclick="selMetodo('tienda')">
+          <input type="radio" name="metodo" value="tienda" id="r-tienda">
+          <span class="metodo-card-icon">🏪</span>
+          <div class="metodo-card-body">
+            <strong>Recoger en tienda</strong>
+            <span>Sin costo adicional</span>
+          </div>
+        </label>
+
+      </div>
+
+      <div class="envio-alert" id="envioAlert">
+        ⚠️ El envío a domicilio requiere compras mayores a <strong>$20</strong>.
+      </div>
+
+      <!-- HORA DE RETIRO — solo visible cuando metodo = tienda -->
+      <div class="hora-retiro-box" id="horaRetiroBox">
+        <label>🕐 ¿A qué hora pasas a recoger tu pedido? <span style="color:#E53935;">*</span></label>
+        <input type="time" id="f_hora_retiro" value="14:00" min="09:30" max="19:00">
+        <p>Horario de atención: Lun–Sáb 9:30 a.m. – 7:00 p.m.</p>
+      </div>
+
+    </div>
+
+    <!-- PASO 2 — Información -->
+    <div class="checkout-block" id="bloqueEntrega">
+      <div class="checkout-step-title">Paso 2</div>
+      <h2 id="tituloEntrega">Información de entrega</h2>
+
+      <div class="form-row" style="margin-bottom:13px;">
+        <div class="form-group">
+          <label>País</label>
+          <input type="text" id="f_pais" value="Ecuador" readonly style="background:#F0F0F0;color:#888;">
+        </div>
+        <div class="form-group">
+          <label>Ciudad <span class="req">*</span></label>
+          <select id="f_ciudad">
+            <option value="Guayaquil">Guayaquil</option>
+            <option value="Quito">Quito</option>
+            <option value="Cuenca">Cuenca</option>
+            <option value="Otra">Otra ciudad</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="camposEnvio">
+        <div class="form-group" style="margin-bottom:13px;">
+          <label>Dirección <span class="req">*</span></label>
+          <input type="text" id="f_dir" placeholder="Escribe tu dirección">
+        </div>
+        <div class="form-group" style="margin-bottom:13px;">
+          <label>Referencia / detalles</label>
+          <input type="text" id="f_dir2" placeholder="Apartamento, casa, referencia...">
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom:13px;">
+        <div class="form-group">
+          <label>Nombre y apellido <span class="req">*</span></label>
+          <input type="text" id="f_nombre" placeholder="Tu nombre completo">
+        </div>
+        <div class="form-group">
+          <label>Correo electrónico <span class="req">*</span></label>
+          <input type="email" id="f_email" placeholder="correo@email.com">
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom:13px;">
+        <div class="form-group">
+          <label>Tipo de identificación</label>
+          <select id="f_tipo_id">
+            <option value="CC">CC — Cédula</option>
+            <option value="RUC">RUC</option>
+            <option value="Pasaporte">Pasaporte</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de documento</label>
+          <input type="text" id="f_cedula" placeholder="Ingresa tu identificación">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Número de celular <span class="req">*</span></label>
+        <div class="tel-wrap">
+          <span class="tel-prefix">🇪🇨 +593</span>
+          <input type="tel" id="f_tel" placeholder="Número de celular" style="flex:1;">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PASO 3 — Pago -->
+    <div class="checkout-block">
+      <div class="checkout-step-title">Paso 3</div>
+      <h2>Método de pago</h2>
+
+      <div class="pago-grid">
+        <label class="pago-card sel" id="card-efectivo" onclick="selPago('efectivo')">
+          <input type="radio" name="pago" value="efectivo" id="r-efectivo" checked>
+          <span class="pago-card-icon">💵</span>
+          <div><strong>Efectivo</strong><span>Al momento de la entrega</span></div>
+        </label>
+        <label class="pago-card" id="card-transferencia" onclick="selPago('transferencia')">
+          <input type="radio" name="pago" value="transferencia" id="r-transferencia">
+          <span class="pago-card-icon">🏦</span>
+          <div><strong>Transferencia</strong><span>Banco Pichincha</span></div>
+        </label>
+      </div>
+
+      <div class="transferencia-box" id="transferenciaBox">
+        <div class="trans-title">🏦 Datos para transferencia — Banco Pichincha</div>
+        <div class="trans-row"><span class="lbl">Banco</span><span class="val">Banco Pichincha</span></div>
+        <div class="trans-row"><span class="lbl">Tipo de cuenta</span><span class="val">Corriente</span></div>
+        <div class="trans-row"><span class="lbl">N° de cuenta</span><span class="val">2100164127</span></div>
+        <div class="trans-row"><span class="lbl">catNombre</span><span class="val">Eduardo Alava Yoza</span></div>
+        <div class="trans-alert">
+          <span class="icon">📸</span>
+          <span><strong>¡Importante!</strong> Envía el comprobante por WhatsApp al <strong>+593 98 458 6114</strong> para confirmar tu pedido.</span>
+        </div>
+      </div>
+    </div>
+
+    <label class="terminos-check">
+      <input type="checkbox" id="chkTerminos">
+      Al realizar este pago estás de acuerdo con los <a href="#" style="color:var(--azul-vivo);font-weight:700;">&nbsp;Términos y Condiciones</a>.
+    </label>
+
+  </div><!-- /checkout-left -->
+
+  <!-- ═══ COLUMNA DERECHA ═══ -->
+  <div class="checkout-right">
+    <div class="resumen-block">
+      <h2>Tu pedido</h2>
+
+      <div class="resumen-items" id="resumenItems"></div>
+
+      <!-- CUPÓN -->
+      <div id="cuponBox">
+        <div class="cupon-wrap">
+          <input type="text" id="cuponInput" placeholder="Código de cupón">
+          <button onclick="aplicarCupon()">Aplicar</button>
+        </div>
+      </div>
+      <div id="cuponBadge" style="display:none;" class="cupon-aplicado-badge">
+        <span>🎟️</span>
+        <span id="cuponBadgeText"></span>
+        <button onclick="quitarCupon()" title="Quitar cupón">×</button>
+      </div>
+
+      <div class="resumen-lineas">
+        <div class="resumen-linea">
+          <span id="labelProductos">Productos (0)</span>
+          <span id="subtotalProductos">$0.00</span>
+        </div>
+        <div class="resumen-linea descuento" id="lineaDescuento" style="display:none;">
+          <span id="descuentoLabel">Descuento cupón</span>
+          <span id="descuentoValor">-$0.00</span>
+        </div>
+        <div class="resumen-linea">
+          <span>Envío</span>
+          <span id="costoEnvioLabel">$6.00</span>
+        </div>
+        <div class="resumen-linea total">
+          <span>Total</span>
+          <span id="totalFinal">$0.00</span>
+        </div>
+      </div>
+
+      <button class="btn-orden" id="btnOrden" onclick="realizarOrden()">
+        ✅ Realizar orden
+      </button>
+
+      <div class="info-horario">
+        <strong>Gestionaremos tu pedido en horario de atención.</strong>
+        🕒 Lunes a Sábado: 9:30 a.m. – 7:00 p.m.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /checkout-wrap -->
+
+<!-- MODAL ÉXITO -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-modal">
+    <div class="success-icon">🎉</div>
+    <h2>¡Pedido recibido!</h2>
+    <p>Tu orden ha sido registrada. Te contactaremos pronto para confirmarla.</p>
+    <div class="success-id" id="successIdBox">Pedido #—</div>
+    <p id="successTransMsg" style="display:none;font-size:12.5px;color:#E65100;background:#FFF3E0;border-radius:9px;padding:10px;margin-bottom:14px;line-height:1.5;">
+      📸 Recuerda enviar el comprobante de transferencia por WhatsApp al <strong>+593 98 458 6114</strong>
+    </p>
+    <button class="btn-wa-success" id="btnSuccessWA">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.59-1.377A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.37l-.36-.214-3.713.776.79-3.603-.235-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/></svg>
+      Confirmar por WhatsApp
+    </button>
+    <!-- ✅ CAMBIO 2: "Seguir comprando" redirige a la tienda (sección tienda) -->
+    <button class="btn-volver" onclick="irATienda()">🛍️ Seguir comprando</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API       = 'http://localhost:5000';
+const WA_NUM    = '593984586114';
+const ENVIO_MIN = 20;
+const COSTO_ENVIO = 6;
+
+let carrito = [];
+let metodo  = 'envio';
+let pago    = 'efectivo';
+let _cupon  = null;
+
+/* ── INIT ── */
+async function init() {
+  try { carrito = JSON.parse(localStorage.getItem('jv_carrito') || '[]'); } catch(e){ carrito=[]; }
+  if (!carrito.length) {
+    toast('Tu carrito está vacío', 'rojo');
+    setTimeout(() => { window.location.href = 'index.html'; }, 1800);
+    return;
+  }
+
+  const token = localStorage.getItem('jv_token');
+
+  if (token) {
+    // ── Traer datos frescos desde la API ──
+    try {
+      const res  = await fetch(API + '/api/auth/me', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const u = data.user;
+        fillField('f_nombre', u.nombre    || '');
+        fillField('f_email',  u.email     || '');
+        fillField('f_tel',    limpiarTel(u.telefono || ''));
+        fillField('f_cedula', u.cedula    || '');
+        fillField('f_dir',    u.direccion || '');
+      }
+    } catch(e) {
+      // Sin conexión — usar localStorage como fallback
+      const user = JSON.parse(localStorage.getItem('jv_user') || 'null');
+      if (user) {
+        fillField('f_nombre', user.nombre    || '');
+        fillField('f_email',  user.email     || '');
+        fillField('f_tel',    limpiarTel(user.telefono || ''));
+        fillField('f_cedula', user.cedula    || '');
+        fillField('f_dir',    user.direccion || '');
+      }
+    }
+  } else {
+    document.getElementById('alertaSesion').style.display = 'flex';
+  }
+
+  renderResumen();
+  verificarEnvio();
+}
+
+function fillField(id, val) {
+  const el = document.getElementById(id);
+  if (!el || !val) return;
+  el.value = val;
+  el.classList.add('prefilled');
+}
+
+function limpiarTel(t) {
+  t = t.replace(/\D/g, '');
+  if (t.startsWith('593')) t = t.slice(3);
+  if (t.startsWith('0'))   t = t.slice(1);
+  return t;
+}
+
+/* ── RESUMEN ── */
+function renderResumen() {
+  const cont = document.getElementById('resumenItems');
+  cont.innerHTML = carrito.map(i => `
+    <div class="resumen-item">
+      <div class="resumen-img">
+        ${i.img_url ? `<img src="${i.img_url}" alt="${i.nombre}">` : '📦'}
+      </div>
+      <div class="resumen-item-info">
+        <strong>${i.nombre}</strong>
+        <span>x${i.qty} — $${Number(i.precio).toFixed(2)} c/u</span>
+      </div>
+      <div class="resumen-item-precio">$${(Number(i.precio)*i.qty).toFixed(2)}</div>
+    </div>`).join('');
+
+  const subtotal   = carrito.reduce((a,i) => a + Number(i.precio)*i.qty, 0);
+  const envioVal   = metodo === 'envio' ? COSTO_ENVIO : 0;
+  const totalItems = carrito.reduce((a,i) => a + i.qty, 0);
+  let descuentoVal = 0;
+  if (_cupon && _cupon.tipo === 'tienda') descuentoVal = subtotal * (_cupon.descuento/100);
+  const total = subtotal - descuentoVal + envioVal;
+
+  document.getElementById('labelProductos').textContent    = `Productos (${totalItems})`;
+  document.getElementById('subtotalProductos').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('costoEnvioLabel').textContent   = metodo==='tienda' ? 'Gratis' : `$${COSTO_ENVIO.toFixed(2)}`;
+  document.getElementById('totalFinal').textContent        = `$${total.toFixed(2)}`;
+
+  const lineaDesc = document.getElementById('lineaDescuento');
+  if (descuentoVal > 0) {
+    lineaDesc.style.display = 'flex';
+    document.getElementById('descuentoLabel').textContent = `Cupón ${_cupon.codigo} (${_cupon.descuento}%)`;
+    document.getElementById('descuentoValor').textContent = `-$${descuentoVal.toFixed(2)}`;
+  } else {
+    lineaDesc.style.display = 'none';
+  }
+}
+
+/* ── MÉTODO ENTREGA ── */
+function selMetodo(m) {
+  metodo = m;
+  document.getElementById('card-envio').classList.toggle('sel', m==='envio');
+  document.getElementById('card-tienda').classList.toggle('sel', m==='tienda');
+  document.getElementById('r-envio').checked  = m==='envio';
+  document.getElementById('r-tienda').checked = m==='tienda';
+  document.getElementById('camposEnvio').style.display = m==='envio' ? '' : 'none';
+  document.getElementById('tituloEntrega').textContent  = m==='envio' ? 'Información de entrega' : 'Información de contacto';
+  /* ✅ CAMBIO 1: mostrar/ocultar selector de hora de retiro */
+  document.getElementById('horaRetiroBox').classList.toggle('vis', m==='tienda');
+  verificarEnvio();
+  renderResumen();
+}
+
+function verificarEnvio() {
+  const subtotal = carrito.reduce((a,i) => a + Number(i.precio)*i.qty, 0);
+  const alert = document.getElementById('envioAlert');
+  if (metodo==='envio' && subtotal < ENVIO_MIN) {
+    alert.classList.add('vis');
+    document.getElementById('btnOrden').disabled = true;
+  } else {
+    alert.classList.remove('vis');
+    document.getElementById('btnOrden').disabled = false;
+  }
+}
+
+/* ── MÉTODO PAGO ── */
+function selPago(p) {
+  pago = p;
+  document.getElementById('card-efectivo').classList.toggle('sel', p==='efectivo');
+  document.getElementById('card-transferencia').classList.toggle('sel', p==='transferencia');
+  document.getElementById('r-efectivo').checked      = p==='efectivo';
+  document.getElementById('r-transferencia').checked = p==='transferencia';
+  document.getElementById('transferenciaBox').classList.toggle('vis', p==='transferencia');
+}
+
+/* ── CUPÓN ── */
+async function aplicarCupon() {
+  const cod = (document.getElementById('cuponInput').value||'').trim().toUpperCase();
+  if (!cod) { toast('Ingresa un código de cupón','rojo'); return; }
+  const token = localStorage.getItem('jv_token');
+  if (!token) { toast('Debes iniciar sesión para usar cupones','rojo'); return; }
+  if (_cupon) quitarCupon();
+  try {
+    const res = await fetch(API+'/api/cupones/validar',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+      body:JSON.stringify({codigo:cod})
+    });
+    const data = await res.json();
+    if (!data.ok) { toast(data.error||'Cupón no válido','rojo'); return; }
+    if (data.tipo !== 'tienda') { toast('Este cupón es para Peluquería, no aplica aquí','naranja'); return; }
+    _cupon = data;
+    document.getElementById('cuponBox').style.display   = 'none';
+    document.getElementById('cuponBadge').style.display = 'flex';
+    document.getElementById('cuponBadgeText').textContent = `${data.codigo} — ${data.descuento}% de descuento`;
+    renderResumen();
+    toast(`✅ Cupón ${data.codigo} aplicado: ${data.descuento}% OFF`,'verde');
+  } catch(e) { toast('Error de conexión','rojo'); }
+}
+
+function quitarCupon() {
+  _cupon = null;
+  document.getElementById('cuponInput').value         = '';
+  document.getElementById('cuponBox').style.display   = '';
+  document.getElementById('cuponBadge').style.display = 'none';
+  renderResumen();
+  toast('Cupón quitado','naranja');
+}
+
+/* ── VALIDACIÓN ── */
+function validar() {
+  const nombre = document.getElementById('f_nombre').value.trim();
+  const email  = document.getElementById('f_email').value.trim();
+  const tel    = document.getElementById('f_tel').value.trim();
+  const dir    = document.getElementById('f_dir').value.trim();
+
+  if (!nombre)                        { toast('Ingresa tu nombre y apellido','rojo'); return false; }
+  if (!email||!email.includes('@'))   { toast('Ingresa un correo válido','rojo'); return false; }
+  if (!tel||tel.length < 7)           { toast('Ingresa tu número de celular','rojo'); return false; }
+  if (metodo==='envio' && !dir)       { toast('Ingresa tu dirección de entrega','rojo'); return false; }
+
+  /* ✅ CAMBIO 1: validar hora de retiro cuando metodo = tienda */
+  if (metodo==='tienda') {
+    const hora = document.getElementById('f_hora_retiro').value;
+    if (!hora) { toast('Indica la hora a la que vas a recoger tu pedido','rojo'); return false; }
+  }
+
+  if (!document.getElementById('chkTerminos').checked) {
+    toast('Acepta los Términos y Condiciones','rojo'); return false;
+  }
+  return true;
+}
+
+/* ── REALIZAR ORDEN ── */
+async function realizarOrden() {
+  if (!validar()) return;
+
+  const nombre  = document.getElementById('f_nombre').value.trim();
+  const email   = document.getElementById('f_email').value.trim();
+  const tel     = document.getElementById('f_tel').value.trim();
+  const dir     = document.getElementById('f_dir').value.trim();
+  const dir2    = document.getElementById('f_dir2').value.trim();
+  const ciudad  = document.getElementById('f_ciudad').value;
+  const cedula  = document.getElementById('f_cedula').value.trim();
+  const tipo_id = document.getElementById('f_tipo_id').value;
+
+  /* ✅ CAMBIO 1: leer hora de retiro */
+  const horaRetiro = metodo==='tienda'
+    ? document.getElementById('f_hora_retiro').value
+    : null;
+
+  const subtotal     = carrito.reduce((a,i)=>a+Number(i.precio)*i.qty, 0);
+  const envioVal     = metodo==='envio' ? COSTO_ENVIO : 0;
+  const descuentoVal = (_cupon && _cupon.tipo==='tienda') ? subtotal*(_cupon.descuento/100) : 0;
+  const total        = subtotal - descuentoVal + envioVal;
+
+  const btn = document.getElementById('btnOrden');
+  btn.disabled = true; btn.textContent = 'Procesando...';
+
+  const token = localStorage.getItem('jv_token');
+  let pedidoId = null, waLinkFinal = '';
+
+  if (token) {
+    const itemsPayload = carrito.map(i=>({
+      id:i.id, nombre:i.nombre, qty:i.qty,
+      precio:Number(i.precio), subtotal:Number(i.precio)*i.qty, img_url:i.img_url||''
+    }));
+    try {
+      const res = await fetch(API+'/api/pedidos',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body:JSON.stringify({
+          nombre, telefono:tel, items:itemsPayload, total,
+          metodo_entrega:metodo, metodo_pago:pago,
+          direccion: metodo==='envio' ? (dir+(dir2?' — '+dir2:'')) : 'Retiro en tienda',
+          ciudad, cedula, tipo_id, email
+        })
+      });
+      const data = await res.json();
+      if (data.ok) {
+        pedidoId    = data.id;
+        waLinkFinal = data.wa_link || '';
+        if (_cupon && _cupon.uc_id) {
+          try {
+            await fetch(API+'/api/cupones/canjear',{
+              method:'POST',
+              headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+              body:JSON.stringify({uc_id:_cupon.uc_id})
+            });
+          } catch(e){}
+        }
+      }
+    } catch(e){ console.warn('Sin conexión API:',e); }
+  }
+
+  /* ── Mensaje WhatsApp ── */
+  const lineasItems = carrito.map(i=>
+    `• [ID:${i.id}] *${i.nombre}* x${i.qty} = $${(Number(i.precio)*i.qty).toFixed(2)}`
+  ).join('\n');
+
+  /* ✅ CAMBIO 1: incluir hora de retiro en el mensaje WA */
+  const direccionTexto = metodo==='envio'
+    ? ` *Dirección:* ${dir}${dir2?' — '+dir2:''}, ${ciudad}`
+    : ` *Entrega:* Retiro en tienda\n⏰ *Hora de retiro:* ${formatHora(horaRetiro)}`;
+
+  const pagoTexto = pago==='transferencia'
+    ? ` Transferencia Banco Pichincha\n⚠️ *Recuerda enviar el comprobante por WhatsApp*`
+    : ' Efectivo al momento de entrega';
+
+  const cuponTexto = _cupon
+    ? `\n *Cupón:* ${_cupon.codigo} — ${_cupon.descuento}% OFF (-$${descuentoVal.toFixed(2)})`
+    : '';
+
+  const waMsg =
+` *NUEVO PEDIDO — Jezreel Vet*${pedidoId?'\n🆔 *ID Pedido:* #'+pedidoId:''}
+
+ *Cliente:* ${nombre}
+ *Email:* ${email}
+ *Celular:* +593${tel}
+ *${tipo_id}:* ${cedula||'No indicado'}
+${direccionTexto}
+
+ *Productos:*
+${lineasItems}
+
+ *Subtotal:* $${subtotal.toFixed(2)}${cuponTexto}
+ *Envío:* ${metodo==='tienda'?'Gratis':'$'+COSTO_ENVIO.toFixed(2)}
+ *TOTAL: $${total.toFixed(2)}*
+
+ *Pago:* ${pagoTexto}
+
+¡Gracias por comprar en Jezreel Vet! 🐾`;
+
+  const waUrl = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(waMsg)}`;
+
+  localStorage.removeItem('jv_carrito');
+  carrito = []; _cupon = null;
+
+  document.getElementById('successIdBox').textContent = pedidoId ? `Pedido #${pedidoId}` : 'Pedido enviado';
+  document.getElementById('successTransMsg').style.display = pago==='transferencia' ? 'block' : 'none';
+  document.getElementById('btnSuccessWA').onclick = () => window.open(waLinkFinal||waUrl,'_blank');
+  document.getElementById('successOverlay').classList.add('open');
+
+  btn.disabled = false; btn.textContent = '✅ Realizar orden';
+}
+
+/* ── Formatea hora 24h → 12h am/pm ── */
+function formatHora(h) {
+  if (!h) return '—';
+  const [hh, mm] = h.split(':').map(Number);
+  const ampm = hh >= 12 ? 'p.m.' : 'a.m.';
+  const h12  = hh % 12 || 12;
+  return `${h12}:${String(mm).padStart(2,'0')} ${ampm}`;
+}
+
+/* ✅ CAMBIO 2: "Seguir comprando" va directo a la sección tienda sin bienvenida */
+function irATienda() {
+  localStorage.setItem('jv_ir_tienda', '1');
+  window.location.href = 'index.html#tienda';
+}
+
+/* ── TOAST ── */
+function toast(msg, tipo='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast '+tipo+' show';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 3400);
+}
+
+init();
+</script>
+</body>
+</html>
