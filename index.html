@@ -818,7 +818,16 @@ footer{background:#0A2E6B;color:rgba(255,255,255,0.7);padding:44px 2rem 0;}
     min-height: 60px;
   }
 
-  .nav-logo img { height: 36px; }
+ .nav-logo img {
+    height: auto;
+    width: auto;
+    max-height: 28px;
+    max-width: 90px;
+    object-fit: contain;
+  }
+  nav {
+  flex-wrap: nowrap;  /* ← asegúrate que diga nowrap */
+}
 
   .nav-links {
     display: none;
@@ -1474,10 +1483,11 @@ footer { padding: 32px 1rem 0; }
 
 /* ── MÓVIL ── */
 @media (max-width: 768px) {
-  .hc-img {
-    height: 480px;
-    object-position: center;
-  }
+.hc-img {
+  height: auto;
+  width: 100%;
+  object-fit: contain;
+}
   .hc-arrow {
     width: 28px;
     height: 28px;
