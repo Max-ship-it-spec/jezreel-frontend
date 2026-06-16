@@ -632,6 +632,72 @@ tbody tr:hover td{background:#FAFBFF;}
           <div id="fichaDocsList" style="display:flex;flex-direction:column;gap:8px;">
             <p style="color:var(--texto-suave);font-size:13px;">Sin documentos.</p>
           </div>
+
+<!-- Próxima Cita -->
+<div class="card" style="margin-top:16px;border:1.5px solid var(--borde);box-shadow:none;">
+  <div class="card-header" style="background:linear-gradient(135deg,#E3F2FD,#fff);">
+    <h3>📅 Próxima Cita</h3>
+    <span class="badge b-azul" style="font-size:11px;">Notifica al cliente</span>
+  </div>
+  <div style="padding:16px;">
+
+    <!-- Cita actual -->
+    <div id="citaActualBox" style="display:none;margin-bottom:16px;
+         background:#E3F2FD;border-radius:10px;padding:12px 16px;
+         border:1.5px solid #BBDEFB;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;
+                  letter-spacing:0.6px;color:#1565C0;margin-bottom:8px;">
+        Cita agendada actualmente
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px;">
+        <span style="font-size:15px;font-weight:700;color:#0D47A1;" id="citaActualFecha">—</span>
+        <span style="font-size:13px;color:#1565C0;font-weight:600;" id="citaActualHora"></span>
+        <span style="font-size:13px;color:#1565C0;" id="citaActualServicio"></span>
+      </div>
+      <div style="font-size:13px;color:#4A5568;" id="citaActualNotas"></div>
+      <button class="btn btn-sm btn-rojo" style="margin-top:10px;"
+              onclick="borrarProximaCita()">🗑 Eliminar cita</button>
+    </div>
+
+    <!-- Formulario -->
+    <div class="form-grid" style="margin-bottom:10px;">
+      <div class="form-group">
+        <label>Fecha de la cita</label>
+        <input type="date" id="citaFecha">
+      </div>
+      <div class="form-group">
+        <label>Hora</label>
+        <input type="time" id="citaHora">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Servicio / motivo</label>
+      <input type="text" id="citaServicio"
+             placeholder="Ej: Vacuna anual, Control de peso, Peluquería...">
+    </div>
+    <div class="form-group">
+      <label>Notas adicionales</label>
+      <input type="text" id="citaNotas"
+             placeholder="Instrucciones, preparación, observaciones...">
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="guardarProximaCita()">
+      💾 Guardar y notificar al cliente
+    </button>
+
+  </div>
+</div>
+
+
+          <!-- Vacunas de la Mascota -->
+<div class="card" style="margin-top:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+  <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
+    <h3>💉 Vacunas Aplicadas</h3>
+    <span class="badge b-verde" style="font-size:11px;">Visible para el cliente</span>
+  </div>
+  <div style="padding:16px;" id="fichaVacunasPanel">
+    <p style="color:var(--texto-suave);font-size:13px;">Cargando vacunas...</p>
+  </div>
+</div>
  
         </div>
       </div>
@@ -1970,6 +2036,8 @@ async function cargarFichaDeUsuario(uid) {
  
   // Documentos
   renderDocsAdmin(ficha.documentos || []);
+  await cargarVacunasMascota(uid);
+  renderCitaActual(ficha);
 }
  
 function renderDocsAdmin(docs) {
@@ -2044,6 +2112,177 @@ async function eliminarDocFicha(docId) {
   toast('Documento eliminado', 'naranja');
   cargarFichaDeUsuario(_fichaUsuarioId);
 }
+
+
+// ── VACUNAS DE MASCOTA ────────────────────────────────────────────────────────
+
+async function cargarVacunasMascota(uid) {
+  const panel = document.getElementById('fichaVacunasPanel');
+  if (!panel) return;
+  panel.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Cargando...</p>';
+
+  const d = await apiFetch(`/api/mascota-vacunas/${uid}`, { headers: authH() });
+  if (!d.ok) { panel.innerHTML = '<p style="color:#E53935;font-size:13px;">Error cargando vacunas</p>'; return; }
+
+  const vacunas = d.vacunas || [];
+  if (!vacunas.length) {
+    panel.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin vacunas en el catálogo</p>';
+    return;
+  }
+
+  // Agrupar por animal
+  const grupos = {};
+  vacunas.forEach(v => {
+    const g = v.animal || 'otro';
+    if (!grupos[g]) grupos[g] = [];
+    grupos[g].push(v);
+  });
+
+  const labelAnimal = { perro:'🐶 Perro', gato:'🐱 Gato', ambos:'✅ Ambos', otro:'🐾 Otro' };
+
+  panel.innerHTML = Object.entries(grupos).map(([animal, lista]) => `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;
+                  letter-spacing:0.8px;color:var(--texto-suave);margin-bottom:8px;">
+        ${labelAnimal[animal] || animal}
+      </div>
+      ${lista.map(v => `
+        <div id="vac-row-${v.id}" style="
+          display:flex;align-items:center;gap:12px;
+          padding:10px 14px;border-radius:10px;margin-bottom:6px;
+          border:1.5px solid ${v.aplicada ? '#A5D6A7' : 'var(--borde)'};
+          background:${v.aplicada ? '#F1F8E9' : 'var(--gris)'};
+          transition:all 0.2s;cursor:pointer;"
+          onclick="toggleVacCheck(${v.id}, ${v.aplicada ? 0 : 1})">
+
+          <!-- Checkbox visual -->
+          <div style="
+            width:22px;height:22px;border-radius:6px;flex-shrink:0;
+            border:2px solid ${v.aplicada ? '#2E7D32' : 'var(--borde)'};
+            background:${v.aplicada ? '#2E7D32' : '#fff'};
+            display:flex;align-items:center;justify-content:center;
+            font-size:13px;color:#fff;font-weight:900;">
+            ${v.aplicada ? '✓' : ''}
+          </div>
+
+          <!-- Info vacuna -->
+          <div style="flex:1;">
+            <div style="font-size:13.5px;font-weight:700;color:var(--texto);">
+              ${v.emoji || '💉'} ${v.nombre}
+            </div>
+            <div style="font-size:11.5px;color:var(--texto-suave);">
+              ${v.frecuencia || 'Anual'} — $${Number(v.precio).toFixed(2)}
+            </div>
+            ${v.aplicada && v.fecha_aplicacion ? `
+              <div style="font-size:11px;color:#2E7D32;margin-top:3px;">
+                📅 Aplicada: ${v.fecha_aplicacion}
+                ${v.proxima_dosis ? ' · Próxima: ' + v.proxima_dosis : ''}
+              </div>` : ''}
+          </div>
+
+          <!-- Fecha (solo si aplicada) -->
+          ${v.aplicada ? `
+            <div onclick="event.stopPropagation()" style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+              <input type="date" value="${v.fecha_aplicacion || ''}"
+                style="padding:4px 8px;border:1.5px solid var(--borde);border-radius:7px;font-size:12px;outline:none;"
+                placeholder="Fecha aplicación"
+                onchange="actualizarFechaVac(${v.id}, 'fecha_aplicacion', this.value)">
+              <input type="date" value="${v.proxima_dosis || ''}"
+                style="padding:4px 8px;border:1.5px solid var(--borde);border-radius:7px;font-size:12px;outline:none;"
+                placeholder="Próxima dosis"
+                onchange="actualizarFechaVac(${v.id}, 'proxima_dosis', this.value)">
+            </div>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+// ── Estado temporal de fechas por vacuna ──
+const _vacFechas = {};
+
+function actualizarFechaVac(vid, campo, valor) {
+  if (!_vacFechas[vid]) _vacFechas[vid] = {};
+  _vacFechas[vid][campo] = valor;
+  // Guardar automáticamente al cambiar fecha
+  const v = document.querySelector(`#vac-row-${vid}`);
+  guardarVacunaMascota(vid, true);
+}
+
+async function toggleVacCheck(vid, nuevaAplicada) {
+  await guardarVacunaMascota(vid, nuevaAplicada === 1);
+}
+
+async function guardarVacunaMascota(vid, aplicada) {
+  if (!_fichaUsuarioId) return;
+  const extra = _vacFechas[vid] || {};
+  const d = await apiFetch(`/api/mascota-vacunas/${_fichaUsuarioId}/${vid}`, {
+    method: 'PUT',
+    headers: authH(),
+    body: JSON.stringify({
+      aplicada,
+      fecha_aplicacion: extra.fecha_aplicacion || null,
+      proxima_dosis:    extra.proxima_dosis    || null,
+    })
+  });
+  if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
+  toast(aplicada ? '✅ Vacuna marcada' : 'Vacuna desmarcada', aplicada ? 'verde' : 'naranja');
+  cargarVacunasMascota(_fichaUsuarioId);
+}
+
+function renderCitaActual(ficha) {
+  const box = document.getElementById('citaActualBox');
+  if (!box) return;
+  if (ficha.proxima_cita_fecha) {
+    box.style.display = 'block';
+    const d = new Date(ficha.proxima_cita_fecha + 'T00:00:00');
+    document.getElementById('citaActualFecha').textContent =
+      d.toLocaleDateString('es-EC', {weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+    document.getElementById('citaActualHora').textContent =
+      ficha.proxima_cita_hora ? '🕐 ' + ficha.proxima_cita_hora : '';
+    document.getElementById('citaActualServicio').textContent =
+      ficha.proxima_cita_servicio ? '• ' + ficha.proxima_cita_servicio : '';
+    document.getElementById('citaActualNotas').textContent =
+      ficha.proxima_cita_notas || '';
+    document.getElementById('citaFecha').value    = ficha.proxima_cita_fecha;
+    document.getElementById('citaHora').value     = ficha.proxima_cita_hora || '';
+    document.getElementById('citaServicio').value = ficha.proxima_cita_servicio || '';
+    document.getElementById('citaNotas').value    = ficha.proxima_cita_notas || '';
+  } else {
+    box.style.display = 'none';
+    ['citaFecha','citaHora','citaServicio','citaNotas']
+      .forEach(id => document.getElementById(id).value = '');
+  }
+}
+
+async function guardarProximaCita() {
+  if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
+  const fecha    = document.getElementById('citaFecha').value;
+  const hora     = document.getElementById('citaHora').value;
+  const servicio = document.getElementById('citaServicio').value.trim();
+  const notas    = document.getElementById('citaNotas').value.trim();
+  if (!fecha) { toast('Selecciona una fecha', 'rojo'); return; }
+  const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/proxima-cita`, {
+    method: 'PUT',
+    headers: authH(),
+    body: JSON.stringify({ fecha, hora, servicio, notas })
+  });
+  if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
+  toast('✅ Cita agendada y cliente notificado', 'verde');
+  cargarFichaDeUsuario(_fichaUsuarioId);
+}
+
+async function borrarProximaCita() {
+  if (!confirm('¿Eliminar la próxima cita agendada?')) return;
+  const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/proxima-cita`, {
+    method: 'DELETE', headers: authH()
+  });
+  if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
+  toast('Cita eliminada', 'naranja');
+  cargarFichaDeUsuario(_fichaUsuarioId);
+}
+
+
 </script>
 
 </body>
