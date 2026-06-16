@@ -1503,6 +1503,114 @@ footer { padding: 32px 1rem 0; }
     height: 300px;
   }
 }
+
+/* ── CHECKLIST VACUNAS CLIENTE ── */
+.vac-checklist-box { margin-top: 16px; }
+.vac-checklist-section-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 16px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.vac-checklist-section-title.pendientes { color: #E65100; }
+.vac-checklist-section-title.aldia { color: #2E7D32; }
+
+.vac-check-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1.5px solid var(--borde);
+  background: var(--gris);
+}
+.vac-check-item.aplicada {
+  border-color: #A5D6A7;
+  background: #F1F8E9;
+}
+.vac-check-item.pendiente {
+  border-color: #FFCC80;
+  background: #FFF8E1;
+}
+.vac-check-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: #fff;
+}
+.vac-check-circle.si { background: #2E7D32; }
+.vac-check-circle.no { background: #FB8C00; }
+.vac-check-info { flex: 1; }
+.vac-check-nombre {
+  font-size: 13.5px; font-weight: 700; color: var(--texto);
+}
+.vac-check-detalle {
+  font-size: 11.5px; color: var(--texto-suave); margin-top: 2px;
+}
+.vac-check-fecha {
+  font-size: 11px; color: #2E7D32; margin-top: 4px; font-weight: 600;
+}
+.vac-check-proxima {
+  font-size: 11px; color: #E65100; margin-top: 4px; font-weight: 700;
+}
+.vac-check-freq-tag {
+  font-size: 10.5px; font-weight: 700; color: var(--azul-oscuro);
+  background: var(--azul-claro); padding: 2px 8px; border-radius: 6px;
+  margin-top: 4px; display: inline-block;
+}
+.vac-checklist-empty {
+  font-size: 13px; color: var(--texto-suave);
+  padding: 14px; text-align: center;
+  border: 1.5px dashed var(--borde); border-radius: 10px;
+}
+
+
+
+/* ── Cuadro de estado de vacuna ── */
+.vacuna-check-box {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 2px solid var(--borde);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 900;
+  color: #fff;
+}
+.vacuna-check-box.si {
+  background: #2E7D32;
+  border-color: #2E7D32;
+}
+.vacuna-check-box.no {
+  background: #fff;
+  border-color: var(--borde);
+}
+.vacuna-card { position: relative; }
+.vacuna-card.tiene-vacuna { border-color: #A5D6A7; }
+
+.vacuna-card-fecha-info {
+  font-size: 11.5px;
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  display: inline-block;
+}
+.vacuna-card-fecha-info.aplicada { background: #F1F8E9; color: #2E7D32; }
+.vacuna-card-fecha-info.proxima  { background: #FFF8E1; color: #E65100; margin-left: 6px; }
+
 </style>
 
 <script>
@@ -1948,6 +2056,52 @@ footer { padding: 32px 1rem 0; }
   .ficha-grid { grid-template-columns: 1fr 1fr; }
   .ficha-login-banner { flex-wrap: wrap; }
 }
+
+
+
+
+/* ── Estado de vacuna en tarjeta del catálogo ── */
+.vacuna-estado-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.vacuna-estado-badge.tiene {
+  background: #E8F5E9;
+  color: #2E7D32;
+}
+.vacuna-estado-badge.falta {
+  background: #FFF3E0;
+  color: #E65100;
+}
+.vacuna-card-fecha-info {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  display: inline-block;
+}
+.vacuna-card-fecha-info.aplicada {
+  background: #F1F8E9;
+  color: #2E7D32;
+}
+.vacuna-card-fecha-info.proxima {
+  background: #FFF8E1;
+  color: #E65100;
+  margin-left: 6px;
+}
+.vacuna-card.tiene-vacuna {
+  border-color: #A5D6A7;
+}
 </style>
 
 
@@ -2006,6 +2160,68 @@ footer { padding: 32px 1rem 0; }
           <div class="ficha-docs-list" id="fichaDocsList"></div>
         </div>
  
+<!-- Próxima Cita -->
+<div id="proximaCitaBox" style="display:none;margin-bottom:14px;">
+  <div style="
+    background:linear-gradient(135deg,#E3F2FD,#fff);
+    border-radius:12px;
+    padding:14px 18px;
+    border:1.5px solid #BBDEFB;
+    position:relative;
+    overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;
+                background:linear-gradient(90deg,#1565C0,#42A5F5);"></div>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;
+                letter-spacing:0.8px;color:#1565C0;margin-bottom:8px;">
+      📅 Próxima Cita
+    </div>
+    <div style="font-size:17px;font-weight:700;color:#0D47A1;margin-bottom:4px;"
+         id="pcFecha">—</div>
+    <div style="font-size:13px;color:#1565C0;margin-bottom:6px;" id="pcHora"></div>
+    <div style="font-size:13.5px;color:#4A5568;line-height:1.5;" id="pcComentario"></div>
+    <a id="pcWaBtn" href="#" target="_blank" style="
+       display:none;margin-top:10px;
+       background:#25D366;color:#fff;border-radius:8px;
+       padding:8px 14px;font-size:13px;font-weight:700;
+       text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+      📲 Confirmar por WhatsApp
+    </a>
+  </div>
+</div>
+<!-- Próxima Cita -->
+<div id="proximaCitaBox" style="display:none;margin-top:14px;margin-bottom:4px;">
+  <div style="background:linear-gradient(135deg,#E3F2FD,#fff);
+              border-radius:12px;padding:16px 18px;
+              border:1.5px solid #BBDEFB;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;
+                background:linear-gradient(90deg,#1565C0,#42A5F5);"></div>
+    <div style="font-size:10px;font-weight:800;text-transform:uppercase;
+                letter-spacing:0.8px;color:#1565C0;margin-bottom:8px;">
+      📅 Próxima Cita
+    </div>
+    <div style="font-size:17px;font-weight:700;color:#0D47A1;margin-bottom:3px;"
+         id="pcFecha">—</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+      <span style="font-size:13px;color:#1565C0;font-weight:600;" id="pcHora"></span>
+      <span style="font-size:13px;color:#1565C0;" id="pcServicio"></span>
+    </div>
+    <div style="font-size:13.5px;color:#4A5568;line-height:1.5;" id="pcNotas"></div>
+    <a id="pcWaBtn" href="#" target="_blank" style="
+       margin-top:12px;background:#25D366;color:#fff;border-radius:9px;
+       padding:9px 16px;font-size:13px;font-weight:700;
+       text-decoration:none;display:inline-flex;align-items:center;gap:7px;">
+      📲 Confirmar por WhatsApp
+    </a>
+  </div>
+</div>
+<!-- Checklist de vacunas del cliente -->
+<div id="vacChecklistBox" class="vac-checklist-box" style="display:none">
+  <div class="vac-checklist-label">💉 Plan de Vacunación</div>
+  <div id="vacChecklistList"></div>
+</div>
+
+
+
         <!-- Sin sesión -->
         <div id="fichaSinSesion" style="display:none">
           <div class="ficha-login-banner">
@@ -2882,23 +3098,27 @@ const animalColors = {
   otro:  { bg:'#ECEFF1', color:'#37474F', label:'Otro'  },
 };
 let _vacunas = [];
+let _misVacunas = [];
 let vacunaFiltro = 'todos';
 
 async function cargarVacunas() {
   const data = await apiFetch('/api/vacunas');
   _vacunas = data.vacunas || [];
+
+  // Cargar estado ANTES de renderizar
+  if (getToken() && currentUser) {
+    const d = await apiFetch('/api/mis-vacunas', { headers: authHeaders() });
+    _misVacunas = d.ok ? (d.vacunas || []) : [];
+  } else {
+    _misVacunas = [];
+  }
+
   if (currentUser?.especie) {
     const map = { Canino:'perro', Felino:'gato' };
     vacunaFiltro = map[currentUser.especie] || 'todos';
   }
   renderVacunasFiltros();
   renderVacunasGrid();
-  const sub = document.getElementById('vacunas-sub');
-  if (currentUser?.mascota_nombre) {
-    sub.textContent = 'Vacunas para ' + currentUser.mascota_nombre + ' (' + (currentUser.especie || 'tu mascota') + ')';
-  } else {
-    sub.textContent = 'Vacunas disponibles para tu mascota';
-  }
 }
 
 function renderVacunasFiltros() {
@@ -2915,18 +3135,58 @@ function filtrarVacunas(f, btn) {
   btn.classList.add('active');
   renderVacunasGrid();
 }
-
 function renderVacunasGrid() {
   const lista = vacunaFiltro === 'todos'
     ? _vacunas
     : _vacunas.filter(v => v.animal === vacunaFiltro || v.animal === 'ambos');
+
+  const fmtFecha = (f) => {
+    if (!f) return null;
+    const d2 = new Date(f + 'T00:00:00');
+    if (isNaN(d2)) return f;
+    return d2.toLocaleDateString('es-EC', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
   document.getElementById('vacunasGrid').innerHTML = lista.map((v, i) => {
     const ac = animalColors[v.animal] || animalColors.otro;
-    return `<div class="vacuna-card ${vcClases[i % vcClases.length]}">
+
+    const miVac = currentUser
+      ? _misVacunas.find(mv => Number(mv.id) === Number(v.id))
+      : null;
+    const tiene = !!miVac;
+
+    let checkHtml = '';
+    let fechasHtml = '';
+    let extraClass = '';
+
+    if (currentUser) {
+const miVac = _misVacunas.find(mv => Number(mv.id) === Number(v.id) && Number(mv.aplicada) === 1);
+const tiene = !!miVac;
+
+checkHtml = `
+  <div style="
+    position:absolute;top:14px;right:14px;
+    width:22px;height:22px;border-radius:5px;
+    border:2px solid ${tiene ? '#2E7D32' : '#cccccc'};
+    background:${tiene ? '#2E7D32' : '#ffffff'};
+  "></div>`;
+
+      if (tiene) {
+        extraClass = 'tiene-vacuna';
+        const fechaAp = fmtFecha(miVac.fecha_aplicacion);
+        const fechaPx = fmtFecha(miVac.proxima_dosis);
+        if (fechaAp) fechasHtml += `<span class="vacuna-card-fecha-info aplicada">📅 Aplicada: ${fechaAp}</span>`;
+        if (fechaPx) fechasHtml += `<span class="vacuna-card-fecha-info proxima">⏰ Próxima: ${fechaPx}</span>`;
+      }
+    }
+
+    return `<div class="vacuna-card ${vcClases[i % vcClases.length]} ${extraClass}">
+      ${checkHtml}
       <div class="vacuna-icon">${v.emoji || '💉'}</div>
       <h3>${v.nombre} <span class="vacuna-animal-tag" style="background:${ac.bg};color:${ac.color}">${ac.label}</span></h3>
       <p>${v.descripcion || ''}</p>
       <span class="ci-badge b-azul">${v.frecuencia || 'Anual'} — $${Number(v.precio).toFixed(2)}</span>
+      ${fechasHtml ? `<div style="margin-top:6px;">${fechasHtml}</div>` : ''}
     </div>`;
   }).join('') || '<p style="color:var(--texto-suave);font-size:14px;padding:20px 0;">Sin vacunas en esta categoría.</p>';
 }
@@ -3572,7 +3832,59 @@ function renderFichaView() {
   document.getElementById('fichaSinSesion').style.display = 'none';
   document.getElementById('fichaForm').style.display = 'none';
   document.getElementById('fichaEditBtn').style.display = 'flex';
+
+
+
+  // Próxima cita
+const pcBox = document.getElementById('proximaCitaBox');
+const fc = _fichaData || {};
+if (pcBox) {
+  if (fc.proxima_cita_fecha) {
+    pcBox.style.display = 'block';
+    const dpc = new Date(fc.proxima_cita_fecha + 'T00:00:00');
+    document.getElementById('pcFecha').textContent =
+      dpc.toLocaleDateString('es-EC',
+        {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+    document.getElementById('pcHora').textContent =
+      fc.proxima_cita_hora ? '🕐 ' + fc.proxima_cita_hora : '';
+    document.getElementById('pcServicio').textContent =
+      fc.proxima_cita_servicio ? '• ' + fc.proxima_cita_servicio : '';
+    document.getElementById('pcNotas').textContent =
+      fc.proxima_cita_notas || '';
+    const tel = (currentUser?.telefono || '').replace(/\D/g,'').slice(-9);
+    const msg = `Hola Jezreel Vet! Confirmo mi cita para el ${fc.proxima_cita_fecha}${fc.proxima_cita_hora ? ' a las ' + fc.proxima_cita_hora : ''}${fc.proxima_cita_servicio ? ' — ' + fc.proxima_cita_servicio : ''}.`;
+    document.getElementById('pcWaBtn').href =
+      `https://wa.me/593984586114?text=${encodeURIComponent(msg)}`;
+  } else {
+    pcBox.style.display = 'none';
+  }
 }
+}
+
+
+
+async function cargarFichaMascota() {
+  const token = getToken();
+
+  if (!token || !currentUser) {
+    document.getElementById('fichaView').style.display = 'block';
+    document.getElementById('fichaSinSesion').style.display = 'block';
+    document.getElementById('fichaEditBtn').style.display = 'none';
+    document.getElementById('fichaNombreTxt').textContent = 'Ficha de mi Mascota';
+    document.getElementById('fichaSubTxt').textContent = 'Inicia sesión para ver tu ficha';
+    // ocultar checklist si no hay sesión
+    const box = document.getElementById('vacChecklistBox');
+    if (box) box.style.display = 'none';
+    return;
+  }
+
+  const data = await apiFetch('/api/ficha-mascota', { headers: authHeaders() });
+  _fichaData = data.ficha || {};
+
+  renderFichaView();
+  cargarChecklistVacunas();   // ← agregar esta línea
+}
+
  
 function toggleFichaEdit() {
   if (!currentUser) { window.location.href = 'login.html'; return; }
@@ -3634,6 +3946,101 @@ function actualizarNavVacunas() {
     || (currentUser && currentUser.mascota_nombre)
     || '';
   label.textContent = nombre ? nombre : 'Mi Mascota';
+}
+
+
+// ── CHECKLIST DE VACUNAS DEL CLIENTE ──────────────────────────────────────────
+// ── CHECKLIST DE VACUNAS DEL CLIENTE ──────────────────────────────────────────
+async function cargarChecklistVacunas() {
+  const box  = document.getElementById('vacChecklistBox');
+  const list = document.getElementById('vacChecklistList');
+  if (!box || !list) return;
+
+  if (!getToken() || !currentUser) {
+    box.style.display = 'none';
+    return;
+  }
+
+  const d = await apiFetch('/api/mis-vacunas', { headers: authHeaders() });
+  if (!d.ok) { box.style.display = 'none'; return; }
+
+  const vacunas = d.vacunas || [];
+  if (!vacunas.length) { box.style.display = 'none'; return; }
+
+  // Filtrar por especie de la mascota (si aplica)
+  const espMap = { Canino: 'perro', Felino: 'gato' };
+  const filtroAnimal = espMap[currentUser.especie] || null;
+
+  const lista = filtroAnimal
+    ? vacunas.filter(v => v.animal === filtroAnimal || v.animal === 'ambos')
+    : vacunas;
+
+  if (!lista.length) { box.style.display = 'none'; return; }
+
+  box.style.display = 'block';
+
+  const pendientes = lista.filter(v => !v.aplicada);
+  const aldia      = lista.filter(v => v.aplicada);
+
+  // Formatear fecha YYYY-MM-DD a algo legible
+  const fmtFecha = (f) => {
+    if (!f) return null;
+    const d2 = new Date(f + 'T00:00:00');
+    if (isNaN(d2)) return f;
+    return d2.toLocaleDateString('es-EC', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
+  let html = '';
+
+  // ── Pendientes primero (lo más importante) ──
+  if (pendientes.length) {
+    html += `<div class="vac-checklist-section-title pendientes">
+      ⚠️ Vacunas pendientes (${pendientes.length})
+    </div>`;
+    html += pendientes.map(v => `
+      <div class="vac-check-item pendiente">
+        <div class="vac-check-circle no">!</div>
+        <div class="vac-check-info">
+          <div class="vac-check-nombre">${v.emoji || '💉'} ${v.nombre}</div>
+          <div class="vac-check-detalle">${v.descripcion || ''}</div>
+          <span class="vac-check-freq-tag">🔁 Se aplica: ${v.frecuencia || 'Anual'} — $${Number(v.precio).toFixed(2)}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── Al día ──
+  if (aldia.length) {
+    html += `<div class="vac-checklist-section-title aldia">
+      ✅ Vacunas al día (${aldia.length})
+    </div>`;
+    html += aldia.map(v => {
+      const fechaAp  = fmtFecha(v.fecha_aplicacion);
+      const fechaPx  = fmtFecha(v.proxima_dosis);
+      return `<div class="vac-check-item aplicada">
+        <div class="vac-check-circle si">✓</div>
+        <div class="vac-check-info">
+          <div class="vac-check-nombre">${v.emoji || '💉'} ${v.nombre}</div>
+          <div class="vac-check-detalle">${v.frecuencia || 'Anual'} — $${Number(v.precio).toFixed(2)}</div>
+          ${fechaAp ? `<div class="vac-check-fecha">📅 Aplicada: ${fechaAp}</div>` : ''}
+          ${fechaPx ? `<div class="vac-check-proxima">⏰ Próxima dosis: ${fechaPx}</div>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  if (!pendientes.length && !aldia.length) {
+    html = '<div class="vac-checklist-empty">Sin información de vacunas todavía.</div>';
+  }
+
+  list.innerHTML = html;
+}
+
+async function cargarMisVacunasEstado() {
+  if (!getToken() || !currentUser) { _misVacunas = []; return; }
+  const d = await apiFetch('/api/mis-vacunas', { headers: authHeaders() });
+  // Solo guardar las que están aplicadas (aplicada == 1 o "1")
+  _misVacunas = d.ok ? (d.vacunas || []).filter(v => Number(v.aplicada) === 1) : [];
 }
 </script>
 </body>
