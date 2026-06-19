@@ -2145,27 +2145,27 @@ function prevDocUpload(e) {
 async function subirDocFicha() {
   if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
   if (!_fichaDocFile)   { toast('Selecciona un archivo', 'rojo'); return; }
- 
-  const nombre = document.getElementById('fichaDocNombre').value.trim()
-    || _fichaDocFile.name;
- 
+
+  // Si no pusieron nombre, usar el nombre original del archivo sin extensión rara
+  const nombreInput = document.getElementById('fichaDocNombre').value.trim();
+  const nombreFinal = nombreInput || _fichaDocFile.name.replace(/\.[^.]+$/, '');
+
   const fd = new FormData();
   fd.append('archivo', _fichaDocFile);
-  fd.append('nombre', nombre);
- 
+  fd.append('nombre', nombreFinal);   // ← siempre manda un nombre limpio
+
   const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/documentos`, {
     method: 'POST',
     headers: { 'Authorization': 'Bearer ' + getToken() },
     body: fd
   });
- 
+
   if (!d.ok) { toast(d.error || 'Error al subir', 'rojo'); return; }
   toast('Documento subido', 'verde');
   _fichaDocFile = null;
   document.getElementById('fichaDocFile').value = '';
   document.getElementById('fichaDocNombre').value = '';
   document.getElementById('fichaDocPreviewNombre').style.display = 'none';
-  // Recargar ficha
   cargarFichaDeUsuario(_fichaUsuarioId);
 }
  
