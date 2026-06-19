@@ -1346,7 +1346,7 @@ footer { padding: 32px 1rem 0; }
         Jezreel<span style="color:var(--acento);">Vet</span>
       </span>
     </a>
-    <div class="nav-stars" id="navStars"></div>
+    
   </div>
 
   <ul class="nav-links" id="navLinks">
@@ -2707,10 +2707,11 @@ footer { padding: 32px 1rem 0; }
       <div class="jzc-photo" id="jzcFoto"><span>🐾</span></div>
       <div class="jzc-nombre" id="jzcNombre">—</div>
       <div class="jzc-meta-list">
-        <div class="jzc-meta-line" id="jzcEspecie">—</div>
-        <div class="jzc-meta-line" id="jzcFecha">—</div>
-        <div class="jzc-meta-line" id="jzcIdMascota">—</div>
-      </div>
+  <div class="jzc-meta-line" id="jzcEspecie">—</div>
+  <div class="jzc-meta-line" id="jzcFecha">—</div>
+  <div class="jzc-meta-line" id="jzcIdMascota">—</div>
+  <div class="jzc-meta-line" id="jzcEstrellas" style="color:#E65100;">—</div>
+</div>
     </div>
     <div style="text-align:center;margin-top:14px;">
       <button class="btn-primary" onclick="descargarTarjeta()">⬇ Descargar tarjeta</button>
@@ -2957,7 +2958,7 @@ function mostrarNavConSesion() {
   document.getElementById('btnLogin').style.display    = 'none';
   document.getElementById('userNameNav').textContent   = u.nombre?.split(' ')[0] || 'Usuario';
   document.getElementById('userAvatar').textContent    = (u.nombre || 'U')[0].toUpperCase();
-  renderNavStars();
+  
 }
 
 function mostrarNavSinSesion() {
@@ -2984,7 +2985,6 @@ function doLogout() {
   localStorage.removeItem('jv_user');
   currentUser = null;
   mostrarNavSinSesion();
-  document.getElementById('navStars').innerHTML = '';
   toast('Sesión cerrada', 'naranja');
   document.getElementById('navVacunasLabel').textContent = 'Mi Mascota';
 }
@@ -4233,7 +4233,6 @@ function abrirTarjetaMascota(){
   document.getElementById('jzcNombre').textContent  = nombre.toUpperCase();
   document.getElementById('jzcEspecie').textContent = [especie, raza].filter(Boolean).join(' / ') || '—';
 
-  // Fecha de ingreso: usa created_at de la mascota si existe
   let fechaTxt = '—';
   if (f.created_at) {
     const d = new Date(f.created_at);
@@ -4246,9 +4245,11 @@ function abrirTarjetaMascota(){
   const idMascota = f.id ? 'JV-' + new Date().getFullYear() + '-' + String(f.id).padStart(5,'0') : '—';
   document.getElementById('jzcIdMascota').textContent = 'ID MASCOTA: ' + idMascota;
 
-document.getElementById('jzcFoto').innerHTML = f.foto_url
-  ? `<img src="${f.foto_url}" alt="${nombre}" crossorigin="anonymous">`
-  : `<span>🐾</span>`;
+  document.getElementById('jzcEstrellas').textContent = '⭐ ESTRELLAS: ' + (u.estrellas ?? 0);
+
+  document.getElementById('jzcFoto').innerHTML = f.foto_url
+    ? `<img src="${f.foto_url}" alt="${nombre}" crossorigin="anonymous">`
+    : `<span>🐾</span>`;
 
   abrirModal('mTarjeta');
 }
