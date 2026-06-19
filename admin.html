@@ -564,16 +564,30 @@ tbody tr:hover td{background:#FAFBFF;}
       <span style="font-size:13px;color:var(--texto-suave);">El Dr. puede agregar comentarios y documentos PDF</span>
     </div>
  
-    <!-- Barra de búsqueda de usuario -->
-    <div style="padding:16px 20px;border-bottom:1px solid var(--borde);">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <select id="fichaUserSelect" onchange="cargarFichaDeUsuario(this.value)"
-          style="flex:1;min-width:200px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;outline:none;background:var(--gris);">
-          <option value="">Seleccionar cliente...</option>
-        </select>
-        <button class="btn btn-verde btn-sm" onclick="cargarSelectUsuarios()">↻ Actualizar lista</button>
-      </div>
+<!-- Barra de búsqueda de usuario -->
+<div style="padding:16px 20px;border-bottom:1px solid var(--borde);">
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <select id="fichaUserSelect" onchange="cargarFichaDeUsuario(this.value)"
+      style="flex:1;min-width:200px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;outline:none;background:var(--gris);">
+      <option value="">Seleccionar cliente...</option>
+    </select>
+
+    <!-- ── NUEVA búsqueda por ID tarjeta ── -->
+    <div style="display:flex;gap:6px;align-items:center;">
+      <input type="text" id="fichaIdInput"
+        placeholder="🪪 ID tarjeta (JV-2026-00001)"
+        style="padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;
+               font-size:13.5px;font-family:inherit;outline:none;background:var(--gris);
+               width:220px;transition:0.2s;"
+        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+        onblur="this.style.borderColor='';this.style.background='var(--gris)';"
+        onkeydown="if(event.key==='Enter')buscarPorIdTarjeta()">
+      <button class="btn btn-azul btn-sm" onclick="buscarPorIdTarjeta()">🔍 Buscar</button>
     </div>
+
+    <button class="btn btn-verde btn-sm" onclick="cargarSelectUsuarios()">↻ Actualizar lista</button>
+  </div>
+</div>
  
     <!-- Panel de ficha del usuario seleccionado -->
     <div id="fichaAdminPanel" style="display:none;padding:20px;">
@@ -1356,7 +1370,7 @@ async function cargarEstrellas(){
         <td>${u.telefono||'--'}</td>
         <td><div class="stars-ctrl">
           <button class="btn btn-sm btn-naranja" onclick="cambiarEstrellas(${u.id},-1)">−</button>
-          <span class="num">⭐ ${u.estrellas}</span>
+          <span class="num" id="star-num-${u.id}">⭐ ${u.estrellas}</span>
           <button class="btn btn-sm btn-verde" onclick="cambiarEstrellas(${u.id},1)">+</button>
         </div></td>
         <td><button class="btn btn-sm btn-naranja" onclick="abrirNotificarEstrellas(${u.id})">🎟️ Cupón + WA</button></td>
@@ -1429,10 +1443,24 @@ _Jezreel Vet — Cuidamos a tu familia peluda_ `;
   cargarCupones();
 }
 
-async function cambiarEstrellas(id,delta){
-  const d=await apiFetch(`/api/usuarios/${id}/estrellas`,{method:'PATCH',headers:authH(),body:JSON.stringify({delta})});
-  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
-  cargarEstrellas();
+async function cambiarEstrellas(id, delta) {
+  // 1. Actualizar UI inmediatamente
+  const u = _usuarios.find(u => u.id === id);
+  if (!u) return;
+  u.estrellas = Math.max(0, u.estrellas + delta);
+  const numEl = document.querySelector(`#star-num-${id}`);
+  if (numEl) numEl.textContent = '⭐ ' + u.estrellas;
+
+  // 2. Mandar a la API en segundo plano
+  const d = await apiFetch(`/api/usuarios/${id}/estrellas`, {
+    method: 'PATCH', headers: authH(), body: JSON.stringify({ delta })
+  });
+  if (!d.ok) {
+    // Revertir si falló
+    u.estrellas -= delta;
+    if (numEl) numEl.textContent = '⭐ ' + u.estrellas;
+    toast(d.error || 'Error', 'rojo');
+  }
 }
 
 function notificarWA(id){
@@ -2002,8 +2030,11 @@ async function cargarSelectUsuarios() {
   if (!d.ok) { toast('Error cargando usuarios', 'rojo'); return; }
   _usuarios = d.usuarios || [];
   const sel = document.getElementById('fichaUserSelect');
+  const valorActual = sel.value; // conservar selección actual
   sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
     _usuarios.map(u => `<option value="${u.id}">${u.nombre}${u.mascota_nombre ? ' — ' + u.mascota_nombre : ''}</option>`).join('');
+  if (valorActual) sel.value = valorActual; // restaurar selección
+  toast('Lista actualizada', 'verde');
 }
  
 async function cargarFichaDeUsuario(uid) {
@@ -2323,6 +2354,35 @@ async function borrarProximaCita() {
   cargarFichaDeUsuario(_fichaUsuarioId);
 }
 
+async function buscarPorIdTarjeta() {
+  const input = document.getElementById('fichaIdInput').value.trim().toUpperCase();
+  if (!input) { toast('Ingresa un ID de tarjeta', 'rojo'); return; }
+
+  // Formato esperado: JV-2026-00001 → extraer el número al final
+  const match = input.match(/(\d+)$/);
+  if (!match) { toast('Formato inválido. Ej: JV-2026-00001', 'rojo'); return; }
+  const mascotaId = parseInt(match[1]);
+
+  // Buscar en _usuarios por mascota_id
+  if (!_usuarios.length) {
+    const d = await apiFetch('/api/usuarios', { headers: authH() });
+    _usuarios = d.usuarios || [];
+    cargarSelectUsuarios(); // actualizar select también
+  }
+
+  // La ficha se busca por usuario_id, y el id de mascota está en mascota_id del usuario
+  const usuario = _usuarios.find(u => u.mascota_id === mascotaId);
+  if (!usuario) {
+    toast(`No se encontró mascota con ID ${mascotaId}`, 'rojo');
+    return;
+  }
+
+  // Seleccionar en el dropdown y cargar ficha
+  const sel = document.getElementById('fichaUserSelect');
+  sel.value = usuario.id;
+  toast(`✅ Mascota encontrada: ${usuario.mascota_nombre || usuario.nombre}`, 'verde');
+  cargarFichaDeUsuario(usuario.id);
+}
 
 </script>
 
