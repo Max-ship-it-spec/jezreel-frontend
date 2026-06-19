@@ -1006,6 +1006,15 @@ tbody tr:hover td{background:#FAFBFF;}
 </div>
 
 
+<!-- Ver Foto Mascota -->
+<div class="modal-overlay" id="mVerFoto">
+  <div class="modal" style="max-width:480px;padding:0;overflow:hidden;background:#000;">
+    <button class="modal-close" onclick="cerrar('mVerFoto')" style="background:rgba(255,255,255,0.15);color:#fff;z-index:2;">✕</button>
+    <img id="verFotoImg" src="" alt="Foto mascota" style="width:100%;max-height:80vh;object-fit:contain;display:block;background:#000;">
+  </div>
+</div>
+
+
 
 
 
@@ -2044,9 +2053,14 @@ async function cargarFichaDeUsuario(uid) {
 
 // ── FOTO MASCOTA (admin ve pero no edita) ──
 const fotoHtml = ficha.foto_url
-  ? `<img src="${ficha.foto_url}" style="
-      width:64px;height:64px;border-radius:50%;object-fit:cover;
-      border:3px solid var(--azul-medio);flex-shrink:0;">`
+  ? `<div style="position:relative;cursor:pointer;width:64px;height:64px;" onclick="verFotoMascota('${ficha.foto_url}')">
+      <img src="${ficha.foto_url}" style="
+        width:64px;height:64px;border-radius:50%;object-fit:cover;
+        border:3px solid var(--azul-medio);flex-shrink:0;display:block;">
+      <div style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;
+                  background:var(--azul);border:2px solid #fff;display:flex;align-items:center;
+                  justify-content:center;font-size:11px;color:#fff;">🔍</div>
+    </div>`
   : `<div style="
       width:64px;height:64px;border-radius:50%;
       background:var(--azul-claro);display:flex;
@@ -2074,6 +2088,12 @@ function renderDocsAdmin(docs) {
       <button class="btn btn-sm btn-rojo" onclick="eliminarDocFicha(${d.id})">✕</button>
     </div>
   `).join('');
+}
+
+function verFotoMascota(url) {
+  if (!url) return;
+  document.getElementById('verFotoImg').src = url;
+  abrirModal('mVerFoto');
 }
  
 async function guardarComentarioDr() {
