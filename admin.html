@@ -399,9 +399,9 @@ tbody tr:hover td{background:#FAFBFF;}
     <!-- ESTRELLAS -->
     <div class="section" id="sec-estrellas">
       <div class="card">
-        <div class="card-header"><h3>Programa de Fidelidad ⭐</h3><span style="font-size:13px;color:var(--texto-suave);">10 estrellas = % descuentos</span></div>
+        <div class="card-header"><h3>Programa de Fidelidad ⭐</h3><span style="font-size:13px;color:var(--texto-suave);">Acumulación libre — tú decides cuándo premiar</span></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>Cliente</th><th>Teléfono</th><th>Estrellas</th><th>Estado</th><th>Notificar</th></tr></thead>
+          <thead><tr><th>Cliente</th><th>Teléfono</th><th>Estrellas</th><th>Notificar</th></tr></thead>
           <tbody id="tbEstrellas"><tr class="loading-row"><td colspan="5">Cargando...</td></tr></tbody>
         </table></div>
       </div>
@@ -1314,7 +1314,7 @@ async function cargarUsuarios(){
         <td><strong>${u.nombre}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${u.email||'--'}</span></td>
         <td>${u.cedula||'--'}</td><td>${u.telefono||'--'}</td>
         <td><strong>${u.mascota_nombre||'--'}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${u.especie||''} ${u.raza?'· '+u.raza:''}</span></td>
-        <td><strong style="color:var(--acento)">${u.estrellas}/10</strong></td>
+        <td><strong style="color:var(--acento)">⭐ ${u.estrellas}</strong></td>
         <td>${u.carnet_url?`<a href="${u.carnet_url}" target="_blank" class="btn btn-sm btn-azul">Ver</a>`:'<span class="badge b-gris">Sin carnet</span>'}</td>
         <td><button class="btn btn-sm btn-rojo" onclick="eliminarUsuario(${u.id})">Eliminar</button></td>
       </tr>`).join('')
@@ -1356,16 +1356,12 @@ async function cargarEstrellas(){
         <td>${u.telefono||'--'}</td>
         <td><div class="stars-ctrl">
           <button class="btn btn-sm btn-naranja" onclick="cambiarEstrellas(${u.id},-1)">−</button>
-          <span class="num">${u.estrellas}</span>
+          <span class="num">⭐ ${u.estrellas}</span>
           <button class="btn btn-sm btn-verde" onclick="cambiarEstrellas(${u.id},1)">+</button>
         </div></td>
-        <td>${u.estrellas>=10
-          ? '<span class="badge b-acento">¡Premio listo!</span>'
-          : `<span class="badge b-azul">${10-u.estrellas} para descuento</span>`}
-        </td>
         <td><button class="btn btn-sm btn-naranja" onclick="abrirNotificarEstrellas(${u.id})">🎟️ Cupón + WA</button></td>
       </tr>`).join('')
-    : '<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+    : '<tr><td colspan="4" style="text-align:center;padding:16px;color:var(--texto-suave)">Sin usuarios</td></tr>';
 }
 
 function abrirNotificarEstrellas(uid){
@@ -1374,8 +1370,8 @@ function abrirNotificarEstrellas(uid){
   _estrellaUserSel = u;
 
   document.getElementById('mEstrellasNombre').textContent  = u.nombre;
-  document.getElementById('mEstrellasEstrellas').textContent = u.estrellas + '/10';
-  document.getElementById('mEstrellasAlerta').style.display = u.estrellas >= 10 ? 'flex' : 'none';
+document.getElementById('mEstrellasEstrellas').textContent = u.estrellas;
+document.getElementById('mEstrellasAlerta').style.display = 'none';
 
   // Preseleccionar tipo según estrellas
   document.getElementById('me_tipo').value = 'tienda';
@@ -1436,7 +1432,6 @@ _Jezreel Vet — Cuidamos a tu familia peluda_ `;
 async function cambiarEstrellas(id,delta){
   const d=await apiFetch(`/api/usuarios/${id}/estrellas`,{method:'PATCH',headers:authH(),body:JSON.stringify({delta})});
   if(!d.ok){ toast(d.error||'Error','rojo'); return; }
-  if(d.estrellas>=10) toast('🌟 ¡'+(_usuarios.find(u=>u.id===id)?.nombre||'Cliente')+' alcanzó 10 estrellas!','verde');
   cargarEstrellas();
 }
 
