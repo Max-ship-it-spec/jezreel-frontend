@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jezreel Vet - Clínica Veterinaria</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 :root {
   --azul:#1565C0;--azul-vivo:#1976D2;--azul-claro:#E3F2FD;--azul-medio:#BBDEFB;
@@ -1910,6 +1912,64 @@ footer { padding: 32px 1rem 0; }
   }
 }</style>
 <style>
+
+.jzc-card{
+  width:100%;
+  max-width:640px;
+  aspect-ratio:1050/607;
+  background:url('Imagenes/Tarjeta.png') center/cover no-repeat;
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 12px 36px rgba(13,71,161,0.25);
+  font-family:'Plus Jakarta Sans',sans-serif;
+}
+.jzc-photo{
+  position:absolute;
+  left:30%;
+  top:21%;
+  width:31%;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  border:4px solid #1565C0;
+  overflow:hidden;
+  background:#E3F2FD;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8vw;
+}
+.jzc-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.jzc-nombre{
+  position:absolute;
+  left:5.5%;
+  top:40%;
+  max-width:21%;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-weight:900;
+  font-style:italic;
+  font-size:clamp(13px,4.8vw,36px);
+  color:#1565C0;
+  text-transform:uppercase;
+  line-height:0.95;
+}
+.jzc-meta-list{
+  position:absolute;
+  left:5.5%;
+  top:58%;
+  max-width:21%;
+}
+.jzc-meta-line{
+  font-size:clamp(6px,1.05vw,9.5px);
+  font-weight:800;
+  color:#1A237E;
+  line-height:1.85;
+  white-space:nowrap;
+}
+
+
+
+
+
+
 /* ── FICHA MASCOTA ────────────────────────────────────────── */
 .ficha-mascota-card {
   background: #fff;
@@ -2297,7 +2357,10 @@ footer { padding: 32px 1rem 0; }
     <p class="section-sub" id="vacunas-sub">Vacunas disponibles para tu mascota</p>
     <div class="vacunas-filtros" id="vacunasFiltros"></div>
     <div class="vacunas-grid" id="vacunasGrid"><div class="loader">Cargando vacunas...</div></div>
-    <button class="btn-primary" style="background:var(--acento)" onclick="ir('citas')">Agendar Vacuna</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+  <button class="btn-primary" style="background:var(--acento)" onclick="ir('citas')">Agendar Vacuna</button>
+  <button class="btn-primary" style="background:var(--azul-noche)" onclick="abrirTarjetaMascota()">🪪 Tarjeta</button>
+</div>
   </div>
 </section>
 
@@ -2633,6 +2696,24 @@ footer { padding: 32px 1rem 0; }
         <div id="mBienvenidaMascota" style="font-size:14px;color:var(--texto);"></div>
       </div>
       <button class="btn-primary" style="width:100%;justify-content:center;" onclick="cerrar('mBienvenida')">¡Explorar Jezreel Vet!</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="mTarjeta">
+  <div class="modal" style="max-width:680px;background:transparent;box-shadow:none;padding:0;">
+    <button class="modal-close" onclick="cerrar('mTarjeta')" style="background:#fff;">✕</button>
+    <div class="jzc-card" id="jzcCard">
+      <div class="jzc-photo" id="jzcFoto"><span>🐾</span></div>
+      <div class="jzc-nombre" id="jzcNombre">—</div>
+      <div class="jzc-meta-list">
+        <div class="jzc-meta-line" id="jzcEspecie">—</div>
+        <div class="jzc-meta-line" id="jzcFecha">—</div>
+        <div class="jzc-meta-line" id="jzcIdMascota">—</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:14px;">
+      <button class="btn-primary" onclick="descargarTarjeta()">⬇ Descargar tarjeta</button>
     </div>
   </div>
 </div>
@@ -3817,7 +3898,7 @@ function renderFichaView() {
   // Avatar emoji por especie
   const avatarMap = { Canino: '🐶', Felino: '🐱', Otro: '🐾' };
  // Ya no usamos fichaAvatar, usamos renderMascotaAvatar
-renderMascotaAvatar(_fichaData?.foto_url || null);
+renderMascotaAvatar(_fichaData?.foto_url || null, false);
  
   // Valores
   document.getElementById('fv_nombre').textContent = nombre || '—';
@@ -3917,27 +3998,29 @@ async function cargarFichaMascota() {
  
 function toggleFichaEdit() {
   if (!currentUser) { window.location.href = 'login.html'; return; }
- 
+
   const f = _fichaData || {};
   const u = currentUser || {};
- 
-  // Rellenar formulario con datos existentes
+
   document.getElementById('ff_nombre').value = f.nombre || u.mascota_nombre || '';
   document.getElementById('ff_edad').value   = f.edad   || '';
   document.getElementById('ff_peso').value   = f.peso   || '';
   document.getElementById('ff_raza').value   = f.raza   || u.raza || '';
- 
+
   document.getElementById('fichaView').style.display = 'none';
   document.getElementById('fichaForm').style.display = 'block';
   document.getElementById('fichaEditBtn').style.display = 'none';
+
+  renderMascotaAvatar(f.foto_url || null, true);   // ← nueva línea
 }
  
 function cancelarFichaEdit() {
   document.getElementById('fichaView').style.display = 'block';
   document.getElementById('fichaForm').style.display = 'none';
   document.getElementById('fichaEditBtn').style.display = 'flex';
+
+  renderMascotaAvatar(_fichaData?.foto_url || null, false);   // ← nueva línea
 }
- 
 async function guardarFicha() {
   if (!currentUser) return;
  
@@ -4103,7 +4186,7 @@ async function subirFotoMascota(e) {
     toast('Foto actualizada ✅', 'verde');
 
     if (_fichaData) _fichaData.foto_url = d.foto_url;
-    renderMascotaAvatar(d.foto_url || null);
+    renderMascotaAvatar(d.foto_url || null, true);
 
     const stored = getStoredUser();
     if (stored) {
@@ -4117,25 +4200,91 @@ async function subirFotoMascota(e) {
   }
 }
 
-function renderMascotaAvatar(fotoUrl) {
+function renderMascotaAvatar(fotoUrl, editable = false) {
   const wrap = document.getElementById('mascotaAvatarWrap');
   if (!wrap) return;
-  if (fotoUrl) {
-    wrap.innerHTML = `
-      <img class="mascota-foto" src="${fotoUrl}" alt="Foto mascota">
-      <label class="foto-edit-btn" for="mascotaFotoInput" title="Cambiar foto">✏️</label>
-      <input type="file" id="mascotaFotoInput" accept="image/*">
-    `;
-  } else {
-    wrap.innerHTML = `
-      <div class="avatar-placeholder">🐾</div>
-      <label class="foto-edit-btn" for="mascotaFotoInput" title="Cambiar foto">✏️</label>
-      <input type="file" id="mascotaFotoInput" accept="image/*">
-    `;
+
+  const imgHtml = fotoUrl
+    ? `<img class="mascota-foto" src="${fotoUrl}" alt="Foto mascota">`
+    : `<div class="avatar-placeholder">🐾</div>`;
+
+  const editHtml = editable
+    ? `<label class="foto-edit-btn" for="mascotaFotoInput" title="Cambiar foto">✏️</label>
+       <input type="file" id="mascotaFotoInput" accept="image/*">`
+    : '';
+
+  wrap.innerHTML = imgHtml + editHtml;
+
+  if (editable) {
+    document.getElementById('mascotaFotoInput')
+      ?.addEventListener('change', subirFotoMascota);
   }
-  // Vincular DESPUÉS de insertar en el DOM
-  document.getElementById('mascotaFotoInput')
-    ?.addEventListener('change', subirFotoMascota);
+}
+
+
+function abrirTarjetaMascota(){
+  if(!currentUser){ window.location.href='login.html'; return; }
+  const f = _fichaData || {};
+  const u = currentUser || {};
+  const nombre  = f.nombre || u.mascota_nombre || 'Mi Mascota';
+  const especie = (u.especie || '').toUpperCase();
+  const raza    = (f.raza || u.raza || '').toUpperCase();
+
+  document.getElementById('jzcNombre').textContent  = nombre.toUpperCase();
+  document.getElementById('jzcEspecie').textContent = [especie, raza].filter(Boolean).join(' / ') || '—';
+
+  // Fecha de ingreso: usa created_at de la mascota si existe
+  let fechaTxt = '—';
+  if (f.created_at) {
+    const d = new Date(f.created_at);
+    if (!isNaN(d)) {
+      fechaTxt = d.toLocaleDateString('es-EC', {day:'2-digit', month:'2-digit', year:'numeric'});
+    }
+  }
+  document.getElementById('jzcFecha').textContent = 'FECHA DE INGRESO: ' + fechaTxt;
+
+  const idMascota = f.id ? 'JV-' + new Date().getFullYear() + '-' + String(f.id).padStart(5,'0') : '—';
+  document.getElementById('jzcIdMascota').textContent = 'ID MASCOTA: ' + idMascota;
+
+document.getElementById('jzcFoto').innerHTML = f.foto_url
+  ? `<img src="${f.foto_url}" alt="${nombre}" crossorigin="anonymous">`
+  : `<span>🐾</span>`;
+
+  abrirModal('mTarjeta');
+}
+
+function descargarTarjeta(){
+  const card = document.getElementById('jzcCard');
+  const btn  = event?.target;
+
+  toast('Generando tarjeta...', '');
+
+  // Esperar a que todas las imágenes dentro de la tarjeta terminen de cargar
+  const imgs = card.querySelectorAll('img');
+  const promesasImgs = Array.from(imgs).map(img => {
+    if (img.complete) return Promise.resolve();
+    return new Promise(res => { img.onload = res; img.onerror = res; });
+  });
+
+  Promise.all(promesasImgs).then(() => {
+    html2canvas(card, {
+      scale: 3,
+      backgroundColor: null,
+      useCORS: true,
+      allowTaint: false,
+      logging: true
+    }).then(canvas => {
+      const a = document.createElement('a');
+      a.download = 'tarjeta-' + (document.getElementById('jzcNombre').textContent || 'mascota')
+        .toLowerCase().replace(/\s+/g, '-') + '.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+      toast('✅ Tarjeta descargada', 'verde');
+    }).catch(err => {
+      console.error('Error generando tarjeta:', err);
+      toast('Error al generar la tarjeta. Revisa la consola.', 'naranja');
+    });
+  });
 }
 
 </script>
