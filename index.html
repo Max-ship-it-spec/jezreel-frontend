@@ -1286,7 +1286,50 @@ footer { padding: 32px 1rem 0; }
 }
 .notif-tab.active{background:var(--azul);color:#fff;border-color:var(--azul);}
 
-
+.mascota-avatar-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+.mascota-avatar-wrap img.mascota-foto {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--azul-medio);
+  display: block;
+}
+.mascota-avatar-wrap .avatar-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--azul-claro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  border: 3px solid var(--azul-medio);
+}
+.mascota-avatar-wrap .foto-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--azul);
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 11px;
+  color: #fff;
+}
+.mascota-avatar-wrap input[type="file"] {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -2116,9 +2159,14 @@ footer { padding: 32px 1rem 0; }
     <div class="ficha-mascota-card" id="fichaMascotaCard">
  
       <!-- Cabecera de la ficha -->
-      <div class="ficha-header">
-        <div class="ficha-avatar" id="fichaAvatar">🐾</div>
-        <div class="ficha-header-txt">
+     <div class="ficha-header">
+  <div class="mascota-avatar-wrap" id="mascotaAvatarWrap">
+    <div class="avatar-placeholder">🐾</div>
+    <label class="foto-edit-btn" for="mascotaFotoInput" title="Cambiar foto">✏️</label>
+    <input type="file" id="mascotaFotoInput" accept="image/*"
+           onchange="subirFotoMascota(event)">
+  </div>
+  <div class="ficha-header-txt">
           <h3 class="ficha-nombre-txt" id="fichaNombreTxt">Ficha de mi Mascota</h3>
           <span class="ficha-sub" id="fichaSubTxt">Completa los datos de tu compañero</span>
         </div>
@@ -2161,33 +2209,7 @@ footer { padding: 32px 1rem 0; }
         </div>
  
 <!-- Próxima Cita -->
-<div id="proximaCitaBox" style="display:none;margin-bottom:14px;">
-  <div style="
-    background:linear-gradient(135deg,#E3F2FD,#fff);
-    border-radius:12px;
-    padding:14px 18px;
-    border:1.5px solid #BBDEFB;
-    position:relative;
-    overflow:hidden;">
-    <div style="position:absolute;top:0;left:0;right:0;height:3px;
-                background:linear-gradient(90deg,#1565C0,#42A5F5);"></div>
-    <div style="font-size:10px;font-weight:800;text-transform:uppercase;
-                letter-spacing:0.8px;color:#1565C0;margin-bottom:8px;">
-      📅 Próxima Cita
-    </div>
-    <div style="font-size:17px;font-weight:700;color:#0D47A1;margin-bottom:4px;"
-         id="pcFecha">—</div>
-    <div style="font-size:13px;color:#1565C0;margin-bottom:6px;" id="pcHora"></div>
-    <div style="font-size:13.5px;color:#4A5568;line-height:1.5;" id="pcComentario"></div>
-    <a id="pcWaBtn" href="#" target="_blank" style="
-       display:none;margin-top:10px;
-       background:#25D366;color:#fff;border-radius:8px;
-       padding:8px 14px;font-size:13px;font-weight:700;
-       text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
-      📲 Confirmar por WhatsApp
-    </a>
-  </div>
-</div>
+
 <!-- Próxima Cita -->
 <div id="proximaCitaBox" style="display:none;margin-top:14px;margin-bottom:4px;">
   <div style="background:linear-gradient(135deg,#E3F2FD,#fff);
@@ -3794,8 +3816,8 @@ function renderFichaView() {
  
   // Avatar emoji por especie
   const avatarMap = { Canino: '🐶', Felino: '🐱', Otro: '🐾' };
-  document.getElementById('fichaAvatar').textContent =
-    avatarMap[especie] || '🐾';
+ // Ya no usamos fichaAvatar, usamos renderMascotaAvatar
+renderMascotaAvatar(_fichaData?.foto_url || null);
  
   // Valores
   document.getElementById('fv_nombre').textContent = nombre || '—';
@@ -3838,13 +3860,20 @@ function renderFichaView() {
   // Próxima cita
 const pcBox = document.getElementById('proximaCitaBox');
 const fc = _fichaData || {};
+console.log('proxima_cita_fecha RAW:', fc.proxima_cita_fecha, typeof fc.proxima_cita_fecha);
 if (pcBox) {
   if (fc.proxima_cita_fecha) {
     pcBox.style.display = 'block';
-    const dpc = new Date(fc.proxima_cita_fecha + 'T00:00:00');
-    document.getElementById('pcFecha').textContent =
-      dpc.toLocaleDateString('es-EC',
-        {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+    // Parseo robusto — soporta cualquier formato que llegue del backend
+    const dpc = new Date(fc.proxima_cita_fecha);
+const dpcLocal = new Date(
+  dpc.getUTCFullYear(),
+  dpc.getUTCMonth(),
+  dpc.getUTCDate()
+);
+document.getElementById('pcFecha').textContent =
+  dpcLocal.toLocaleDateString('es-EC',
+    {weekday:'long', day:'2-digit', month:'long', year:'numeric'});
     document.getElementById('pcHora').textContent =
       fc.proxima_cita_hora ? '🕐 ' + fc.proxima_cita_hora : '';
     document.getElementById('pcServicio').textContent =
@@ -4042,6 +4071,73 @@ async function cargarMisVacunasEstado() {
   // Solo guardar las que están aplicadas (aplicada == 1 o "1")
   _misVacunas = d.ok ? (d.vacunas || []).filter(v => Number(v.aplicada) === 1) : [];
 }
+
+async function subirFotoMascota(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const fd = new FormData();
+  fd.append('foto', file);
+
+  try {
+    const res = await fetch(API + '/api/ficha-mascota/foto', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + getToken() },
+      body: fd
+    });
+
+    let d;
+    try {
+      d = await res.json();
+    } catch (parseErr) {
+      console.error('Respuesta no es JSON. Status:', res.status, res.statusText);
+      toast('Error del servidor (status ' + res.status + ')', 'naranja');
+      return;
+    }
+
+    if (!d.ok) {
+      toast('Error subiendo foto: ' + (d.error || 'desconocido'), 'naranja');
+      return;
+    }
+
+    toast('Foto actualizada ✅', 'verde');
+
+    if (_fichaData) _fichaData.foto_url = d.foto_url;
+    renderMascotaAvatar(d.foto_url || null);
+
+    const stored = getStoredUser();
+    if (stored) {
+      stored.foto_url = d.foto_url;
+      localStorage.setItem('jv_user', JSON.stringify(stored));
+    }
+
+  } catch (networkErr) {
+    console.error('Error de red al subir foto:', networkErr);
+    toast('Sin conexión con el servidor', 'naranja');
+  }
+}
+
+function renderMascotaAvatar(fotoUrl) {
+  const wrap = document.getElementById('mascotaAvatarWrap');
+  if (!wrap) return;
+  if (fotoUrl) {
+    wrap.innerHTML = `
+      <img class="mascota-foto" src="${fotoUrl}" alt="Foto mascota">
+      <label class="foto-edit-btn" for="mascotaFotoInput" title="Cambiar foto">✏️</label>
+      <input type="file" id="mascotaFotoInput" accept="image/*">
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div class="avatar-placeholder">🐾</div>
+      <label class="foto-edit-btn" for="mascotaFotoInput" title="Cambiar foto">✏️</label>
+      <input type="file" id="mascotaFotoInput" accept="image/*">
+    `;
+  }
+  // Vincular DESPUÉS de insertar en el DOM
+  document.getElementById('mascotaFotoInput')
+    ?.addEventListener('change', subirFotoMascota);
+}
+
 </script>
 </body>
 </html>
