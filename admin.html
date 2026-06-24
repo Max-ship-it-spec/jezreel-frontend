@@ -629,10 +629,7 @@ tbody tr:hover td{background:#FAFBFF;}
 
     <!-- Campos de la receta -->
     <div class="form-grid" style="margin-bottom:10px;">
-      <div class="form-group">
-        <label>Diagnóstico</label>
-        <input type="text" id="rx_diagnostico" placeholder="Ej: Gastroenteritis aguda">
-      </div>
+    
       <div class="form-group">
         <label>Fecha</label>
         <input type="date" id="rx_fecha">
@@ -2185,14 +2182,14 @@ function construirTextoReceta() {
   const u   = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
   const mascota = document.getElementById('fichaClienteInfo')
     ?.querySelector('[data-label="Nombre"]')?.textContent || u.mascota_nombre || 'Mascota';
-  const diagnostico = document.getElementById('rx_diagnostico').value.trim();
+  
   const meds        = document.getElementById('rx_medicamentos').value.trim();
   const obs         = document.getElementById('rx_obs').value.trim();
   const fecha       = document.getElementById('rx_fecha').value ||
                       new Date().toISOString().split('T')[0];
   const fechaFmt    = new Date(fecha + 'T00:00:00').toLocaleDateString('es-EC',
                         { day: '2-digit', month: 'long', year: 'numeric' });
-  return { u, mascota, diagnostico, meds, obs, fechaFmt, fecha };
+  return { u, mascota, meds, obs, fechaFmt, fecha };
 }
 
 
@@ -2202,7 +2199,7 @@ async function guardarReceta() {
 
   const u           = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
   const mascota     = u.mascota_nombre || '—';
-  const diagnostico = document.getElementById('rx_diagnostico').value.trim();
+  
   const meds        = document.getElementById('rx_medicamentos').value.trim();
   const obs         = document.getElementById('rx_obs').value.trim();
   const fecha       = document.getElementById('rx_fecha').value || new Date().toISOString().split('T')[0];
@@ -2234,7 +2231,6 @@ async function guardarReceta() {
   meds.split('\n').forEach(l => {
     h += wrapLines(l || ' ', '14px sans-serif', W).length * LINE + 4;
   });
-  if (diagnostico) h += LINE + 8;
   if (obs)         h += LINE + 20;
   h += 80;
 
@@ -2252,10 +2248,8 @@ async function guardarReceta() {
   ctx.fillRect(0, 0, 800, 8);
 
   // Logo en texto (sin imagen — evita canvas tainted)
-  ctx.fillStyle = '#0D47A1'; ctx.font = 'bold 26px serif';
-  ctx.fillText('Jezreel', MARGIN, 52);
-  ctx.fillStyle = '#FF6F00';
-  ctx.fillText('Vet', MARGIN + 96, 52);
+ctx.fillStyle = '#0D47A1'; ctx.font = 'bold 26px serif';
+  ctx.fillText('Jezreel Vet', MARGIN, 52);
   ctx.fillStyle = '#4A5568'; ctx.font = '12px sans-serif';
   ctx.fillText('Clínica Veterinaria — Guayaquil, Ecuador', MARGIN, 72);
 
@@ -2280,13 +2274,7 @@ async function guardarReceta() {
 
   let y = 190;
 
-  if (diagnostico) {
-    ctx.fillStyle = '#C62828'; ctx.font = 'bold 13px sans-serif';
-    ctx.fillText('Diagnóstico:', MARGIN, y);
-    ctx.fillStyle = '#0D1B3E'; ctx.font = '13px sans-serif';
-    ctx.fillText(diagnostico, MARGIN + 102, y);
-    y += LINE + 8;
-  }
+
 
   ctx.fillStyle = '#1B5E20'; ctx.font = 'bold 13px sans-serif';
   ctx.fillText('Medicamentos / Indicaciones:', MARGIN, y);
@@ -2337,11 +2325,11 @@ async function guardarReceta() {
       if (!d.ok) { toast(d.error || 'Error guardando receta', 'rojo'); resolve(null); return; }
 
       toast('✅ Receta guardada en documentos', 'verde');
-      ['rx_diagnostico','rx_medicamentos','rx_obs'].forEach(id =>
+      ['rx_medicamentos','rx_obs'].forEach(id =>
         document.getElementById(id).value = '');
       document.getElementById('rx_fecha').value = '';
       cargarFichaDeUsuario(_fichaUsuarioId);
-      resolve({ u, mascota, diagnostico, meds, obs, fechaFmt });
+      resolve({ u, mascota, meds, obs, fechaFmt });
     }, 'image/png');
   });
 }
@@ -2351,7 +2339,6 @@ async function enviarRecetaWA() {
 
   const u           = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
   const mascota     = u.mascota_nombre || '—';
-  const diagnostico = document.getElementById('rx_diagnostico').value.trim();
   const meds        = document.getElementById('rx_medicamentos').value.trim();
   const obs         = document.getElementById('rx_obs').value.trim();
   const fecha       = document.getElementById('rx_fecha').value || new Date().toISOString().split('T')[0];
@@ -2370,7 +2357,7 @@ async function enviarRecetaWA() {
 
 🐾 *Paciente:* ${mascota}
 👤 *Propietario:* ${u.nombre || '—'}
-${diagnostico ? `\n🔍 *Diagnóstico:* ${diagnostico}` : ''}
+
 
 💊 *Medicamentos / Indicaciones:*
 ${meds}
