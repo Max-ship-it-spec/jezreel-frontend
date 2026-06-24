@@ -619,7 +619,63 @@ tbody tr:hover td{background:#FAFBFF;}
           </button>
         </div>
       </div>
- 
+ <!-- Receta del Dr. -->
+<div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+  <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
+    <h3>💊 Receta Médica</h3>
+    <span class="badge b-verde" style="font-size:11px;">Se guarda como documento</span>
+  </div>
+  <div style="padding:16px;">
+
+    <!-- Campos de la receta -->
+    <div class="form-grid" style="margin-bottom:10px;">
+      <div class="form-group">
+        <label>Diagnóstico</label>
+        <input type="text" id="rx_diagnostico" placeholder="Ej: Gastroenteritis aguda">
+      </div>
+      <div class="form-group">
+        <label>Fecha</label>
+        <input type="date" id="rx_fecha">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Medicamentos / Indicaciones</label>
+      <textarea id="rx_medicamentos" rows="5"
+        placeholder="Ej:&#10;1. Metronidazol 250mg — 1 tableta cada 12h por 5 días&#10;2. Omeprazol 10mg — 1 cápsula en ayunas por 7 días&#10;3. Dieta blanda por 3 días"
+        style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
+               font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
+               resize:vertical;outline:none;transition:0.2s;"
+        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+        onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Observaciones adicionales</label>
+      <input type="text" id="rx_obs"
+        placeholder="Ej: Control en 7 días, traer en ayunas"
+        style="width:100%;padding:10px 13px;border:1.5px solid var(--borde);border-radius:9px;
+               font-size:13.5px;font-family:inherit;outline:none;background:var(--gris);transition:0.2s;"
+        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+        onblur="this.style.borderColor='';this.style.background='var(--gris)';">
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+      <button class="btn btn-verde" onclick="guardarReceta()">
+        💾 Guardar receta
+      </button>
+      <button class="btn btn-wa" onclick="enviarRecetaWA()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.59-1.377A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.37l-.36-.214-3.713.776.79-3.603-.235-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/>
+        </svg>
+        Guardar y enviar por WhatsApp
+      </button>
+    </div>
+
+  </div>
+</div>
+
       <!-- Documentos PDF -->
       <div class="card" style="border:none;box-shadow:none;border:1.5px solid var(--borde);">
         <div class="card-header" style="background:linear-gradient(135deg,#FFF8E1,#fff);">
@@ -2122,6 +2178,210 @@ function verFotoMascota(url) {
   abrirModal('mVerFoto');
 }
  
+
+// ── RECETA MÉDICA ─────────────────────────────────────────────────────────────
+
+function construirTextoReceta() {
+  const u   = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
+  const mascota = document.getElementById('fichaClienteInfo')
+    ?.querySelector('[data-label="Nombre"]')?.textContent || u.mascota_nombre || 'Mascota';
+  const diagnostico = document.getElementById('rx_diagnostico').value.trim();
+  const meds        = document.getElementById('rx_medicamentos').value.trim();
+  const obs         = document.getElementById('rx_obs').value.trim();
+  const fecha       = document.getElementById('rx_fecha').value ||
+                      new Date().toISOString().split('T')[0];
+  const fechaFmt    = new Date(fecha + 'T00:00:00').toLocaleDateString('es-EC',
+                        { day: '2-digit', month: 'long', year: 'numeric' });
+  return { u, mascota, diagnostico, meds, obs, fechaFmt, fecha };
+}
+
+
+
+async function guardarReceta() {
+  if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return null; }
+
+  const u           = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
+  const mascota     = u.mascota_nombre || '—';
+  const diagnostico = document.getElementById('rx_diagnostico').value.trim();
+  const meds        = document.getElementById('rx_medicamentos').value.trim();
+  const obs         = document.getElementById('rx_obs').value.trim();
+  const fecha       = document.getElementById('rx_fecha').value || new Date().toISOString().split('T')[0];
+  const fechaFmt    = new Date(fecha + 'T00:00:00').toLocaleDateString('es-EC',
+                        { day:'2-digit', month:'long', year:'numeric' });
+
+  if (!meds) { toast('Escribe al menos los medicamentos', 'rojo'); return null; }
+
+  const MARGIN = 48;
+  const W      = 800 - MARGIN * 2;
+  const LINE   = 22;
+
+  // ── Medir altura dinámica ──
+  const tmpCtx = document.createElement('canvas').getContext('2d');
+  function wrapLines(text, font, maxW) {
+    tmpCtx.font = font;
+    const words = text.split(' ');
+    const lines = []; let cur = '';
+    for (const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if (tmpCtx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; }
+      else cur = test;
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+
+  let h = 240;
+  meds.split('\n').forEach(l => {
+    h += wrapLines(l || ' ', '14px sans-serif', W).length * LINE + 4;
+  });
+  if (diagnostico) h += LINE + 8;
+  if (obs)         h += LINE + 20;
+  h += 80;
+
+  // ── Dibujar ──
+  const canvas = document.createElement('canvas');
+  canvas.width = 800; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // Fondo
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 800, h);
+
+  // Franja verde
+  ctx.fillStyle = '#2E7D32';
+  ctx.fillRect(0, 0, 800, 8);
+
+  // Logo en texto (sin imagen — evita canvas tainted)
+  ctx.fillStyle = '#0D47A1'; ctx.font = 'bold 26px serif';
+  ctx.fillText('Jezreel', MARGIN, 52);
+  ctx.fillStyle = '#FF6F00';
+  ctx.fillText('Vet', MARGIN + 96, 52);
+  ctx.fillStyle = '#4A5568'; ctx.font = '12px sans-serif';
+  ctx.fillText('Clínica Veterinaria — Guayaquil, Ecuador', MARGIN, 72);
+
+  // Separador
+  ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(MARGIN, 84); ctx.lineTo(800 - MARGIN, 84); ctx.stroke();
+
+  // Título
+  ctx.fillStyle = '#1B5E20'; ctx.font = 'bold 18px sans-serif';
+  ctx.fillText('RECETA MÉDICA', MARGIN, 112);
+  ctx.fillStyle = '#4A5568'; ctx.font = '13px sans-serif';
+  ctx.fillText('Fecha: ' + fechaFmt, 800 - MARGIN - 220, 112);
+
+  // Paciente
+  ctx.fillStyle = '#0D1B3E'; ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Paciente: ' + mascota, MARGIN, 138);
+  ctx.font = '13px sans-serif'; ctx.fillStyle = '#4A5568';
+  ctx.fillText('Propietario: ' + (u.nombre || '—'), MARGIN, 156);
+
+  ctx.strokeStyle = '#e0e0e0';
+  ctx.beginPath(); ctx.moveTo(MARGIN, 168); ctx.lineTo(800 - MARGIN, 168); ctx.stroke();
+
+  let y = 190;
+
+  if (diagnostico) {
+    ctx.fillStyle = '#C62828'; ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('Diagnóstico:', MARGIN, y);
+    ctx.fillStyle = '#0D1B3E'; ctx.font = '13px sans-serif';
+    ctx.fillText(diagnostico, MARGIN + 102, y);
+    y += LINE + 8;
+  }
+
+  ctx.fillStyle = '#1B5E20'; ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('Medicamentos / Indicaciones:', MARGIN, y);
+  y += LINE;
+
+  ctx.fillStyle = '#0D1B3E'; ctx.font = '14px sans-serif';
+  meds.split('\n').forEach(linea => {
+    wrapLines(linea || ' ', '14px sans-serif', W).forEach(wl => {
+      ctx.fillText(wl, MARGIN + 14, y); y += LINE;
+    });
+    y += 4;
+  });
+
+  if (obs) {
+    y += 8;
+    ctx.fillStyle = '#E65100'; ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('Observaciones:', MARGIN, y);
+    ctx.fillStyle = '#4A5568'; ctx.font = '13px sans-serif';
+    ctx.fillText(obs, MARGIN + 112, y);
+    y += LINE + 8;
+  }
+
+  // Firma
+  ctx.strokeStyle = '#e0e0e0';
+  ctx.beginPath(); ctx.moveTo(MARGIN, y + 10); ctx.lineTo(800 - MARGIN, y + 10); ctx.stroke();
+  ctx.fillStyle = '#4A5568'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('— Dr. Jezreel Vet —', 400, y + 30);
+  ctx.fillText('Jezreel Vet Clínica Veterinaria', 400, y + 46);
+  ctx.textAlign = 'left';
+
+  // ── Subir ──
+  return new Promise(resolve => {
+    canvas.toBlob(async blob => {
+      if (!blob) { toast('Error generando imagen', 'rojo'); resolve(null); return; }
+
+      const file = new File([blob], `Receta_${fecha}_${mascota.replace(/\s+/g,'_')}.png`,
+                            { type: 'image/png' });
+      const fd = new FormData();
+      fd.append('archivo', file);
+      fd.append('nombre', `💊 Receta ${fechaFmt} — ${mascota}`);
+
+      const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/documentos`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + getToken() },
+        body: fd
+      });
+
+      if (!d.ok) { toast(d.error || 'Error guardando receta', 'rojo'); resolve(null); return; }
+
+      toast('✅ Receta guardada en documentos', 'verde');
+      ['rx_diagnostico','rx_medicamentos','rx_obs'].forEach(id =>
+        document.getElementById(id).value = '');
+      document.getElementById('rx_fecha').value = '';
+      cargarFichaDeUsuario(_fichaUsuarioId);
+      resolve({ u, mascota, diagnostico, meds, obs, fechaFmt });
+    }, 'image/png');
+  });
+}
+
+async function enviarRecetaWA() {
+  if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
+
+  const u           = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
+  const mascota     = u.mascota_nombre || '—';
+  const diagnostico = document.getElementById('rx_diagnostico').value.trim();
+  const meds        = document.getElementById('rx_medicamentos').value.trim();
+  const obs         = document.getElementById('rx_obs').value.trim();
+  const fecha       = document.getElementById('rx_fecha').value || new Date().toISOString().split('T')[0];
+  const fechaFmt    = new Date(fecha + 'T00:00:00').toLocaleDateString('es-EC',
+                        { day:'2-digit', month:'long', year:'numeric' });
+  const tel         = (u.telefono || '').replace(/\D/g,'').slice(-9);
+
+  if (!meds) { toast('Escribe al menos los medicamentos', 'rojo'); return; }
+
+  const resultado = await guardarReceta();
+  if (!resultado) return;
+
+  const msg =
+`💊 *RECETA MÉDICA — Jezreel Vet*
+📅 Fecha: ${fechaFmt}
+
+🐾 *Paciente:* ${mascota}
+👤 *Propietario:* ${u.nombre || '—'}
+${diagnostico ? `\n🔍 *Diagnóstico:* ${diagnostico}` : ''}
+
+💊 *Medicamentos / Indicaciones:*
+${meds}
+${obs ? `\n📋 *Observaciones:* ${obs}` : ''}
+
+_Jezreel Vet — Cuidamos a tu familia peluda_ 🐾`;
+
+  window.open(`https://wa.me/593${tel}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+
 async function guardarComentarioDr() {
   if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
   const comentario = document.getElementById('fichaComentarioDr').value.trim();
