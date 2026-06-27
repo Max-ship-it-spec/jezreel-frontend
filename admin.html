@@ -589,66 +589,65 @@ tbody tr:hover td{background:#FAFBFF;}
   </div>
 </div>
  
-    <!-- Panel de ficha del usuario seleccionado -->
+<!-- Panel de ficha del usuario seleccionado -->
     <div id="fichaAdminPanel" style="display:none;padding:20px;">
- 
+
       <!-- Info de la mascota (datos del cliente) -->
-     <div style="background:var(--azul-claro);border-radius:12px;padding:16px 20px;margin-bottom:20px;border:1px solid var(--azul-medio);">
-  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--azul-oscuro);margin-bottom:10px;">📋 Datos ingresados por el cliente</div>
-  
-  <!-- FOTO MASCOTA -->
-  <div id="fichaFotoAdmin" style="display:flex;justify-content:center;margin-bottom:14px;"></div>
-  
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;" id="fichaClienteInfo"></div>
-</div>
- 
+      <div style="background:var(--azul-claro);border-radius:12px;padding:16px 20px;margin-bottom:20px;border:1px solid var(--azul-medio);">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--azul-oscuro);margin-bottom:10px;">📋 Datos ingresados por el cliente</div>
+        <div id="fichaFotoAdmin" style="display:flex;justify-content:center;margin-bottom:14px;"></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;" id="fichaClienteInfo"></div>
+      </div>
+
+      <!-- Historia Clínica — solo admin -->
+      <div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+        <div class="card-header" style="background:linear-gradient(135deg,#EDE7F6,#fff);">
+          <h3>🩺 Historia Clínica / Anamnesis / Diagnóstico</h3>
+          <span class="badge" style="background:#EDE7F6;color:#4527A0;font-size:11px;">🔒 Solo visible para Admin</span>
+        </div>
+        <div style="padding:16px;">
+          <textarea id="fichaHistoriaClinica" rows="6"
+            placeholder="Anamnesis, signos clínicos, diagnóstico diferencial, diagnóstico definitivo, tratamiento aplicado..."
+            style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
+                   font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
+                   resize:vertical;outline:none;transition:0.2s;"
+            onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+            onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+
+          <div style="margin-top:14px;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;
+                          letter-spacing:0.6px;color:var(--texto-suave);display:block;margin-bottom:6px;">
+              📋 Notas del Dr.
+            </label>
+            <textarea id="fichaNotesDr" rows="3"
+              placeholder="Notas internas, recordatorios, observaciones privadas..."
+              style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
+                     font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
+                     resize:vertical;outline:none;transition:0.2s;"
+              onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+              onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+          </div>
+
+          <button class="btn btn-primary btn-sm" style="margin-top:12px;background:#4527A0;"
+                  onclick="guardarHistoriaDr()">
+            💾 Guardar entrada
+          </button>
+
+          <!-- Lista de entradas guardadas -->
+          <div style="margin-top:20px;">
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;
+                        letter-spacing:0.6px;color:var(--texto-suave);margin-bottom:10px;">
+              Entradas guardadas
+            </div>
+            <div id="historiaEntradasList">
+              <p style="color:var(--texto-suave);font-size:13px;">Sin entradas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Comentario del Dr. -->
-<!-- Historia Clínica / Anamnesis / Diagnóstico — solo admin -->
-<div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
-  <div class="card-header" style="background:linear-gradient(135deg,#EDE7F6,#fff);">
-    <h3>🩺 Historia Clínica / Anamnesis / Diagnóstico</h3>
-    <span class="badge" style="background:#EDE7F6;color:#4527A0;font-size:11px;">🔒 Solo visible para Admin</span>
-  </div>
-  <div style="padding:16px;">
-    <textarea id="fichaHistoriaClinica" rows="6"
-      placeholder="Anamnesis, signos clínicos, diagnóstico diferencial, diagnóstico definitivo, tratamiento aplicado..."
-      style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
-             font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
-             resize:vertical;outline:none;transition:0.2s;"
-      onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
-      onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
-
-    <div style="margin-top:14px;">
-      <label style="font-size:11px;font-weight:700;text-transform:uppercase;
-                    letter-spacing:0.6px;color:var(--texto-suave);display:block;margin-bottom:6px;">
-        📋 Notas del Dr.
-      </label>
-      <textarea id="fichaNotesDr" rows="3"
-        placeholder="Notas internas, recordatorios, observaciones privadas..."
-        style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
-               font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
-               resize:vertical;outline:none;transition:0.2s;"
-        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
-        onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
-    </div>
-
-    <button class="btn btn-primary btn-sm" style="margin-top:12px;background:#4527A0;"
-            onclick="guardarHistoriaDr()">
-      💾 Guardar entrada
-    </button>
-
-    <!-- Lista de entradas guardadas -->
-    <div style="margin-top:20px;">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;
-                  letter-spacing:0.6px;color:var(--texto-suave);margin-bottom:10px;">
-        Entradas guardadas
-      </div>
-      <div id="historiaEntradasList">
-        <p style="color:var(--texto-suave);font-size:13px;">Sin entradas.</p>
-      </div>
-    </div>
-  </div>
-</div>
+      <div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
         <div class="card-header" style="background:linear-gradient(135deg,var(--azul-claro),#fff);">
           <h3>📝 Comentario del Dr.</h3>
           <span class="badge b-azul" style="font-size:11px;">Solo editable por Admin</span>
@@ -664,75 +663,65 @@ tbody tr:hover td{background:#FAFBFF;}
           </button>
         </div>
       </div>
- <!-- Receta del Dr. -->
-<div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
-  <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
-    <h3>💊 Receta Médica</h3>
-    <span class="badge b-verde" style="font-size:11px;">Se guarda como documento</span>
-  </div>
-  <div style="padding:16px;">
 
-    <!-- Campos de la receta -->
-    <div class="form-grid" style="margin-bottom:10px;">
-    
-      <div class="form-group">
-        <label>Fecha</label>
-        <input type="date" id="rx_fecha">
+      <!-- Receta del Dr. -->
+      <div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+        <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
+          <h3>💊 Receta Médica</h3>
+          <span class="badge b-verde" style="font-size:11px;">Se guarda como documento</span>
+        </div>
+        <div style="padding:16px;">
+          <div class="form-grid" style="margin-bottom:10px;">
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" id="rx_fecha">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Medicamentos / Indicaciones</label>
+            <textarea id="rx_medicamentos" rows="5"
+              placeholder="Ej:&#10;1. Metronidazol 250mg — 1 tableta cada 12h por 5 días&#10;2. Omeprazol 10mg — 1 cápsula en ayunas por 7 días&#10;3. Dieta blanda por 3 días"
+              style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
+                     font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
+                     resize:vertical;outline:none;transition:0.2s;"
+              onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+              onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Observaciones adicionales</label>
+            <input type="text" id="rx_obs"
+              placeholder="Ej: Control en 7 días, traer en ayunas"
+              style="width:100%;padding:10px 13px;border:1.5px solid var(--borde);border-radius:9px;
+                     font-size:13.5px;font-family:inherit;outline:none;background:var(--gris);transition:0.2s;"
+              onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+              onblur="this.style.borderColor='';this.style.background='var(--gris)';">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
+            <button class="btn btn-verde" onclick="guardarReceta()">💾 Guardar receta</button>
+            <button class="btn btn-wa" onclick="enviarRecetaWA()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.59-1.377A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.37l-.36-.214-3.713.776.79-3.603-.235-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/>
+              </svg>
+              Guardar y enviar por WhatsApp
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label>Medicamentos / Indicaciones</label>
-      <textarea id="rx_medicamentos" rows="5"
-        placeholder="Ej:&#10;1. Metronidazol 250mg — 1 tableta cada 12h por 5 días&#10;2. Omeprazol 10mg — 1 cápsula en ayunas por 7 días&#10;3. Dieta blanda por 3 días"
-        style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
-               font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
-               resize:vertical;outline:none;transition:0.2s;"
-        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
-        onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Observaciones adicionales</label>
-      <input type="text" id="rx_obs"
-        placeholder="Ej: Control en 7 días, traer en ayunas"
-        style="width:100%;padding:10px 13px;border:1.5px solid var(--borde);border-radius:9px;
-               font-size:13.5px;font-family:inherit;outline:none;background:var(--gris);transition:0.2s;"
-        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
-        onblur="this.style.borderColor='';this.style.background='var(--gris)';">
-    </div>
-
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
-      <button class="btn btn-verde" onclick="guardarReceta()">
-        💾 Guardar receta
-      </button>
-      <button class="btn btn-wa" onclick="enviarRecetaWA()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.025.507 3.934 1.399 5.61L0 24l6.59-1.377A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.003-1.37l-.36-.214-3.713.776.79-3.603-.235-.372A9.818 9.818 0 012.182 12C2.182 6.58 6.58 2.182 12 2.182c5.42 0 9.818 4.398 9.818 9.818 0 5.42-4.398 9.818-9.818 9.818z"/>
-        </svg>
-        Guardar y enviar por WhatsApp
-      </button>
-    </div>
-
-  </div>
-</div>
-
-      <!-- Documentos PDF -->
+      <!-- Documentos -->
       <div class="card" style="border:none;box-shadow:none;border:1.5px solid var(--borde);">
         <div class="card-header" style="background:linear-gradient(135deg,#FFF8E1,#fff);">
           <h3>📄 Documentos (Imágenes)</h3>
           <span class="badge b-acento" style="font-size:11px;">Visibles para el cliente</span>
         </div>
         <div style="padding:16px;">
- 
-          <!-- Upload -->
           <div class="img-uploader" onclick="document.getElementById('fichaDocFile').click()"
             style="margin-bottom:14px;border-color:var(--acento);background:#FFFDE7;">
             <input type="file" id="fichaDocFile" accept=".pdf,.jpg,.jpeg,.png"
               onchange="prevDocUpload(event)">
             <div style="font-size:30px;margin-bottom:6px">📎</div>
-            <p style="font-size:13px;color:var(--texto-suave)"><strong style="color:var(--acento)">Clic</strong> para subir imagenes</p>
+            <p style="font-size:13px;color:var(--texto-suave)"><strong style="color:var(--acento)">Clic</strong> para subir imágenes</p>
           </div>
           <div id="fichaDocPreviewNombre" style="display:none;padding:8px 12px;background:var(--acento-claro);border-radius:8px;font-size:13px;font-weight:600;color:#E65100;margin-bottom:10px;">
             📎 <span id="fichaDocNombreSpan"></span>
@@ -742,84 +731,66 @@ tbody tr:hover td{background:#FAFBFF;}
               style="flex:1;min-width:160px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:13.5px;outline:none;font-family:inherit;">
             <button class="btn btn-naranja" onclick="subirDocFicha()">⬆ Subir</button>
           </div>
- 
-          <!-- Lista de documentos -->
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);margin-bottom:10px;">Documentos guardados</div>
           <div id="fichaDocsList" style="display:flex;flex-direction:column;gap:8px;">
             <p style="color:var(--texto-suave);font-size:13px;">Sin documentos.</p>
           </div>
 
-<!-- Próxima Cita -->
-<div class="card" style="margin-top:16px;border:1.5px solid var(--borde);box-shadow:none;">
-  <div class="card-header" style="background:linear-gradient(135deg,#E3F2FD,#fff);">
-    <h3>📅 Próxima Cita</h3>
-    <span class="badge b-azul" style="font-size:11px;">Notifica al cliente</span>
-  </div>
-  <div style="padding:16px;">
+          <!-- Próxima Cita -->
+          <div class="card" style="margin-top:16px;border:1.5px solid var(--borde);box-shadow:none;">
+            <div class="card-header" style="background:linear-gradient(135deg,#E3F2FD,#fff);">
+              <h3>📅 Próxima Cita</h3>
+              <span class="badge b-azul" style="font-size:11px;">Notifica al cliente</span>
+            </div>
+            <div style="padding:16px;">
+              <div id="citaActualBox" style="display:none;margin-bottom:16px;background:#E3F2FD;border-radius:10px;padding:12px 16px;border:1.5px solid #BBDEFB;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:#1565C0;margin-bottom:8px;">Cita agendada actualmente</div>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px;">
+                  <span style="font-size:15px;font-weight:700;color:#0D47A1;" id="citaActualFecha">—</span>
+                  <span style="font-size:13px;color:#1565C0;font-weight:600;" id="citaActualHora"></span>
+                  <span style="font-size:13px;color:#1565C0;" id="citaActualServicio"></span>
+                </div>
+                <div style="font-size:13px;color:#4A5568;" id="citaActualNotas"></div>
+                <button class="btn btn-sm btn-rojo" style="margin-top:10px;" onclick="borrarProximaCita()">🗑 Eliminar cita</button>
+              </div>
+              <div class="form-grid" style="margin-bottom:10px;">
+                <div class="form-group">
+                  <label>Fecha de la cita</label>
+                  <input type="date" id="citaFecha">
+                </div>
+                <div class="form-group">
+                  <label>Hora</label>
+                  <input type="time" id="citaHora">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Servicio / motivo</label>
+                <input type="text" id="citaServicio" placeholder="Ej: Vacuna anual, Control de peso, Peluquería...">
+              </div>
+              <div class="form-group">
+                <label>Notas adicionales</label>
+                <input type="text" id="citaNotas" placeholder="Instrucciones, preparación, observaciones...">
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="guardarProximaCita()">💾 Guardar y notificar al cliente</button>
+            </div>
+          </div>
 
-    <!-- Cita actual -->
-    <div id="citaActualBox" style="display:none;margin-bottom:16px;
-         background:#E3F2FD;border-radius:10px;padding:12px 16px;
-         border:1.5px solid #BBDEFB;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;
-                  letter-spacing:0.6px;color:#1565C0;margin-bottom:8px;">
-        Cita agendada actualmente
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px;">
-        <span style="font-size:15px;font-weight:700;color:#0D47A1;" id="citaActualFecha">—</span>
-        <span style="font-size:13px;color:#1565C0;font-weight:600;" id="citaActualHora"></span>
-        <span style="font-size:13px;color:#1565C0;" id="citaActualServicio"></span>
-      </div>
-      <div style="font-size:13px;color:#4A5568;" id="citaActualNotas"></div>
-      <button class="btn btn-sm btn-rojo" style="margin-top:10px;"
-              onclick="borrarProximaCita()">🗑 Eliminar cita</button>
-    </div>
+          <!-- Vacunas -->
+          <div class="card" style="margin-top:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+            <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
+              <h3>💉 Vacunas Aplicadas</h3>
+              <span class="badge b-verde" style="font-size:11px;">Visible para el cliente</span>
+            </div>
+            <div style="padding:16px;" id="fichaVacunasPanel">
+              <p style="color:var(--texto-suave);font-size:13px;">Cargando vacunas...</p>
+            </div>
+          </div>
 
-    <!-- Formulario -->
-    <div class="form-grid" style="margin-bottom:10px;">
-      <div class="form-group">
-        <label>Fecha de la cita</label>
-        <input type="date" id="citaFecha">
-      </div>
-      <div class="form-group">
-        <label>Hora</label>
-        <input type="time" id="citaHora">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Servicio / motivo</label>
-      <input type="text" id="citaServicio"
-             placeholder="Ej: Vacuna anual, Control de peso, Peluquería...">
-    </div>
-    <div class="form-group">
-      <label>Notas adicionales</label>
-      <input type="text" id="citaNotas"
-             placeholder="Instrucciones, preparación, observaciones...">
-    </div>
-    <button class="btn btn-primary btn-sm" onclick="guardarProximaCita()">
-      💾 Guardar y notificar al cliente
-    </button>
-
-  </div>
-</div>
-
-
-          <!-- Vacunas de la Mascota -->
-<div class="card" style="margin-top:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
-  <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
-    <h3>💉 Vacunas Aplicadas</h3>
-    <span class="badge b-verde" style="font-size:11px;">Visible para el cliente</span>
-  </div>
-  <div style="padding:16px;" id="fichaVacunasPanel">
-    <p style="color:var(--texto-suave);font-size:13px;">Cargando vacunas...</p>
-  </div>
-</div>
- 
         </div>
       </div>
- 
+
     </div>
- 
+
     <!-- Placeholder cuando no hay usuario seleccionado -->
     <div id="fichaAdminEmpty" style="padding:40px;text-align:center;color:var(--texto-suave);">
       <div style="font-size:48px;margin-bottom:12px">🐾</div>
