@@ -603,7 +603,42 @@ tbody tr:hover td{background:#FAFBFF;}
 </div>
  
       <!-- Comentario del Dr. -->
-      <div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+      <!-- Historia Clínica / Anamnesis / Diagnóstico — solo admin -->
+<div class="card" style="margin-bottom:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
+  <div class="card-header" style="background:linear-gradient(135deg,#EDE7F6,#fff);">
+    <h3>🩺 Historia Clínica / Anamnesis / Diagnóstico</h3>
+    <span class="badge" style="background:#EDE7F6;color:#4527A0;font-size:11px;">🔒 Solo visible para Admin</span>
+  </div>
+  <div style="padding:16px;">
+    <textarea id="fichaHistoriaClinica" rows="6"
+      placeholder="Anamnesis, signos clínicos, diagnóstico diferencial, diagnóstico definitivo, tratamiento aplicado..."
+      style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
+             font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
+             resize:vertical;outline:none;transition:0.2s;"
+      onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+      onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+
+    <!-- Notas del Dr. -->
+    <div style="margin-top:14px;">
+      <label style="font-size:11px;font-weight:700;text-transform:uppercase;
+                    letter-spacing:0.6px;color:var(--texto-suave);display:block;margin-bottom:6px;">
+        📋 Notas del Dr.
+      </label>
+      <textarea id="fichaNotesDr" rows="3"
+        placeholder="Notas internas, recordatorios, observaciones privadas..."
+        style="width:100%;padding:11px 14px;border:1.5px solid var(--borde);border-radius:9px;
+               font-size:13.5px;font-family:inherit;color:var(--texto);background:var(--gris);
+               resize:vertical;outline:none;transition:0.2s;"
+        onfocus="this.style.borderColor='var(--azul-vivo)';this.style.background='#fff';"
+        onblur="this.style.borderColor='';this.style.background='var(--gris)';"></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-sm" style="margin-top:12px;background:#4527A0;"
+            onclick="guardarHistoriaDr()">
+      💾 Guardar historia y notas
+    </button>
+  </div>
+</div>
         <div class="card-header" style="background:linear-gradient(135deg,var(--azul-claro),#fff);">
           <h3>📝 Comentario del Dr.</h3>
           <span class="badge b-azul" style="font-size:11px;">Solo editable por Admin</span>
@@ -2126,8 +2161,10 @@ async function cargarFichaDeUsuario(uid) {
     </div>
   `).join('');
  
-  // Comentario del Dr.
-  document.getElementById('fichaComentarioDr').value = ficha.comentario_dr || '';
+// Comentario del Dr.
+document.getElementById('fichaComentarioDr').value = ficha.comentario_dr || '';
+document.getElementById('fichaHistoriaClinica').value = ficha.historia_clinica || '';
+document.getElementById('fichaNotesDr').value         = ficha.notas_dr_internas || '';
  
 
 // ── FOTO MASCOTA (admin ve pero no edita) ──
@@ -2379,6 +2416,20 @@ async function guardarComentarioDr() {
   });
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
   toast('Comentario del Dr. guardado', 'verde');
+}
+
+
+async function guardarHistoriaDr() {
+  if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
+  const historia = document.getElementById('fichaHistoriaClinica').value.trim();
+  const notas    = document.getElementById('fichaNotesDr').value.trim();
+  const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/historia`, {
+    method: 'PUT',
+    headers: authH(),
+    body: JSON.stringify({ historia_clinica: historia, notas_dr_internas: notas })
+  });
+  if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
+  toast('Historia y notas guardadas ✅', 'verde');
 }
  
 function prevDocUpload(e) {
