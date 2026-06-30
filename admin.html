@@ -345,6 +345,7 @@ tbody tr:hover td{background:#FAFBFF;}
     <button class="nav-item" onclick="ir('fichas')"><span class="icon">🐾</span>Fichas Mascotas</button>
     <button class="nav-item" onclick="ir('servicios')"><span class="icon">🩺</span>Servicios</button>
     <button class="nav-item" onclick="ir('vacunas')"><span class="icon">💉</span>Vacunas</button>
+    <button class="nav-item" onclick="ir('calendario')"><span class="icon">📅</span>Calendario</button>
   </nav>
   <div class="sidebar-user">
     <div class="sidebar-user-info">
@@ -784,6 +785,16 @@ tbody tr:hover td{background:#FAFBFF;}
             </div>
           </div>
 
+
+
+
+
+
+
+
+
+
+          
           <!-- Vacunas -->
           <div class="card" style="margin-top:16px;border:none;box-shadow:none;border:1.5px solid var(--borde);">
             <div class="card-header" style="background:linear-gradient(135deg,#E8F5E9,#fff);">
@@ -795,10 +806,18 @@ tbody tr:hover td{background:#FAFBFF;}
             </div>
           </div>
 
+
+          
+
         </div>
+
+
       </div>
 
     </div>
+
+
+
 
     <!-- Placeholder cuando no hay usuario seleccionado -->
     <div id="fichaAdminEmpty" style="padding:40px;text-align:center;color:var(--texto-suave);">
@@ -806,6 +825,55 @@ tbody tr:hover td{background:#FAFBFF;}
       <p style="font-size:14px;">Selecciona un cliente para ver y editar su ficha</p>
     </div>
  
+  </div>
+</div>
+        <!-- CALENDARIO -->
+<div class="section" id="sec-calendario">
+  <div class="card">
+    <div class="card-header">
+      <h3>📅 Próximas Citas</h3>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <button class="btn btn-azul btn-sm" onclick="cambiarMesCalendario(-1)">‹ Anterior</button>
+        <span id="calMesLabel" style="font-weight:700;font-size:14px;min-width:140px;text-align:center;"></span>
+        <button class="btn btn-azul btn-sm" onclick="cambiarMesCalendario(1)">Siguiente ›</button>
+        <button class="btn btn-verde btn-sm" onclick="irMesActual()">Hoy</button>
+      </div>
+    </div>
+
+    <!-- Grid del calendario -->
+    <div style="padding:20px;">
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Dom</div>
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Lun</div>
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Mar</div>
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Mié</div>
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Jue</div>
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Vie</div>
+        <div style="text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--texto-suave);padding:6px 0;">Sáb</div>
+      </div>
+      <div id="calGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;"></div>
+    </div>
+
+    <!-- Panel lateral: detalle del día seleccionado -->
+    <div id="calDetalle" style="display:none;margin:0 20px 20px;padding:16px;background:var(--azul-claro);border-radius:12px;border:1.5px solid var(--azul-medio);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--azul-oscuro);">Citas del día</span>
+          <div style="font-size:16px;font-weight:800;color:var(--azul-noche);" id="calDetalleLabel"></div>
+        </div>
+        <button onclick="document.getElementById('calDetalle').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:18px;color:var(--texto-suave);">✕</button>
+      </div>
+      <div id="calDetalleItems"></div>
+    </div>
+  </div>
+
+  <!-- Lista compacta de todas las citas del mes -->
+  <div class="card">
+    <div class="card-header"><h3>📋 Lista de citas del mes</h3></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Fecha</th><th>Cliente</th><th>Mascota</th><th>Hora</th><th>Servicio</th><th>Acciones</th></tr></thead>
+      <tbody id="tbCalLista"><tr class="loading-row"><td colspan="6">Cargando...</td></tr></tbody>
+    </table></div>
   </div>
 </div>
   </div>
@@ -1107,6 +1175,7 @@ tbody tr:hover td{background:#FAFBFF;}
 </div>
 
 
+</div>
 
 
 
@@ -1345,8 +1414,9 @@ async function apiFetch(url,opts={}){
 }
 
 const titles={dashboard:'Dashboard',usuarios:'Usuarios',estrellas:'Programa de Estrellas',
-  citas:'Citas',pedidos:'Pedidos',qr:'Código QR',productos:'Productos',categorias:'Categorías',
-  subcategorias:'Subcategorías',marcas:'Marcas',servicios:'Servicios',vacunas:'Vacunas'};
+  citas:'Citas',pedidos:'Pedidos',cupones:'Cupones',qr:'Código QR',productos:'Productos',categorias:'Categorías',
+  subcategorias:'Subcategorías',marcas:'Marcas',servicios:'Servicios',vacunas:'Vacunas',
+  calendario:'Calendario de Próximas Citas'};
 
 function ir(sec){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
@@ -1356,11 +1426,12 @@ function ir(sec){
   if(btn)btn.classList.add('active');
   document.getElementById('pageTitle').textContent=titles[sec]||sec;
   document.getElementById('sidebar').classList.remove('open');
-  const loaders={dashboard:cargarDashboard,usuarios:cargarUsuarios,estrellas:cargarEstrellas,
-    citas:cargarCitas,pedidos:cargarPedidos,cupones:cargarCupones,qr:()=>generarQR(),
-    productos:cargarProductos,categorias:cargarCategorias,subcategorias:cargarSubcategorias,
-    marcas:cargarMarcas,servicios:cargarServicios,vacunas:cargarVacunas,
-    fichas:()=>{ cargarSelectUsuarios(); }};
+ const loaders={dashboard:cargarDashboard,usuarios:cargarUsuarios,estrellas:cargarEstrellas,
+  citas:cargarCitas,pedidos:cargarPedidos,cupones:cargarCupones,qr:()=>generarQR(),
+  productos:cargarProductos,categorias:cargarCategorias,subcategorias:cargarSubcategorias,
+  marcas:cargarMarcas,servicios:cargarServicios,vacunas:cargarVacunas,
+  fichas:()=>{ cargarSelectUsuarios(); },
+  calendario:cargarCalendario};
   if(loaders[sec]) loaders[sec]() ;
   fichas: () => { cargarSelectUsuarios(); }
 }
@@ -2176,19 +2247,21 @@ document.getElementById('fichaFotoAdmin').innerHTML = fotoHtml;
 
 
   // Documentos
-  renderDocsAdmin(ficha.documentos || []);
+renderDocsAdmin(ficha.documentos || []);
   await cargarVacunasMascota(uid);
   renderCitaActual(ficha);
-  cargarHistoriaEntradas(_fichaUsuarioId);
+  cargarHistoriaEntradas(_fichaUsuarioId); // ← esta línea debe estar
 }
  
 function renderDocsAdmin(docs) {
   const list = document.getElementById('fichaDocsList');
-  if (!docs.length) {
+  // Excluir los de Historia Clínica (🩺) de la lista de documentos normales
+  const docsNormales = docs.filter(d => !(d.nombre || '').startsWith('🩺'));
+  if (!docsNormales.length) {
     list.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin documentos.</p>';
     return;
   }
-  list.innerHTML = docs.map(d => `
+  list.innerHTML = docsNormales.map(d => `
     <div class="ficha-doc-row">
       <span style="font-size:18px;">📄</span>
       <a href="${d.url}" target="_blank">${d.nombre || 'Documento'}</a>
@@ -2416,60 +2489,112 @@ async function guardarHistoriaDr() {
   const notas    = document.getElementById('fichaNotesDr').value.trim();
   if (!historia && !notas) { toast('Escribe algo antes de guardar', 'rojo'); return; }
 
+  // 1. Guardar en BD
   const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/historia-entradas`, {
-    method: 'POST',
-    headers: authH(),
+    method: 'POST', headers: authH(),
     body: JSON.stringify({ historia_clinica: historia, notas_dr: notas })
   });
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
 
-  toast('Entrada guardada ✅', 'verde');
-  document.getElementById('fichaHistoriaClinica').value = '';
-  document.getElementById('fichaNotesDr').value = '';
-  cargarHistoriaEntradas(_fichaUsuarioId);
+  // 2. Generar PNG y subir como documento
+  const u       = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
+  const mascota = u.mascota_nombre || '—';
+  const fecha   = new Date();
+  const fechaFmt = fecha.toLocaleDateString('es-EC', { day:'2-digit', month:'long', year:'numeric' });
+  const horaFmt  = fecha.toLocaleTimeString('es-EC', { hour:'2-digit', minute:'2-digit' });
+  const MARGIN = 48, W = 800 - 96, LINE = 22;
+
+  const tmpCtx = document.createElement('canvas').getContext('2d');
+  function wrapLines(text, font, maxW) {
+    tmpCtx.font = font;
+    const words = text.split(' '), lines = []; let cur = '';
+    for (const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if (tmpCtx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; }
+      else cur = test;
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+
+  let h = 200;
+  if (historia) { historia.split('\n').forEach(l => { h += wrapLines(l||' ','14px sans-serif',W).length * LINE + 4; }); h += 40; }
+  if (notas)    { notas.split('\n').forEach(l => { h += wrapLines(l||' ','14px sans-serif',W).length * LINE + 4; }); h += 40; }
+  h += 80;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = 800; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, 800, h);
+  ctx.fillStyle = '#4527A0'; ctx.fillRect(0, 0, 800, 8);
+  ctx.fillStyle = '#4527A0'; ctx.font = 'bold 26px serif'; ctx.fillText('Jezreel Vet', MARGIN, 52);
+  ctx.fillStyle = '#4A5568'; ctx.font = '12px sans-serif'; ctx.fillText('Clínica Veterinaria — Guayaquil, Ecuador', MARGIN, 72);
+  ctx.strokeStyle = '#e0e0e0'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(MARGIN, 84); ctx.lineTo(800-MARGIN, 84); ctx.stroke();
+  ctx.fillStyle = '#4527A0'; ctx.font = 'bold 18px sans-serif'; ctx.fillText('HISTORIA CLÍNICA / ANAMNESIS / DIAGNÓSTICO', MARGIN, 112);
+  ctx.fillStyle = '#4A5568'; ctx.font = '13px sans-serif'; ctx.fillText(`${fechaFmt} ${horaFmt}`, 800-MARGIN-220, 112);
+  ctx.fillStyle = '#0D1B3E'; ctx.font = 'bold 14px sans-serif'; ctx.fillText('Paciente: ' + mascota, MARGIN, 138);
+  ctx.fillStyle = '#4A5568'; ctx.font = '13px sans-serif'; ctx.fillText('Propietario: ' + (u.nombre||'—'), MARGIN, 156);
+  ctx.beginPath(); ctx.moveTo(MARGIN, 168); ctx.lineTo(800-MARGIN, 168); ctx.stroke();
+
+  let y = 192;
+  if (historia) {
+    ctx.fillStyle = '#4527A0'; ctx.font = 'bold 13px sans-serif'; ctx.fillText('Historia Clínica / Anamnesis / Diagnóstico:', MARGIN, y); y += LINE;
+    ctx.fillStyle = '#0D1B3E'; ctx.font = '14px sans-serif';
+    historia.split('\n').forEach(l => { wrapLines(l||' ','14px sans-serif',W).forEach(wl => { ctx.fillText(wl, MARGIN+14, y); y += LINE; }); y += 4; });
+    y += 12;
+  }
+  if (notas) {
+    ctx.fillStyle = '#E65100'; ctx.font = 'bold 13px sans-serif'; ctx.fillText('Notas del Dr.:', MARGIN, y); y += LINE;
+    ctx.fillStyle = '#0D1B3E'; ctx.font = '14px sans-serif';
+    notas.split('\n').forEach(l => { wrapLines(l||' ','14px sans-serif',W).forEach(wl => { ctx.fillText(wl, MARGIN+14, y); y += LINE; }); y += 4; });
+    y += 12;
+  }
+  ctx.beginPath(); ctx.moveTo(MARGIN, y+10); ctx.lineTo(800-MARGIN, y+10); ctx.stroke();
+  ctx.fillStyle = '#4A5568'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('— Dr. Jezreel Vet —', 400, y+30);
+  ctx.fillText('Jezreel Vet Clínica Veterinaria', 400, y+46);
+  ctx.textAlign = 'left';
+
+  canvas.toBlob(async blob => {
+    if (!blob) { toast('Error generando documento', 'rojo'); return; }
+    const file = new File([blob], `Historia_${fecha.toISOString().split('T')[0]}_${mascota.replace(/\s+/g,'_')}.png`, { type:'image/png' });
+    const fd = new FormData();
+    fd.append('archivo', file);
+    fd.append('nombre', `🩺 Historia Clínica ${fechaFmt} ${horaFmt} — ${mascota}`);
+    const du = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/documentos`, {
+      method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd
+    });
+    if (!du.ok) { toast(du.error || 'Error subiendo documento', 'rojo'); return; }
+    toast('✅ Entrada guardada y documento generado', 'verde');
+    document.getElementById('fichaHistoriaClinica').value = '';
+    document.getElementById('fichaNotesDr').value = '';
+    cargarHistoriaEntradas(_fichaUsuarioId);
+    cargarFichaDeUsuario(_fichaUsuarioId);
+  }, 'image/png');
 }
 
 async function cargarHistoriaEntradas(uid) {
   const list = document.getElementById('historiaEntradasList');
   if (!list) return;
 
-  const d = await apiFetch(`/api/ficha-mascota/${uid}/historia-entradas`, { headers: authH() });
-  if (!d.ok || !d.entradas.length) {
+  const d = await apiFetch(`/api/ficha-mascota/${uid}`, { headers: authH() });
+  if (!d.ok) { list.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin entradas.</p>'; return; }
+
+  const docs = (d.ficha?.documentos || []).filter(doc => (doc.nombre || '').startsWith('🩺'));
+
+  if (!docs.length) {
     list.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin entradas.</p>';
     return;
   }
 
-  list.innerHTML = d.entradas.map(e => {
-    const fecha = new Date(e.created_at).toLocaleString('es-EC', {
-      day: '2-digit', month: 'short', year: 'numeric',
-      hour: '2-digit', minute: '2-digit'
-    });
-    return `<div style="
-      background:var(--gris);border:1.5px solid var(--borde);
-      border-radius:10px;padding:12px 14px;margin-bottom:10px;
-      border-left:4px solid #4527A0;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-size:11px;font-weight:700;color:#4527A0;">📅 ${fecha}</span>
-        <button class="btn btn-sm btn-rojo" onclick="eliminarHistoriaEntrada(${e.id})">✕ Eliminar</button>
-      </div>
-      ${e.historia_clinica ? `
-        <div style="font-size:11px;font-weight:700;color:var(--texto-suave);
-                    text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">
-          Historia / Diagnóstico
-        </div>
-        <div style="font-size:13px;color:var(--texto);white-space:pre-wrap;margin-bottom:8px;">
-          ${e.historia_clinica}
-        </div>` : ''}
-      ${e.notas_dr ? `
-        <div style="font-size:11px;font-weight:700;color:var(--texto-suave);
-                    text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">
-          Notas del Dr.
-        </div>
-        <div style="font-size:13px;color:var(--texto);white-space:pre-wrap;">
-          ${e.notas_dr}
-        </div>` : ''}
-    </div>`;
-  }).join('');
+  list.innerHTML = docs.map(doc => `
+    <div class="ficha-doc-row" style="border-left:4px solid #4527A0;">
+      <span style="font-size:18px;">🩺</span>
+      <a href="${doc.url}" target="_blank">${doc.nombre || 'Historia Clínica'}</a>
+      <button class="btn btn-sm btn-rojo" onclick="eliminarDocFicha(${doc.id})">✕</button>
+    </div>
+  `).join('');
 }
 
 async function eliminarHistoriaEntrada(eid) {
@@ -2772,6 +2897,270 @@ async function buscarPorIdTarjeta() {
   sel.value = usuario.id;
   toast(`✅ Mascota encontrada: ${usuario.mascota_nombre || usuario.nombre}`, 'verde');
   cargarFichaDeUsuario(usuario.id);
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// CALENDARIO DE PRÓXIMAS CITAS
+// ══════════════════════════════════════════════════════════════════════════
+
+let _calYear  = new Date().getFullYear();
+let _calMonth = new Date().getMonth();   // 0-11
+let _calCitas = [];   // [{uid, nombre, mascota, telefono, fecha, hora, servicio, notas}]
+
+const MESES_ES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function cambiarMesCalendario(delta) {
+  _calMonth += delta;
+  if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+  if (_calMonth < 0)  { _calMonth = 11; _calYear--; }
+  renderCalendario();
+}
+
+function irMesActual() {
+  const hoy = new Date();
+  _calYear  = hoy.getFullYear();
+  _calMonth = hoy.getMonth();
+  renderCalendario();
+}
+
+function parseFechaSolicitada(str) {
+  if (!str) return null;
+  const meses = {enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,
+    agosto:7,septiembre:8,octubre:9,noviembre:10,diciembre:11};
+  const m = str.match(/(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})(?:\s*(?:a las|,)\s*(\d{1,2}):(\d{2})\s*(a\.?\s?m\.?|p\.?\s?m\.?))?/i);
+  if (!m) return null;
+  const dia = parseInt(m[1]);
+  const mesNombre = m[2].toLowerCase();
+  if (!(mesNombre in meses)) return null;
+  const anio = parseInt(m[3]);
+  let hora = '';
+  if (m[4]) {
+    let h = parseInt(m[4]);
+    const min = m[5];
+    const ampm = (m[6]||'').toLowerCase().replace(/\.|\s/g,'');
+    if (ampm === 'pm' && h < 12) h += 12;
+    if (ampm === 'am' && h === 12) h = 0;
+    hora = String(h).padStart(2,'0') + ':' + min;
+  }
+  const fecha = `${anio}-${String(meses[mesNombre]+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+  return { fecha, hora };
+}
+
+let _calSinFecha = [];
+
+async function cargarCalendario() {
+  if (!_usuarios.length) {
+    const d = await apiFetch('/api/usuarios', { headers: authH() });
+    _usuarios = d.usuarios || [];
+  }
+
+  _calCitas = [];
+  _calSinFecha = [];
+
+  // 1. Próximas citas agendadas — UNA sola llamada en vez de N
+  const dpc = await apiFetch('/api/proximas-citas', { headers: authH() });
+  (dpc.citas || []).forEach(c => {
+    _calCitas.push({
+      uid: c.usuario_id, tipo: 'agendada',
+      nombre: c.nombre || '—', mascota: c.mascota_nombre || '—',
+      telefono: c.telefono || '',
+      fecha: c.proxima_cita_fecha, hora: c.proxima_cita_hora || '',
+      servicio: c.proxima_cita_servicio || '', notas: c.proxima_cita_notas || '',
+      estado: 'agendada'
+    });
+  });
+
+  // 2. Citas solicitadas por el cliente (sin cambios)
+  const dc = await apiFetch('/api/citas', { headers: authH() });
+  const citasSolicitadas = (dc.citas || []).filter(c => c.estado !== 'cancelada');
+  citasSolicitadas.forEach(c => {
+    const parsed = parseFechaSolicitada(c.fecha_solicitada);
+    if (parsed) {
+      _calCitas.push({
+        uid: c.usuario_id || null, tipo: 'solicitada', citaId: c.id,
+        nombre: c.nombre || '—', mascota: c.mascota || '—',
+        telefono: c.telefono || '',
+        fecha: parsed.fecha, hora: parsed.hora,
+        servicio: c.servicio || '', notas: c.notas || '',
+        estado: c.estado || 'pendiente'
+      });
+    } else {
+      _calSinFecha.push(c);
+    }
+  });
+
+  renderCalendario();
+}
+
+function renderCalendario() {
+  // Encabezado del mes
+  document.getElementById('calMesLabel').textContent =
+    `${MESES_ES[_calMonth]} ${_calYear}`;
+
+  const hoy         = new Date();
+  const primerDia   = new Date(_calYear, _calMonth, 1).getDay();   // 0=Dom
+  const diasEnMes   = new Date(_calYear, _calMonth + 1, 0).getDate();
+
+  // Citas de ESTE mes, indexadas por día
+  const citasPorDia = {};
+  _calCitas.forEach(c => {
+    const f = new Date(c.fecha + 'T00:00:00');
+    if (f.getFullYear() === _calYear && f.getMonth() === _calMonth) {
+      const d = f.getDate();
+      if (!citasPorDia[d]) citasPorDia[d] = [];
+      citasPorDia[d].push(c);
+    }
+  });
+
+  // Construir celdas
+  let html = '';
+
+  // Celdas vacías antes del día 1
+  for (let i = 0; i < primerDia; i++) {
+    html += `<div style="min-height:70px;border-radius:10px;background:var(--gris);opacity:0.4;"></div>`;
+  }
+
+  for (let dia = 1; dia <= diasEnMes; dia++) {
+    const esHoy  = hoy.getFullYear() === _calYear && hoy.getMonth() === _calMonth && hoy.getDate() === dia;
+    const citas  = citasPorDia[dia] || [];
+    const nCitas = citas.length;
+
+    const bgColor   = esHoy ? 'var(--azul-vivo)' : nCitas > 0 ? '#fff' : 'var(--gris)';
+    const txtColor  = esHoy ? '#fff' : 'var(--texto)';
+    const border    = nCitas > 0 && !esHoy ? '1.5px solid var(--azul-medio)' : esHoy ? 'none' : '1px solid var(--borde)';
+    const cursor    = nCitas > 0 ? 'pointer' : 'default';
+
+    // Pips de citas (máx 3 puntitos)
+const pips = nCitas > 0
+  ? `<div style="display:flex;gap:3px;margin-top:4px;justify-content:center;flex-wrap:wrap;">
+      ${citas.slice(0,3).map(c =>
+        `<div style="width:7px;height:7px;border-radius:50%;background:${esHoy?'rgba(255,255,255,0.8)':(c.tipo==='solicitada'?'#FB8C00':'#1976D2')};" title="${c.nombre} (${c.tipo})"></div>`
+      ).join('')}
+      ${nCitas > 3 ? `<span style="font-size:9px;font-weight:800;color:${esHoy?'#fff':'var(--azul-oscuro)'};">+${nCitas-3}</span>` : ''}
+    </div>` : '';
+
+const etiquetas = citas.slice(0,2).map(c =>
+  `<div style="font-size:9.5px;line-height:1.2;background:${esHoy?'rgba(255,255,255,0.2)':(c.tipo==='solicitada'?'#FFF3E0':'var(--azul-claro)')};
+   color:${esHoy?'#fff':(c.tipo==='solicitada'?'#E65100':'var(--azul-oscuro)')};border-radius:4px;padding:1px 4px;margin-top:2px;
+   overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;">
+    ${c.hora ? c.hora+' ' : ''}${c.mascota}
+  </div>`
+).join('');
+
+    html += `
+      <div onclick="${nCitas?`mostrarDetalleDia(${dia})`:'void 0'}"
+           style="min-height:70px;border-radius:10px;background:${bgColor};
+                  border:${border};padding:6px 7px;cursor:${cursor};
+                  transition:box-shadow 0.15s;position:relative;overflow:hidden;"
+           onmouseenter="${nCitas?`this.style.boxShadow='0 4px 14px rgba(21,101,192,0.18)'`:''}"
+           onmouseleave="this.style.boxShadow=''">
+        <div style="font-size:13px;font-weight:800;color:${txtColor};">${dia}</div>
+        ${etiquetas}
+        ${nCitas > 2 && !esHoy ? `<div style="font-size:10px;color:var(--azul-vivo);font-weight:700;margin-top:2px;">+${nCitas-2} más</div>` : ''}
+        ${pips}
+      </div>`;
+  }
+
+  document.getElementById('calGrid').innerHTML = html;
+
+  // Lista del mes
+  const citasDelMes = _calCitas
+    .filter(c => {
+      const f = new Date(c.fecha + 'T00:00:00');
+      return f.getFullYear() === _calYear && f.getMonth() === _calMonth;
+    })
+    .sort((a, b) => a.fecha.localeCompare(b.fecha) || (a.hora||'').localeCompare(b.hora||''));
+
+document.getElementById('tbCalLista').innerHTML = citasDelMes.length
+    ? citasDelMes.map(c => {
+        const f = new Date(c.fecha + 'T00:00:00');
+        const fechaFmt = f.toLocaleDateString('es-EC', { weekday:'short', day:'2-digit', month:'short' });
+        const tel = c.telefono.replace(/\D/g,'').slice(-9);
+        const badgeTipo = c.tipo === 'solicitada'
+          ? `<span class="badge b-acento" style="font-size:10px;">Solicitada</span>`
+          : `<span class="badge b-azul" style="font-size:10px;">Agendada</span>`;
+        return `<tr>
+          <td><strong>${fechaFmt}</strong></td>
+          <td>${c.nombre} ${badgeTipo}</td>
+          <td>${c.mascota}</td>
+          <td>${c.hora || '<span style="color:var(--texto-suave)">Sin hora</span>'}</td>
+          <td>${c.servicio || '<span style="color:var(--texto-suave)">—</span>'}</td>
+          <td>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+              ${c.uid ? `<button class="btn btn-sm btn-azul" onclick="irAFicha(${c.uid})">📋 Ver ficha</button>` : ''}
+              ${tel ? `<a class="btn btn-sm btn-wa" href="https://wa.me/593${tel}?text=${encodeURIComponent(`📅 Recordatorio cita ${c.mascota} — ${fechaFmt}${c.hora?' a las '+c.hora:''}.`)}" target="_blank">WA</a>` : ''}
+            </div>
+          </td>
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--texto-suave);">Sin citas agendadas en ${MESES_ES[_calMonth]}</td></tr>`;
+
+  // Sección de citas sin fecha clara (ej: "Por confirmar")
+  let sinFechaBox = document.getElementById('calSinFechaBox');
+  if (!sinFechaBox) {
+    sinFechaBox = document.createElement('div');
+    sinFechaBox.id = 'calSinFechaBox';
+    sinFechaBox.className = 'card';
+    document.getElementById('sec-calendario').appendChild(sinFechaBox);
+  }
+  if (_calSinFecha.length) {
+    sinFechaBox.style.display = 'block';
+    sinFechaBox.innerHTML = `
+      <div class="card-header"><h3>⏳ Citas sin fecha confirmada</h3></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Cliente</th><th>Mascota</th><th>Servicio</th><th>Texto original</th><th>Estado</th></tr></thead>
+        <tbody>${_calSinFecha.map(c => `<tr>
+          <td>${c.nombre||'—'}</td><td>${c.mascota||'—'}</td><td>${c.servicio||'—'}</td>
+          <td style="color:var(--texto-suave);">${c.fecha_solicitada||'—'}</td>
+          <td><span class="badge b-acento">${c.estado||'pendiente'}</span></td>
+        </tr>`).join('')}</tbody>
+      </table></div>`;
+  } else {
+    sinFechaBox.style.display = 'none';
+  }
+}
+
+function mostrarDetalleDia(dia) {
+  const f = new Date(_calYear, _calMonth, dia);
+  const citas = _calCitas.filter(c => {
+    const fc = new Date(c.fecha + 'T00:00:00');
+    return fc.getFullYear() === _calYear && fc.getMonth() === _calMonth && fc.getDate() === dia;
+  }).sort((a,b) => (a.hora||'').localeCompare(b.hora||''));
+
+  const fechaFmt = f.toLocaleDateString('es-EC', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+  document.getElementById('calDetalleLabel').textContent = fechaFmt;
+
+  document.getElementById('calDetalleItems').innerHTML = citas.map(c => `
+    <div style="background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;
+                border:1px solid var(--azul-medio);display:flex;gap:14px;align-items:flex-start;">
+      <div style="background:var(--azul);color:#fff;border-radius:8px;padding:8px 10px;
+                  font-size:13px;font-weight:900;min-width:50px;text-align:center;flex-shrink:0;">
+        ${c.hora || '—'}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:14px;color:var(--azul-noche);">${c.mascota}</div>
+        <div style="font-size:12.5px;color:var(--texto-suave);">👤 ${c.nombre} · 📞 ${c.telefono||'—'}</div>
+        ${c.servicio ? `<div style="font-size:12px;color:var(--azul-vivo);margin-top:2px;">🩺 ${c.servicio}</div>` : ''}
+        ${c.notas    ? `<div style="font-size:12px;color:var(--texto-suave);margin-top:2px;">📋 ${c.notas}</div>` : ''}
+      </div>
+      <button class="btn btn-sm btn-azul" onclick="irAFicha(${c.uid})">Ver ficha</button>
+    </div>
+  `).join('');
+
+  document.getElementById('calDetalle').style.display = 'block';
+  document.getElementById('calDetalle').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function irAFicha(uid) {
+  ir('fichas');
+  setTimeout(() => {
+    const sel = document.getElementById('fichaUserSelect');
+    if (sel) {
+      sel.value = uid;
+      cargarFichaDeUsuario(uid);
+    }
+  }, 400);
 }
 
 </script>
