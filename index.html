@@ -3918,7 +3918,7 @@ renderMascotaAvatar(_fichaData?.foto_url || null, false);
   // Documentos del Dr.
   const docsBox  = document.getElementById('fichaDocs');
   const docsList = document.getElementById('fichaDocsList');
-  const docs = f.documentos || [];
+  const docs = (f.documentos || []).filter(d => !(d.nombre || '').startsWith('🩺'));
   if (docs.length > 0) {
     docsBox.style.display = 'block';
     docsList.innerHTML = docs.map(d => `
