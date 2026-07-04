@@ -389,7 +389,7 @@ tbody tr:hover td{background:#FAFBFF;}
     <!-- USUARIOS -->
     <div class="section" id="sec-usuarios">
       <div class="card">
-        <div class="card-header"><h3>Usuarios Registrados</h3><button class="btn btn-primary btn-sm" onclick="abrirModal('mCrearUser')">+ Crear usuario</button></div>
+        <div class="card-header"><h3>Usuarios Registrados</h3><button class="btn btn-primary btn-sm" onclick="abrirModalCrearUsuario()">+ Crear usuario</button></div>
         <div class="table-wrap"><table>
           <thead><tr><th>Nombre / Email</th><th>Cédula</th><th>Teléfono</th><th>Mascota</th><th>⭐</th><th>Carnet</th><th>Acciones</th></tr></thead>
           <tbody id="tbUsuarios"><tr class="loading-row"><td colspan="7">Cargando...</td></tr></tbody>
@@ -568,7 +568,7 @@ tbody tr:hover td{background:#FAFBFF;}
 <!-- Barra de búsqueda de usuario -->
 <div style="padding:16px 20px;border-bottom:1px solid var(--borde);">
   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-    <select id="fichaUserSelect" onchange="cargarFichaDeUsuario(this.value)"
+    <select id="fichaUserSelect" onchange="cargarFichaDeMascota(this.value)"
       style="flex:1;min-width:200px;padding:9px 13px;border:1.5px solid var(--borde);border-radius:9px;font-size:14px;font-family:inherit;outline:none;background:var(--gris);">
       <option value="">Seleccionar cliente...</option>
     </select>
@@ -891,13 +891,11 @@ tbody tr:hover td{background:#FAFBFF;}
       <div class="form-group"><label>Cédula</label><input type="text" id="nu_cedula" placeholder="1234567890"></div>
       <div class="form-group"><label>Celular</label><input type="tel" id="nu_tel" placeholder="0999..."></div>
     </div>
-    <div class="form-group"><label>Mascota</label><input type="text" id="nu_mascota" placeholder="Nombre de mascota"></div>
-    <div class="form-grid">
-      <div class="form-group"><label>Especie</label>
-        <select id="nu_especie"><option value="">Seleccionar...</option><option>Canino</option><option>Felino</option><option>Otro</option></select>
-      </div>
-      <div class="form-group"><label>Raza</label><input type="text" id="nu_raza" placeholder="Raza"></div>
-    </div>
+    <div class="form-group">
+  <label>Mascotas</label>
+  <div id="nuMascotasList"></div>
+  <button type="button" class="btn btn-azul btn-sm" onclick="agregarCampoMascota()">+ Agregar otra mascota</button>
+</div>
     <div style="background:var(--azul-claro);border-radius:9px;padding:12px;font-size:13px;color:var(--azul-oscuro);margin-bottom:16px;">
       🔑 La contraseña temporal será la <strong>cédula</strong> (o "123456" si no hay cédula).
     </div>
@@ -1472,16 +1470,54 @@ async function cargarUsuarios(){
   const d=await apiFetch('/api/usuarios',{headers:authH()});
   if(!d.ok){ toast('Error: '+d.error,'rojo'); return; }
   _usuarios=d.usuarios||[];
-  document.getElementById('tbUsuarios').innerHTML=_usuarios.length
-    ? _usuarios.map(u=>`<tr>
+document.getElementById('tbUsuarios').innerHTML=_usuarios.length
+  ? _usuarios.map(u=>{
+      const mascotasHtml = (u.mascotas && u.mascotas.length)
+        ? u.mascotas.map(m=>`<div><strong>${m.nombre}</strong> <span style="font-size:11px;color:var(--texto-suave)">${m.especie||''}${m.raza?' · '+m.raza:''}</span></div>`).join('')
+        : '--';
+      return `<tr>
         <td><strong>${u.nombre}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${u.email||'--'}</span></td>
         <td>${u.cedula||'--'}</td><td>${u.telefono||'--'}</td>
-        <td><strong>${u.mascota_nombre||'--'}</strong><br><span style="font-size:11px;color:var(--texto-suave)">${u.especie||''} ${u.raza?'· '+u.raza:''}</span></td>
+        <td>${mascotasHtml}</td>
         <td><strong style="color:var(--acento)">⭐ ${u.estrellas}</strong></td>
         <td>${u.carnet_url?`<a href="${u.carnet_url}" target="_blank" class="btn btn-sm btn-azul">Ver</a>`:'<span class="badge b-gris">Sin carnet</span>'}</td>
         <td><button class="btn btn-sm btn-rojo" onclick="eliminarUsuario(${u.id})">Eliminar</button></td>
-      </tr>`).join('')
-    : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+      </tr>`;
+    }).join('')
+  : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+}
+
+let _nuMascotaCount = 0;
+
+function abrirModalCrearUsuario(){
+  document.getElementById('nuMascotasList').innerHTML = '';
+  _nuMascotaCount = 0;
+  agregarCampoMascota();
+  abrirModal('mCrearUser');
+}
+
+function agregarCampoMascota(){
+  _nuMascotaCount++;
+  const id = _nuMascotaCount;
+  const div = document.createElement('div');
+  div.id = `nuMascotaRow${id}`;
+  div.style.marginBottom = '10px';
+  div.innerHTML = `
+    <div class="form-grid" style="align-items:end;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Mascota ${id}</label>
+        <input type="text" id="nu_masc_nombre_${id}" placeholder="Nombre de mascota">
+      </div>
+      <div class="form-group" style="margin-bottom:0;display:flex;gap:8px;">
+        <select id="nu_masc_especie_${id}" style="flex:1;">
+          <option value="">Especie...</option>
+          <option>Canino</option><option>Felino</option><option>Otro</option>
+        </select>
+        <input type="text" id="nu_masc_raza_${id}" placeholder="Raza" style="flex:1;">
+        ${id > 1 ? `<button type="button" class="btn btn-rojo btn-sm" onclick="document.getElementById('nuMascotaRow${id}').remove()">✕</button>` : ''}
+      </div>
+    </div>`;
+  document.getElementById('nuMascotasList').appendChild(div);
 }
 
 async function crearUsuario(){
@@ -1489,15 +1525,28 @@ async function crearUsuario(){
   const email=document.getElementById('nu_email').value.trim();
   const cedula=document.getElementById('nu_cedula').value.trim();
   const telefono=document.getElementById('nu_tel').value.trim();
-  const mascota=document.getElementById('nu_mascota').value.trim();
-  const especie=document.getElementById('nu_especie').value;
-  const raza=document.getElementById('nu_raza').value.trim();
   if(!nombre||!email){ toast('Nombre y email son obligatorios','rojo'); return; }
-  const d=await apiFetch('/api/usuarios',{method:'POST',headers:authH(),body:JSON.stringify({nombre,email,cedula,telefono,mascota,especie,raza})});
+
+  const mascotas = [];
+  for(let i=1;i<=_nuMascotaCount;i++){
+    const el = document.getElementById(`nu_masc_nombre_${i}`);
+    if(!el) continue; // fue eliminada con el botón ✕
+    const nombreM = el.value.trim();
+    if(!nombreM) continue;
+    mascotas.push({
+      nombre: nombreM,
+      especie: document.getElementById(`nu_masc_especie_${i}`).value,
+      raza: document.getElementById(`nu_masc_raza_${i}`).value.trim()
+    });
+  }
+
+  const d=await apiFetch('/api/usuarios',{method:'POST',headers:authH(),body:JSON.stringify({nombre,email,cedula,telefono,mascotas})});
   if(!d.ok){ toast(d.error||'Error','rojo'); return; }
   toast(`✅ Usuario creado. Contraseña: ${d.password_temporal}`,'verde');
   cerrar('mCrearUser');
-  ['nu_nombre','nu_email','nu_cedula','nu_tel','nu_mascota','nu_raza'].forEach(id=>document.getElementById(id).value='');
+  ['nu_nombre','nu_email','nu_cedula','nu_tel'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('nuMascotasList').innerHTML='';
+  _nuMascotaCount = 0;
   cargarUsuarios(); cargarDashboard();
 }
 
@@ -2179,78 +2228,85 @@ async function cargarSelectUsuarios() {
   if (!d.ok) { toast('Error cargando usuarios', 'rojo'); return; }
   _usuarios = d.usuarios || [];
   const sel = document.getElementById('fichaUserSelect');
-  const valorActual = sel.value; // conservar selección actual
-  sel.innerHTML = '<option value="">Seleccionar cliente...</option>' +
-    _usuarios.map(u => `<option value="${u.id}">${u.nombre}${u.mascota_nombre ? ' — ' + u.mascota_nombre : ''}</option>`).join('');
-  if (valorActual) sel.value = valorActual; // restaurar selección
+  const valorActual = sel.value;
+  let opciones = '<option value="">Seleccionar mascota...</option>';
+  _usuarios.forEach(u => {
+    const mascotas = u.mascotas && u.mascotas.length ? u.mascotas : [];
+    mascotas.forEach(m => {
+      opciones += `<option value="${m.id}">${u.nombre} — ${m.nombre}</option>`;
+    });
+  });
+  sel.innerHTML = opciones;
+  if (valorActual) sel.value = valorActual;
   toast('Lista actualizada', 'verde');
 }
+
+function buscarUsuarioPorMascotaId(mid) {
+  for (const u of _usuarios) {
+    const m = (u.mascotas || []).find(x => String(x.id) === String(mid));
+    if (m) return { usuario: u, mascota: m };
+  }
+  return null;
+}
  
-async function cargarFichaDeUsuario(uid) {
-  _fichaUsuarioId = uid || null;
+async function cargarFichaDeMascota(mid) {
+  _fichaUsuarioId = mid || null; // ahora contiene mascota_id
   const empty  = document.getElementById('fichaAdminEmpty');
   const panel  = document.getElementById('fichaAdminPanel');
- 
-  if (!uid) {
+
+  if (!mid) {
     empty.style.display  = 'block';
     panel.style.display  = 'none';
     return;
   }
- 
+
   empty.style.display = 'none';
   panel.style.display = 'block';
- 
-  // Cargar ficha del usuario
-  const d = await apiFetch(`/api/ficha-mascota/${uid}`, { headers: authH() });
+
+  const d = await apiFetch(`/api/ficha-mascota/${mid}`, { headers: authH() });
   const ficha = d.ficha || {};
- // Al inicio de fichaAdminPanel, antes del grid de datos:
 
+  const match = buscarUsuarioPorMascotaId(mid);
+  const u = match ? match.usuario : {};
+  const mBase = match ? match.mascota : {};
 
-  // Info del cliente (datos que él puso)
-  const u = _usuarios.find(x => String(x.id) === String(uid)) || {};
   document.getElementById('fichaClienteInfo').innerHTML = [
-    ['Nombre',  ficha.nombre || u.mascota_nombre || '—'],
+    ['Nombre',  ficha.nombre || mBase.nombre || '—'],
     ['Edad',    ficha.edad   || '—'],
     ['Peso',    ficha.peso   ? ficha.peso + ' kg' : '—'],
-    ['Raza',    ficha.raza   || u.raza || '—'],
-    ['Especie', u.especie    || '—'],
+    ['Raza',    ficha.raza   || mBase.raza || '—'],
+    ['Especie', ficha.especie || mBase.especie || '—'],
   ].map(([l, v]) => `
-  
     <div style="background:#fff;border-radius:9px;padding:9px 12px;border:1px solid var(--azul-medio);">
       <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--azul-oscuro);margin-bottom:3px;">${l}</div>
       <div style="font-size:13.5px;font-weight:600;color:var(--texto);">${v}</div>
     </div>
   `).join('');
- 
-// Comentario del Dr.
-document.getElementById('fichaComentarioDr').value = ficha.comentario_dr || '';
-document.getElementById('fichaHistoriaClinica').value = ficha.historia_clinica || '';
-document.getElementById('fichaNotesDr').value         = ficha.notas_dr_internas || '';
- 
 
-// ── FOTO MASCOTA (admin ve pero no edita) ──
-const fotoHtml = ficha.foto_url
-  ? `<div style="position:relative;cursor:pointer;width:64px;height:64px;" onclick="verFotoMascota('${ficha.foto_url}')">
-      <img src="${ficha.foto_url}" style="
-        width:64px;height:64px;border-radius:50%;object-fit:cover;
-        border:3px solid var(--azul-medio);flex-shrink:0;display:block;">
-      <div style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;
-                  background:var(--azul);border:2px solid #fff;display:flex;align-items:center;
-                  justify-content:center;font-size:11px;color:#fff;">🔍</div>
-    </div>`
-  : `<div style="
-      width:64px;height:64px;border-radius:50%;
-      background:var(--azul-claro);display:flex;
-      align-items:center;justify-content:center;font-size:28px;
-      border:3px solid var(--azul-medio);flex-shrink:0;">🐾</div>`;
-document.getElementById('fichaFotoAdmin').innerHTML = fotoHtml;
+  document.getElementById('fichaComentarioDr').value = ficha.comentario_dr || '';
+  document.getElementById('fichaHistoriaClinica').value = ficha.historia_clinica || '';
+  document.getElementById('fichaNotesDr').value         = ficha.notas_dr_internas || '';
 
+  const fotoHtml = ficha.foto_url
+    ? `<div style="position:relative;cursor:pointer;width:64px;height:64px;" onclick="verFotoMascota('${ficha.foto_url}')">
+        <img src="${ficha.foto_url}" style="
+          width:64px;height:64px;border-radius:50%;object-fit:cover;
+          border:3px solid var(--azul-medio);flex-shrink:0;display:block;">
+        <div style="position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;
+                    background:var(--azul);border:2px solid #fff;display:flex;align-items:center;
+                    justify-content:center;font-size:11px;color:#fff;">🔍</div>
+      </div>`
+    : `<div style="
+        width:64px;height:64px;border-radius:50%;
+        background:var(--azul-claro);display:flex;
+        align-items:center;justify-content:center;font-size:28px;
+        border:3px solid var(--azul-medio);flex-shrink:0;">🐾</div>`;
+  document.getElementById('fichaFotoAdmin').innerHTML = fotoHtml;
 
-  // Documentos
-renderDocsAdmin(ficha.documentos || []);
-  await cargarVacunasMascota(uid);
+  renderDocsAdmin(ficha.documentos || []);
+  await cargarVacunasMascota(mid);
   renderCitaActual(ficha);
-  cargarHistoriaEntradas(_fichaUsuarioId); // ← esta línea debe estar
+  cargarHistoriaEntradas(mid);
 }
  
 function renderDocsAdmin(docs) {
@@ -2429,7 +2485,7 @@ ctx.fillStyle = '#0D47A1'; ctx.font = 'bold 26px serif';
       ['rx_medicamentos','rx_obs'].forEach(id =>
         document.getElementById(id).value = '');
       document.getElementById('rx_fecha').value = '';
-      cargarFichaDeUsuario(_fichaUsuarioId);
+      cargarFichaDeMascota(_fichaUsuarioId);
       resolve({ u, mascota, meds, obs, fechaFmt });
     }, 'image/png');
   });
@@ -2570,7 +2626,7 @@ async function guardarHistoriaDr() {
     document.getElementById('fichaHistoriaClinica').value = '';
     document.getElementById('fichaNotesDr').value = '';
     cargarHistoriaEntradas(_fichaUsuarioId);
-    cargarFichaDeUsuario(_fichaUsuarioId);
+    cargarFichaDeMascota(_fichaUsuarioId)
   }, 'image/png');
 }
 
@@ -2639,7 +2695,7 @@ async function subirDocFicha() {
   document.getElementById('fichaDocFile').value = '';
   document.getElementById('fichaDocNombre').value = '';
   document.getElementById('fichaDocPreviewNombre').style.display = 'none';
-  cargarFichaDeUsuario(_fichaUsuarioId);
+  cargarFichaDeMascota(_fichaUsuarioId);
 }
  
 async function eliminarDocFicha(docId) {
@@ -2650,7 +2706,7 @@ async function eliminarDocFicha(docId) {
   });
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
   toast('Documento eliminado', 'naranja');
-  cargarFichaDeUsuario(_fichaUsuarioId);
+  cargarFichaDeMascota(_fichaUsuarioId);
 }
 
 
@@ -2839,7 +2895,7 @@ Por favor confirma tu asistencia respondiendo este mensaje. ¡Te esperamos! 🐾
 _Jezreel Vet —El mejor amigo para tu mascota_`;
 
   window.open(`https://wa.me/593${tel}?text=${encodeURIComponent(msg)}`, '_blank');
-  cargarFichaDeUsuario(_fichaUsuarioId);
+  cargarFichaDeMascota(_fichaUsuarioId);
 }
 
 async function guardarProximaCita() {
@@ -2856,7 +2912,7 @@ async function guardarProximaCita() {
   });
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
   toast('✅ Cita agendada y cliente notificado', 'verde');
-  cargarFichaDeUsuario(_fichaUsuarioId);
+  cargarFichaDeMascota(_fichaUsuarioId);
 }
 
 async function borrarProximaCita() {
@@ -2866,37 +2922,32 @@ async function borrarProximaCita() {
   });
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
   toast('Cita eliminada', 'naranja');
-  cargarFichaDeUsuario(_fichaUsuarioId);
+  cargarFichaDeMascota(_fichaUsuarioId);
 }
 
 async function buscarPorIdTarjeta() {
   const input = document.getElementById('fichaIdInput').value.trim().toUpperCase();
   if (!input) { toast('Ingresa un ID de tarjeta', 'rojo'); return; }
-
-  // Formato esperado: JV-2026-00001 → extraer el número al final
   const match = input.match(/(\d+)$/);
   if (!match) { toast('Formato inválido. Ej: JV-2026-00001', 'rojo'); return; }
   const mascotaId = parseInt(match[1]);
 
-  // Buscar en _usuarios por mascota_id
   if (!_usuarios.length) {
     const d = await apiFetch('/api/usuarios', { headers: authH() });
     _usuarios = d.usuarios || [];
-    cargarSelectUsuarios(); // actualizar select también
+    cargarSelectUsuarios();
   }
 
-  // La ficha se busca por usuario_id, y el id de mascota está en mascota_id del usuario
-  const usuario = _usuarios.find(u => u.mascota_id === mascotaId);
-  if (!usuario) {
+  const found = buscarUsuarioPorMascotaId(mascotaId);
+  if (!found) {
     toast(`No se encontró mascota con ID ${mascotaId}`, 'rojo');
     return;
   }
 
-  // Seleccionar en el dropdown y cargar ficha
   const sel = document.getElementById('fichaUserSelect');
-  sel.value = usuario.id;
-  toast(`✅ Mascota encontrada: ${usuario.mascota_nombre || usuario.nombre}`, 'verde');
-  cargarFichaDeUsuario(usuario.id);
+  sel.value = mascotaId;
+  toast(`✅ Mascota encontrada: ${found.mascota.nombre}`, 'verde');
+  cargarFichaDeMascota(mascotaId);
 }
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -2959,10 +3010,10 @@ async function cargarCalendario() {
   _calSinFecha = [];
 
   // 1. Próximas citas agendadas — UNA sola llamada en vez de N
-  const dpc = await apiFetch('/api/proximas-citas', { headers: authH() });
+const dpc = await apiFetch('/api/proximas-citas', { headers: authH() });
   (dpc.citas || []).forEach(c => {
     _calCitas.push({
-      uid: c.usuario_id, tipo: 'agendada',
+      uid: c.mascota_id, tipo: 'agendada',
       nombre: c.nombre || '—', mascota: c.mascota_nombre || '—',
       telefono: c.telefono || '',
       fecha: c.proxima_cita_fecha, hora: c.proxima_cita_hora || '',
@@ -3152,13 +3203,13 @@ function mostrarDetalleDia(dia) {
   document.getElementById('calDetalle').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function irAFicha(uid) {
+function irAFicha(mascotaId) {
   ir('fichas');
   setTimeout(() => {
     const sel = document.getElementById('fichaUserSelect');
     if (sel) {
-      sel.value = uid;
-      cargarFichaDeUsuario(uid);
+      sel.value = mascotaId;
+      cargarFichaDeMascota(mascotaId);
     }
   }, 400);
 }
