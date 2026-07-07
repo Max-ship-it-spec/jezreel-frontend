@@ -903,6 +903,29 @@ tbody tr:hover td{background:#FAFBFF;}
   </div>
 </div>
 
+
+<!-- Editar Usuario -->
+<div class="modal-overlay" id="mEditUser">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrar('mEditUser')">✕</button>
+    <h2>Editar Usuario</h2><p class="modal-sub" id="mEditUserSub">Modifica los datos del cliente</p>
+    <input type="hidden" id="eu_id">
+    <div class="form-grid">
+      <div class="form-group"><label>Nombre</label><input type="text" id="eu_nombre" placeholder="Nombre completo"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="eu_email" placeholder="correo@ejemplo.com"></div>
+      <div class="form-group"><label>Cédula</label><input type="text" id="eu_cedula" placeholder="1234567890"></div>
+      <div class="form-group"><label>Celular</label><input type="tel" id="eu_tel" placeholder="0999..."></div>
+    </div>
+    <div class="form-group">
+      <label>Mascotas</label>
+      <div id="euMascotasList"></div>
+      <button type="button" class="btn btn-azul btn-sm" onclick="agregarCampoMascotaEdit()">+ Agregar otra mascota</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="guardarEdicionUsuario()">💾 Guardar Cambios</button>
+  </div>
+</div>
+
+
 <!-- Agregar Producto -->
 <div class="modal-overlay" id="mProd">
   <div class="modal">
@@ -1481,7 +1504,12 @@ document.getElementById('tbUsuarios').innerHTML=_usuarios.length
         <td>${mascotasHtml}</td>
         <td><strong style="color:var(--acento)">⭐ ${u.estrellas}</strong></td>
         <td>${u.carnet_url?`<a href="${u.carnet_url}" target="_blank" class="btn btn-sm btn-azul">Ver</a>`:'<span class="badge b-gris">Sin carnet</span>'}</td>
-        <td><button class="btn btn-sm btn-rojo" onclick="eliminarUsuario(${u.id})">Eliminar</button></td>
+       <td>
+  <div style="display:flex;gap:5px;">
+    <button class="btn btn-sm btn-azul" onclick="abrirEditarUsuario(${u.id})">✏️</button>
+    <button class="btn btn-sm btn-rojo" onclick="eliminarUsuario(${u.id})">Eliminar</button>
+  </div>
+</td>
       </tr>`;
     }).join('')
   : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--texto-suave)">Sin usuarios</td></tr>';
@@ -1547,6 +1575,86 @@ async function crearUsuario(){
   ['nu_nombre','nu_email','nu_cedula','nu_tel'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('nuMascotasList').innerHTML='';
   _nuMascotaCount = 0;
+  cargarUsuarios(); cargarDashboard();
+}
+
+let _euMascotaCount = 0;
+
+function abrirEditarUsuario(id){
+  const u = _usuarios.find(x => x.id === id);
+  if(!u){ toast('Usuario no encontrado','rojo'); return; }
+
+  document.getElementById('eu_id').value     = u.id;
+  document.getElementById('eu_nombre').value = u.nombre || '';
+  document.getElementById('eu_email').value  = u.email || '';
+  document.getElementById('eu_cedula').value = u.cedula || '';
+  document.getElementById('eu_tel').value    = u.telefono || '';
+  document.getElementById('mEditUserSub').textContent = `Editando: ${u.nombre}`;
+
+  document.getElementById('euMascotasList').innerHTML = '';
+  _euMascotaCount = 0;
+  const mascotas = (u.mascotas && u.mascotas.length) ? u.mascotas : [{}];
+  mascotas.forEach(m => agregarCampoMascotaEdit(m));
+
+  abrirModal('mEditUser');
+}
+
+function agregarCampoMascotaEdit(m = {}){
+  _euMascotaCount++;
+  const id = _euMascotaCount;
+  const div = document.createElement('div');
+  div.id = `euMascotaRow${id}`;
+  div.style.marginBottom = '10px';
+  div.innerHTML = `
+    <input type="hidden" id="eu_masc_id_${id}" value="${m.id || ''}">
+    <div class="form-grid" style="align-items:end;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Mascota ${id}</label>
+        <input type="text" id="eu_masc_nombre_${id}" placeholder="Nombre de mascota" value="${m.nombre || ''}">
+      </div>
+      <div class="form-group" style="margin-bottom:0;display:flex;gap:8px;">
+        <select id="eu_masc_especie_${id}" style="flex:1;">
+          <option value="">Especie...</option>
+          <option ${m.especie==='Canino'?'selected':''}>Canino</option>
+          <option ${m.especie==='Felino'?'selected':''}>Felino</option>
+          <option ${m.especie==='Otro'?'selected':''}>Otro</option>
+        </select>
+        <input type="text" id="eu_masc_raza_${id}" placeholder="Raza" style="flex:1;" value="${m.raza || ''}">
+        <button type="button" class="btn btn-rojo btn-sm" onclick="document.getElementById('euMascotaRow${id}').remove()">✕</button>
+      </div>
+    </div>`;
+  document.getElementById('euMascotasList').appendChild(div);
+}
+
+async function guardarEdicionUsuario(){
+  const id     = document.getElementById('eu_id').value;
+  const nombre = document.getElementById('eu_nombre').value.trim();
+  const email  = document.getElementById('eu_email').value.trim();
+  const cedula = document.getElementById('eu_cedula').value.trim();
+  const telefono = document.getElementById('eu_tel').value.trim();
+  if(!nombre || !email){ toast('Nombre y email son obligatorios','rojo'); return; }
+
+  const mascotas = [];
+  for(let i=1;i<=_euMascotaCount;i++){
+    const el = document.getElementById(`eu_masc_nombre_${i}`);
+    if(!el) continue;
+    const nombreM = el.value.trim();
+    if(!nombreM) continue;
+    mascotas.push({
+      id: document.getElementById(`eu_masc_id_${i}`).value || null,
+      nombre: nombreM,
+      especie: document.getElementById(`eu_masc_especie_${i}`).value,
+      raza: document.getElementById(`eu_masc_raza_${i}`).value.trim()
+    });
+  }
+
+  const d = await apiFetch(`/api/usuarios/${id}`, {
+    method:'PUT', headers:authH(),
+    body: JSON.stringify({ nombre, email, cedula, telefono, mascotas })
+  });
+  if(!d.ok){ toast(d.error||'Error','rojo'); return; }
+  toast('✅ Usuario actualizado','verde');
+  cerrar('mEditUser');
   cargarUsuarios(); cargarDashboard();
 }
 
