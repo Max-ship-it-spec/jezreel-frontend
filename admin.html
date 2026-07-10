@@ -1711,6 +1711,11 @@ async function crearYEnviarCuponEstrellas(){
   const fecha = document.getElementById('me_fecha').value;
   if(!fecha){ toast('Ingresa fecha de expiración','rojo'); return; }
 
+  if (!tel || tel.length < 9) {
+  toast('⚠️ Este cliente no tiene teléfono registrado', 'rojo');
+  return;
+}
+
   // 1. Crear cupón
   const dc = await apiFetch('/api/cupones',{
     method:'POST', headers:authH(),
@@ -1774,8 +1779,14 @@ function notificarWA(id){
   const msg=u.estrellas>=10
     ?`¡Hola ${u.nombre.split(' ')[0]}! Has acumulado 10 estrellas en Jezreel Vet 🌟. ¡Tienes un 20% de descuento en tu próxima visita!`
     :`¡Hola ${u.nombre.split(' ')[0]}! Tienes ${u.estrellas} de 10 estrellas en Jezreel Vet 🐾. ¡Sigue visitándonos!`;
-  const num=(u.telefono||'').replace(/\D/g,'');
-  window.open(`https://wa.me/593${num.slice(-9)}?text=${encodeURIComponent(msg)}`,'_blank');
+  const num=(u.telefono||'').replace(/\D/g,'').slice(-9);
+
+  if (!num || num.length < 9) {
+    toast('⚠️ Este cliente no tiene teléfono registrado', 'rojo');
+    return;
+  }
+
+  window.open(`https://wa.me/593${num}?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
 // ── CITAS ──────────────────────────────────────────────────────────────────────
@@ -2358,7 +2369,7 @@ function buscarUsuarioPorMascotaId(mid) {
 }
  
 async function cargarFichaDeMascota(mid) {
-  _fichaUsuarioId = mid || null; // ahora contiene mascota_id
+  _fichaUsuarioId = mid || null;
   const empty  = document.getElementById('fichaAdminEmpty');
   const panel  = document.getElementById('fichaAdminPanel');
 
@@ -2370,10 +2381,19 @@ async function cargarFichaDeMascota(mid) {
 
   empty.style.display = 'none';
   panel.style.display = 'block';
+  document.getElementById('fichaVacunasPanel').innerHTML =
+    '<p style="color:var(--texto-suave);font-size:13px;">Cargando...</p>';
 
-  const d = await apiFetch(`/api/ficha-mascota/${mid}`, { headers: authH() });
+  // ── Las 2 llamadas necesarias van en PARALELO (antes eran secuenciales, 3 llamadas) ──
+  const [d, dv] = await Promise.all([
+    apiFetch(`/api/ficha-mascota/${mid}`, { headers: authH() }),
+    apiFetch(`/api/mascota-vacunas/${mid}`, { headers: authH() })
+  ]);
+
+  // Si el admin ya cambió de mascota mientras cargaba, descartar este resultado viejo
+  if (_fichaUsuarioId !== mid) return;
+
   const ficha = d.ficha || {};
-
   const match = buscarUsuarioPorMascotaId(mid);
   const u = match ? match.usuario : {};
   const mBase = match ? match.mascota : {};
@@ -2412,9 +2432,9 @@ async function cargarFichaDeMascota(mid) {
   document.getElementById('fichaFotoAdmin').innerHTML = fotoHtml;
 
   renderDocsAdmin(ficha.documentos || []);
-  await cargarVacunasMascota(mid);
+  renderVacunasMascota(dv);            // ← ya no vuelve a hacer fetch
   renderCitaActual(ficha);
-  cargarHistoriaEntradas(mid);
+  renderHistoriaEntradas(ficha.documentos || []);  // ← ya no vuelve a hacer fetch
 }
  
 function renderDocsAdmin(docs) {
@@ -2462,8 +2482,9 @@ function construirTextoReceta() {
 async function guardarReceta() {
   if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return null; }
 
-  const u           = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
-  const mascota     = u.mascota_nombre || '—';
+  const match       = buscarUsuarioPorMascotaId(_fichaUsuarioId);
+const u           = match ? match.usuario : {};
+const mascota     = (match ? match.mascota.nombre : null) || '—';
   
   const meds        = document.getElementById('rx_medicamentos').value.trim();
   const obs         = document.getElementById('rx_obs').value.trim();
@@ -2602,8 +2623,9 @@ ctx.fillStyle = '#0D47A1'; ctx.font = 'bold 26px serif';
 async function enviarRecetaWA() {
   if (!_fichaUsuarioId) { toast('Selecciona un usuario primero', 'rojo'); return; }
 
-  const u           = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
-  const mascota     = u.mascota_nombre || '—';
+  const match       = buscarUsuarioPorMascotaId(_fichaUsuarioId);
+const u           = match ? match.usuario : {};
+const mascota     = (match ? match.mascota.nombre : null) || '—';
   const meds        = document.getElementById('rx_medicamentos').value.trim();
   const obs         = document.getElementById('rx_obs').value.trim();
   const fecha       = document.getElementById('rx_fecha').value || new Date().toISOString().split('T')[0];
@@ -2612,6 +2634,12 @@ async function enviarRecetaWA() {
   const tel         = (u.telefono || '').replace(/\D/g,'').slice(-9);
 
   if (!meds) { toast('Escribe al menos los medicamentos', 'rojo'); return; }
+
+  // ── Validar teléfono ANTES de guardar la receta ──
+  if (!tel || tel.length < 9) {
+    toast('⚠️ Este cliente no tiene teléfono registrado', 'rojo');
+    return;
+  }
 
   const resultado = await guardarReceta();
   if (!resultado) return;
@@ -2661,8 +2689,9 @@ async function guardarHistoriaDr() {
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
 
   // 2. Generar PNG y subir como documento
-  const u       = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
-  const mascota = u.mascota_nombre || '—';
+ const matchH  = buscarUsuarioPorMascotaId(_fichaUsuarioId);
+const u       = matchH ? matchH.usuario : {};
+const mascota = (matchH ? matchH.mascota.nombre : null) || '—';
   const fecha   = new Date();
   const fechaFmt = fecha.toLocaleDateString('es-EC', { day:'2-digit', month:'long', year:'numeric' });
   const horaFmt  = fecha.toLocaleTimeString('es-EC', { hour:'2-digit', minute:'2-digit' });
@@ -2738,20 +2767,14 @@ async function guardarHistoriaDr() {
   }, 'image/png');
 }
 
-async function cargarHistoriaEntradas(uid) {
+function renderHistoriaEntradas(documentos) {
   const list = document.getElementById('historiaEntradasList');
   if (!list) return;
-
-  const d = await apiFetch(`/api/ficha-mascota/${uid}`, { headers: authH() });
-  if (!d.ok) { list.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin entradas.</p>'; return; }
-
-  const docs = (d.ficha?.documentos || []).filter(doc => (doc.nombre || '').startsWith('🩺'));
-
+  const docs = (documentos || []).filter(doc => (doc.nombre || '').startsWith('🩺'));
   if (!docs.length) {
     list.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Sin entradas.</p>';
     return;
   }
-
   list.innerHTML = docs.map(doc => `
     <div class="ficha-doc-row" style="border-left:4px solid #4527A0;">
       <span style="font-size:18px;">🩺</span>
@@ -2759,6 +2782,12 @@ async function cargarHistoriaEntradas(uid) {
       <button class="btn btn-sm btn-rojo" onclick="eliminarDocFicha(${doc.id})">✕</button>
     </div>
   `).join('');
+}
+
+async function cargarHistoriaEntradas(uid) {
+  // Usada tras guardar/eliminar una entrada, cuando sí hace falta refrescar desde el servidor
+  const d = await apiFetch(`/api/ficha-mascota/${uid}`, { headers: authH() });
+  renderHistoriaEntradas(d.ficha?.documentos || []);
 }
 
 async function eliminarHistoriaEntrada(eid) {
@@ -2820,12 +2849,9 @@ async function eliminarDocFicha(docId) {
 
 // ── VACUNAS DE MASCOTA ────────────────────────────────────────────────────────
 
-async function cargarVacunasMascota(uid) {
+function renderVacunasMascota(d) {
   const panel = document.getElementById('fichaVacunasPanel');
   if (!panel) return;
-  panel.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Cargando...</p>';
-
-  const d = await apiFetch(`/api/mascota-vacunas/${uid}`, { headers: authH() });
   if (!d.ok) { panel.innerHTML = '<p style="color:#E53935;font-size:13px;">Error cargando vacunas</p>'; return; }
 
   const vacunas = d.vacunas || [];
@@ -2834,7 +2860,6 @@ async function cargarVacunasMascota(uid) {
     return;
   }
 
-  // Agrupar por animal
   const grupos = {};
   vacunas.forEach(v => {
     const g = v.animal || 'otro';
@@ -2858,8 +2883,6 @@ async function cargarVacunasMascota(uid) {
           background:${v.aplicada ? '#F1F8E9' : 'var(--gris)'};
           transition:all 0.2s;cursor:pointer;"
           onclick="toggleVacCheck(${v.id}, ${v.aplicada ? 0 : 1})">
-
-          <!-- Checkbox visual -->
           <div style="
             width:22px;height:22px;border-radius:6px;flex-shrink:0;
             border:2px solid ${v.aplicada ? '#2E7D32' : 'var(--borde)'};
@@ -2868,8 +2891,6 @@ async function cargarVacunasMascota(uid) {
             font-size:13px;color:#fff;font-weight:900;">
             ${v.aplicada ? '✓' : ''}
           </div>
-
-          <!-- Info vacuna -->
           <div style="flex:1;">
             <div style="font-size:13.5px;font-weight:700;color:var(--texto);">
               ${v.emoji || '💉'} ${v.nombre}
@@ -2883,8 +2904,6 @@ async function cargarVacunasMascota(uid) {
                 ${v.proxima_dosis ? ' · Próxima: ' + v.proxima_dosis : ''}
               </div>` : ''}
           </div>
-
-          <!-- Fecha (solo si aplicada) -->
           ${v.aplicada ? `
             <div onclick="event.stopPropagation()" style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
               <input type="date" value="${v.fecha_aplicacion || ''}"
@@ -2900,6 +2919,13 @@ async function cargarVacunasMascota(uid) {
       `).join('')}
     </div>
   `).join('');
+}
+
+async function cargarVacunasMascota(uid) {
+  const panel = document.getElementById('fichaVacunasPanel');
+  if (panel) panel.innerHTML = '<p style="color:var(--texto-suave);font-size:13px;">Cargando...</p>';
+  const d = await apiFetch(`/api/mascota-vacunas/${uid}`, { headers: authH() });
+  renderVacunasMascota(d);
 }
 
 // ── Estado temporal de fechas por vacuna ──
@@ -2972,7 +2998,23 @@ async function guardarYEnviarCitaWA() {
   const notas    = document.getElementById('citaNotas').value.trim();
   if (!fecha) { toast('Selecciona una fecha', 'rojo'); return; }
 
-  // 1. Guardar en backend igual que guardarProximaCita
+  // ── Asegurar que _usuarios esté cargado antes de buscar ──
+  if (!_usuarios.length) {
+    const d0 = await apiFetch('/api/usuarios', { headers: authH() });
+    _usuarios = d0.usuarios || [];
+  }
+
+  const match = buscarUsuarioPorMascotaId(_fichaUsuarioId);
+  const u = match ? match.usuario : {};
+  const mascotaObj = match ? match.mascota : {};
+
+  const tel = (u.telefono || '').replace(/\D/g,'').slice(-9);
+
+  if (!tel || tel.length < 9) {
+    toast('⚠️ Este cliente no tiene un teléfono válido registrado', 'rojo');
+    return;
+  }
+
   const d = await apiFetch(`/api/ficha-mascota/${_fichaUsuarioId}/proxima-cita`, {
     method: 'PUT',
     headers: authH(),
@@ -2981,11 +3023,7 @@ async function guardarYEnviarCitaWA() {
   if (!d.ok) { toast(d.error || 'Error', 'rojo'); return; }
   toast('✅ Cita guardada', 'verde');
 
-  // 2. Armar mensaje WA
-  const u = _usuarios.find(x => String(x.id) === String(_fichaUsuarioId)) || {};
-  const mascota  = u.mascota_nombre || '—';
-  const tel      = (u.telefono || '').replace(/\D/g,'').slice(-9);
-
+  const mascota  = mascotaObj.nombre || '—';
   const fechaFmt = new Date(fecha + 'T00:00:00').toLocaleDateString('es-EC', {
     weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
   });
