@@ -402,7 +402,7 @@ tbody tr:hover td{background:#FAFBFF;}
       <div class="card">
         <div class="card-header"><h3>Programa de Fidelidad ⭐</h3><span style="font-size:13px;color:var(--texto-suave);">Acumulación libre — tú decides cuándo premiar</span></div>
         <div class="table-wrap"><table>
-          <thead><tr><th>Cliente</th><th>Teléfono</th><th>Estrellas</th><th>Notificar</th></tr></thead>
+          <thead><tr><th>Cliente</th><th>Teléfono</th><th>Estrellas</th><th>Motivo</th><th>Notificar</th></tr></thead>
           <tbody id="tbEstrellas"><tr class="loading-row"><td colspan="5">Cargando...</td></tr></tbody>
         </table></div>
       </div>
@@ -1679,9 +1679,25 @@ async function cargarEstrellas(){
           <span class="num" id="star-num-${u.id}">⭐ ${u.estrellas}</span>
           <button class="btn btn-sm btn-verde" onclick="cambiarEstrellas(${u.id},1)">+</button>
         </div></td>
+        <td>
+          <input type="text" value="${(u.notas_estrellas||'').replace(/"/g,'&quot;')}"
+            placeholder="Ej: 5ta visita, cliente frecuente..."
+            style="width:180px;padding:6px 9px;border:1.5px solid var(--borde);border-radius:7px;font-size:12.5px;outline:none;font-family:inherit;"
+            onblur="guardarMotivoEstrella(${u.id}, this.value)">
+        </td>
         <td><button class="btn btn-sm btn-naranja" onclick="abrirNotificarEstrellas(${u.id})">🎟️ Cupón + WA</button></td>
       </tr>`).join('')
-    : '<tr><td colspan="4" style="text-align:center;padding:16px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+    : '<tr><td colspan="5" style="text-align:center;padding:16px;color:var(--texto-suave)">Sin usuarios</td></tr>';
+}
+
+async function guardarMotivoEstrella(id, valor){
+  const u = _usuarios.find(x => x.id === id);
+  if(u) u.notas_estrellas = valor; // actualizar local sin recargar
+  const d = await apiFetch(`/api/usuarios/${id}/notas-estrellas`, {
+    method:'PATCH', headers:authH(), body: JSON.stringify({notas_estrellas: valor})
+  });
+  if(!d.ok){ toast(d.error||'Error al guardar motivo','rojo'); return; }
+  toast('Motivo guardado','verde');
 }
 
 function abrirNotificarEstrellas(uid){
